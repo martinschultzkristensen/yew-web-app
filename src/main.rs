@@ -1,7 +1,8 @@
-mod audio_player;
+
 
 use yew::prelude::*;
-use audio_player::AudioPlayer;
+
+
 
 #[derive(Clone, PartialEq)]
 struct Video {
@@ -104,5 +105,4 @@ fn App() -> Html {
 
 fn main() {
     yew::Renderer::<App>::new().render();
-    //yew::Renderer::<AudioPlayer>();
 }

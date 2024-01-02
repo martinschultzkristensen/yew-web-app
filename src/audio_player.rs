@@ -3,9 +3,11 @@
 use yew::prelude::*;
 use yew::{Component, ComponentLink, html, ShouldRender};
 
+#[derive(Properties, PartialEq)]
 pub struct AudioPlayer {
     link: ComponentLink<Self>,
 }
+
 
 impl Component for AudioPlayer {
     type Message = ();
@@ -39,11 +41,11 @@ impl Component for AudioPlayer {
     }
             
 }
-
-    fn play_audio() {
+    pub fn play_audio() {
         // Play the audio here
         // For simplicity, let's assume playing audio involves some functionality
         // You'd use a library like web-sys to interact with the Web Audio API
         // For demonstration, we'll just print a message
         println!("Audio is played!");
+
     }
