@@ -2,7 +2,7 @@
 //gloo writes stuff to the web console
 //use gloo::console::log; use serde::{Serialize, Deserialize}; <-- Uncomment to write to the webconsole
 use yew::prelude::*;
-use components::molecules::video_list::{VideosList, Video};
+use components::molecules::video_list::{VideosList, Video}; 
 
 
 mod components;
@@ -40,13 +40,12 @@ pub fn app() -> Html {
 
     // Handle keydown events to switch videos
     let handle_keydown = {
-        let current_video_index = current_video_index.clone();
         let videos = videos.clone();
         let current_video_index = current_video_index.clone();
         Callback::from(move |event: KeyboardEvent| {
-            if event.key() == "ArrowRight" || event.key() == "ArrowLeft" {
+            if event.key() == "w" || event.key() == "s" {
                 let new_index = match event.key().as_str() {
-                    "ArrowRight" => {
+                    "w" => {
                         let next_index = *current_video_index + 1;
                         if next_index >= videos.len() {
                             0
@@ -54,7 +53,7 @@ pub fn app() -> Html {
                             next_index
                         }
                     }
-                    "ArrowLeft" => {
+                    "s" => {
                         let prev_index = *current_video_index as i32 - 1;
                         if prev_index < 0 {
                             (videos.len() - 1) as usize
