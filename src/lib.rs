@@ -2,37 +2,12 @@
 //gloo writes stuff to the web console
 //use gloo::console::log; use serde::{Serialize, Deserialize}; <-- Uncomment to write to the webconsole
 use yew::prelude::*;
+use components::molecules::video_list::{VideosList, Video};
 
-#[derive(Clone, PartialEq)]
-struct Video {
-    id: usize,
-    title: String,
-    url: String,
-}
 
-#[derive(Properties, PartialEq)]
-struct VideosListProps {
-    videos: Vec<Video>,
-    current_index: usize, // New property for the current index
-}
+mod components;
 
-#[function_component(VideosList)]
-fn videos_list(
-    VideosListProps {
-        videos,
-        current_index,
-    }: &VideosListProps,
-) -> Html {
-    // Use the current_index to display the corresponding video
-    let current_video = &videos[*current_index];
 
-    html! {
-        <div>
-            <p>{format!("{}", current_video.title)}</p>
-            <video src={format!("{}", current_video.url)} autoplay=true loop=true />
-        </div>
-    }
-} 
 
 #[function_component(DanceOmatic)]
 pub fn app() -> Html {
@@ -97,7 +72,7 @@ pub fn app() -> Html {
     html! {
         <div onkeydown={handle_keydown} tabindex="0">
             <VideosList videos={videos} current_index={*current_video_index} />
-            <img src="static/danceOmatic_logo.png" alt="logo of danceomatic"/>
+            //<img src="static/danceOmatic_logo.png" alt="logo of danceomatic"/>
         </div>
     }
 }
