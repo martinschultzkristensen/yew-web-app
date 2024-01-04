@@ -1,4 +1,6 @@
 //lib.rs
+//gloo writes stuff to the web console
+//use gloo::console::log; use serde::{Serialize, Deserialize}; <-- Uncomment to write to the webconsole
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]
@@ -30,7 +32,7 @@ fn videos_list(
             <video src={format!("{}", current_video.url)} autoplay=true loop=true />
         </div>
     }
-}
+} 
 
 #[function_component(DanceOmatic)]
 pub fn app() -> Html {
