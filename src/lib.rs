@@ -2,7 +2,7 @@
 //gloo writes stuff to the web console
 //use gloo::console::log; use serde::{Serialize, Deserialize}; <-- Uncomment to write to the webconsole
 use yew::prelude::*;
-use components::molecules::video_list::{VideosList, Video}; 
+use components::molecules::video_list::{VideosList, Video};
 
 
 mod components;
@@ -15,22 +15,22 @@ pub fn app() -> Html {
         Video {
             id: 1,
             title: "dancevideo nr.1 ".to_string(),
-            url: "static/AI&Boy.mp4".to_string(),
+            url: "static/Flash_AI&Boy.mp4".to_string(),
         },
         Video {
             id: 2,
             title: "dancevideo nr.2".to_string(),
-            url: "static/Siblings.mp4".to_string(),
+            url: "static/Flash_Siblings.mp4".to_string(),
         },
         Video {
             id: 3,
             title: "dancevideo nr.3".to_string(),
-            url: "static/Culture4Fun.mp4".to_string(),
+            url: "static/Flash_Culture4Fun.mp4".to_string(),
         },
         Video {
             id: 4,
             title: "dancevideo nr.4".to_string(),
-            url: "static/Hej-Nihao.mp4".to_string(),
+            url: "static/Flash_Hej-Nihao.mp4".to_string(),
         },
     ];
     let videos = vec_of_videos;
@@ -64,6 +64,8 @@ pub fn app() -> Html {
                     _ => *current_video_index,
                 };
                 current_video_index.set(new_index);
+                let audio = web_sys::HtmlAudioElement::new_with_src("static/button-124476.mp3").unwrap();
+                let _ = audio.play();
             }
         })
     };
