@@ -1,1 +1,0 @@
-/Users/martinsk/projects/yew-app/target/wasm32-unknown-unknown/debug/yew-app.wasm: /Users/martinsk/projects/yew-app/src/components/mod.rs /Users/martinsk/projects/yew-app/src/components/molecules/mod.rs /Users/martinsk/projects/yew-app/src/components/molecules/video_list.rs /Users/martinsk/projects/yew-app/src/lib.rs /Users/martinsk/projects/yew-app/src/main.rs
