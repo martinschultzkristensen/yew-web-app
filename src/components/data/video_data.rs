@@ -25,7 +25,7 @@ pub fn get_demo_videos() -> Vec<Video> {
     ]
 }
 
-pub fn get_into_video() -> Vec<Video> {
+pub fn get_intro_video() -> Vec<Video> {
     vec![
         Video {
             id: 1,
