@@ -3,7 +3,7 @@
 //use gloo::console::log; use serde::{Serialize, Deserialize}; <-- Uncomment to write to the webconsole
 use yew::prelude::*;
 use components::molecules::video_list::VideosList;
-use components::data::video_data::get_intro_videos;
+use components::data::video_data::get_demo_videos;
 
 mod components;
 
@@ -11,7 +11,7 @@ mod components;
 
 #[function_component(DanceOmatic)]
 pub fn app() -> Html {
-    let videos = get_intro_videos();
+    let videos = get_demo_videos();
 
     // State to track the index of the currently displayed video
     let current_video_index = use_state(|| 0);

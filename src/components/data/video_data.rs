@@ -1,6 +1,6 @@
 use crate::components::molecules::video_list::Video;
 
-pub fn get_intro_videos() -> Vec<Video> {
+pub fn get_demo_videos() -> Vec<Video> {
     vec![
         Video {
             id: 1,
@@ -25,3 +25,12 @@ pub fn get_intro_videos() -> Vec<Video> {
     ]
 }
 
+pub fn get_into_video() -> Vec<Video> {
+    vec![
+        Video {
+            id: 1,
+            title: "IntroVideo".to_string(),
+            url: "static/Intro-Movie_2015Horsens.mp4".to_string(),
+        },
+    ]
+}
