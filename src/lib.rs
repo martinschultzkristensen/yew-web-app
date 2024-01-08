@@ -4,7 +4,7 @@
 use yew::prelude::*;
 use components::molecules::video_list::VideosList;
 use components::data::video_data::*;
-use components::organisms::get_toggle_key;
+use components::organisms::keydown_logic::get_toggle_key;
 
 
 mod components;
@@ -20,36 +20,37 @@ pub fn app() -> Html {
     
 
     // Handle keydown events to switch videos
-    let handle_keydown_toggle = {
-        let videos = videos.clone();
-        let current_video_index = current_video_index.clone();
-        Callback::from(move |event: KeyboardEvent| {
-            if event.key() == "w" || event.key() == "s" {
-                let new_index = match event.key().as_str() {
-                    "w" => {
-                        let next_index = *current_video_index + 1;
-                        if next_index >= videos.len() {
-                            0
-                        } else {
-                            next_index
-                        }
-                    }
-                    "s" => {
-                        let prev_index = *current_video_index as i32 - 1;
-                        if prev_index < 0 {
-                            (videos.len() - 1) as usize
-                        } else {
-                            prev_index as usize
-                        }
-                    }
-                    _ => *current_video_index,
-                };
-                current_video_index.set(new_index);
-                let audio = web_sys::HtmlAudioElement::new_with_src("static/button-124476.mp3").unwrap();
-                let _ = audio.play();
-            }
-        })
-    };
+    // let handle_keydown_toggle = {
+    //     let videos = videos.clone();
+    //     let current_video_index = current_video_index.clone();
+    //     Callback::from(move |event: KeyboardEvent| {
+    //         if event.key() == "w" || event.key() == "s" {
+    //             let new_index = match event.key().as_str() {
+    //                 "w" => {
+    //                     let next_index = *current_video_index + 1;
+    //                     if next_index >= videos.len() {
+    //                         0
+    //                     } else {
+    //                         next_index
+    //                     }
+    //                 }
+    //                 "s" => {
+    //                     let prev_index = *current_video_index as i32 - 1;
+    //                     if prev_index < 0 {
+    //                         (videos.len() - 1) as usize
+    //                     } else {
+    //                         prev_index as usize
+    //                     }
+    //                 }
+    //                 _ => *current_video_index,
+    //             };
+    //             current_video_index.set(new_index);
+    //             let audio = web_sys::HtmlAudioElement::new_with_src("static/button-124476.mp3").unwrap();
+    //             let _ = audio.play();
+    //         }
+    //     })
+    // };
+    let handle_keydown_toggle = get_toggle_key(videos, current_video_index);
 
     html! {        
         <div onkeydown={handle_keydown_toggle} tabindex="0">
