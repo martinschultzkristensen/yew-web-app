@@ -21,7 +21,7 @@ pub fn app() -> Html {
 
     // Handle keydown events to switch videos
 
-    let handle_keydown_toggle = get_toggle_key(videos, current_video_index);
+    let handle_keydown_toggle = get_toggle_key(&videos, current_video_index.clone());
 
     html! {        
         <div onkeydown={handle_keydown_toggle} tabindex="0">
