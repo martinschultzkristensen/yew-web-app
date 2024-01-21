@@ -2,7 +2,8 @@ Title: The danceOmatic software
 
 Explanation: 
 This program is the sofware bagbone of the Art Performance danceOmatic. 
-this webapp should play local videos in a loop. The user should be able to change between the local videos using bind keys. Get info on current video, and select a music track connected to the current video.
+this webapp should play local demo videos in a loop. The user should be able to change between the local demo videos using bind keys. Get info on active demo video, and select a music track connected to that same demo video.
+
 
 More info on danceOmatic under following links: 
 https://artfarm.dk/repertoire/danceomatic
