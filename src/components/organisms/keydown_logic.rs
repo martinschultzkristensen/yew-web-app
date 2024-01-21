@@ -39,4 +39,3 @@ pub fn get_toggle_key(v: &Vec<Video>, video_index: UseStateHandle<usize>) -> Cal
         }
     })
 }
-
