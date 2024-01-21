@@ -1,3 +1,5 @@
+use crate::components::molecules::video_list::Video;
+
 use std::rc::Rc;
 use core::cell::RefCell;
 
