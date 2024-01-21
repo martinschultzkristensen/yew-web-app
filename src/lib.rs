@@ -13,6 +13,7 @@ mod components;
 
 #[function_component(DanceOmatic)]
 pub fn app() -> Html {
+    // let intro_video = get_intro_video();
     let videos = get_demo_videos();
     // State to track the index of the currently displayed demo video
     let current_video_index = use_state(|| 0);
@@ -23,6 +24,7 @@ pub fn app() -> Html {
 
     let handle_keydown_toggle = get_toggle_key(&videos, current_video_index.clone());
 
+        //<IntroVideo videos=intro_video> <-- I want this to be implementet here
     html! {        
         <div onkeydown={handle_keydown_toggle} tabindex="0">
             <VideosList videos={videos} current_index={*current_video_index} />
