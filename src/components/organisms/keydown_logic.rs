@@ -1,4 +1,4 @@
-use crate::{components::molecules::video_list::Video, AppRoute};
+use crate::{components::molecules::video_list::Video, Route};
 use yew::prelude::*;
 use yew_router::router;
 
@@ -50,7 +50,7 @@ pub fn exit_video(v: &Vec<Video>, video_index: UseStateHandle<usize>) -> Callbac
 
     Callback::from(move |event: KeyboardEvent| {
         if event.key() == "x"{
-            let router = AppRoute::MainMenu;
+            let router = Route::MainMenu;
             
         }
     })

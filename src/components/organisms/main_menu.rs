@@ -1,4 +1,7 @@
 use yew::prelude::*;
+use crate::VideosList;
+use crate::get_demo_videos;
+use crate::get_toggle_key;
 
 #[function_component(MainMenu)]
 pub fn main_menu() -> Html {
