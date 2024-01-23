@@ -1,4 +1,4 @@
-use yew::prelude;
+use yew::prelude::*;
 
 #[function_component(MainMenu)]
 pub fn main_menu() -> Html {
