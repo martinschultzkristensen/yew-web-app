@@ -2,7 +2,8 @@
 //gloo writes stuff to the web console
 //use gloo::console::log; use serde::{Serialize, Deserialize}; <-- Uncomment to write to the webconsole
 use yew::prelude::*;
-use yew_router::prelude;
+use yew_router::prelude::*;
+use yew::functional::*;
 use components::molecules::video_list::VideosList;
 use components::data::video_data::*;
 use components::organisms::keydown_logic::get_toggle_key;
@@ -10,8 +11,10 @@ use components::organisms::keydown_logic::get_toggle_key;
 
 mod components;
 
+
+
 #[derive(Clone, Switch, Debug)]
-pub enum AppRoute {
+pub enum Route {
     #[to = "/main-menu"]
     MainMenu,
     #[to = "/intro-screen"]
@@ -22,17 +25,21 @@ pub enum AppRoute {
 #[function_component(DanceOmatic)]
 pub fn app() -> Html {
     html! {
-        <Router<AppRoute, ()>
-            render = Router::render(|switch: AppRoute| {
-                match switch {
-                    AppRoute::MainMenu => html! { <main_menu::MainMenu /> },
-                    AppRoute::VideoList => html! { <video_list::VideoList /> },
-                }
-            })
-        />
+        <BrowserRouter>
+            <Switch<Route> render={switch} />
+        </BrowserRouter>
     }
 }
 
+fn switch(routes: Route) -> Html {
+    match routes {
+        Route::MainMenu => html! { <h1>{ "Home" }</h1> },
+        Route::IntroScreen => html! {
+            <IntroScreen />
+        },
+        Route::NotFound => html! { <h1>{ "404" }</h1> },
+    }
+}
 
 
 

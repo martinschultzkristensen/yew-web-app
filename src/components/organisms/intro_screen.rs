@@ -1,4 +1,4 @@
-use yew::prelude;
+use yew::prelude::*;
 
 #[function_component(IntroScreen)]
 pub fn intro_screen() -> Html {
