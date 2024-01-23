@@ -1,5 +1,6 @@
-use crate::components::molecules::video_list::Video;
+use crate::{components::molecules::video_list::Video, AppRoute};
 use yew::prelude::*;
+use yew_router::router;
 
 
 
@@ -40,7 +41,7 @@ pub fn get_toggle_key(v: &Vec<Video>, video_index: UseStateHandle<usize>) -> Cal
     })
 }
 
-pub fn insert_coin_logic(v: &Vec<Video>, video_index: UseStateHandle<usize>) -> Callback<KeyboardEvent> {
+pub fn exit_video(v: &Vec<Video>, video_index: UseStateHandle<usize>) -> Callback<KeyboardEvent> {
     
 
     let videos = v.clone();
@@ -49,21 +50,8 @@ pub fn insert_coin_logic(v: &Vec<Video>, video_index: UseStateHandle<usize>) -> 
 
     Callback::from(move |event: KeyboardEvent| {
         if event.key() == "x"{
-            let current_index = current_video_index.clone();
-            let new_index = match event.key().as_str() {
-                "x" => {
-                    let next_index = *current_index + 1;
-                    if next_index >= videos.len() {
-                        0
-                    } else {
-                        next_index
-                    }
-                }
-                _ => *current_index,
-            };
-            current_index.set(new_index);
-            let audio = web_sys::HtmlAudioElement::new_with_src("static/button-124476.mp3").unwrap();
-            let _ = audio.play();
+            let router = AppRoute::MainMenu;
+            
         }
     })
 }
