@@ -1,23 +1,24 @@
 //lib.rs
 //gloo writes stuff to the web console
 //use gloo::console::log; use serde::{Serialize, Deserialize}; <-- Uncomment to write to the webconsole
+use yew::functional::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
-use yew::functional::*;
 use components::molecules::video_list::VideosList;
 use components::data::video_data::*;
 use components::organisms::keydown_logic::get_toggle_key;
+use crate::components::organisms::intro_screen::IntroScreen;
 
 
 mod components;
 
 
 
-#[derive(Clone, Switch, Debug)]
+#[derive(Clone, Routable, Debug, PartialEq)]
 pub enum Route {
-    #[to = "/main-menu"]
+    #[at("/main-menu")]
     MainMenu,
-    #[to = "/intro-screen"]
+    #[at("/intro-screen")]
     IntroScreen,
 }
 
@@ -37,7 +38,6 @@ fn switch(routes: Route) -> Html {
         Route::IntroScreen => html! {
             <IntroScreen />
         },
-        Route::NotFound => html! { <h1>{ "404" }</h1> },
     }
 }
 
