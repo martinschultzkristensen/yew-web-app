@@ -25,12 +25,12 @@ pub fn get_demo_videos() -> Vec<Video> {
     ]
 }
 
-// pub fn get_intro_video() -> Vec<Video> {
-//     vec![
-//         Video {
-//             id: 1,
-//             title: "IntroVideo".to_string(),
-//             url: "static/Intro-Movie_2015Horsens.mp4".to_string(),
-//         },
-//     ]
-// }
+pub fn get_intro_video() -> Vec<Video> {
+    vec![
+        Video {
+            id: 1,
+            title: "IntroVideo".to_string(),
+            url: "static/Intro-Movie_2015Horsens.mp4".to_string(),
+        },
+    ]
+}
