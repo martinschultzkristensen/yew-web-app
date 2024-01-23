@@ -26,7 +26,7 @@ pub fn app() -> Html {
     html! {        
         <div onkeydown={handle_keydown_toggle} tabindex="0">
             <VideosList videos={videos} current_index={*current_video_index} />
-            //<img src="static/danceOmatic_logo.png" alt="logo of danceomatic"/>
+            <img src="static/danceOmatic_logo.png" alt="logo of danceomatic"/>
         </div>
     }
 }
