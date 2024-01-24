@@ -1,6 +1,6 @@
 //lib.rs
 //gloo writes stuff to the web console
-//use gloo::console::log; use serde::{Serialize, Deserialize}; <-- Uncomment to write to the webconsole
+//use gloo::console::log; use serde::{Serialize, Deserialize}; //<-- Uncomment to write to the webconsole
 use yew::functional::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -16,26 +16,38 @@ mod components;
 
 #[derive(Clone, Routable, Debug, PartialEq)]
 pub enum Route {
+    #[at("/home")]
+    Home,
     #[at("/main-menu")]
     MainMenu,
     #[at("/intro-screen")]
-    IntroScreen,
+    IntroScreen2,
+    #[at("/")]
+    IntroScreen1,
 }
 
 
 #[function_component(DanceOmatic)]
 pub fn app() -> Html {
+
+
     html! {
+    <div>
         <BrowserRouter>
             <Switch<Route> render={switch} />
         </BrowserRouter>
+    </div>
     }
 }
 
 fn switch(routes: Route) -> Html {
     match routes {
-        Route::MainMenu => html! { <h1>{ "Home" }</h1> },
-        Route::IntroScreen => html! {
+        Route::Home => html! { <h1>{ "Home" }</h1> },
+        Route::MainMenu => html! { <h1>{ "Main" }</h1> },
+        Route::IntroScreen1 => html! {
+            <IntroScreen />
+        },
+        Route::IntroScreen2 => html! {
             <IntroScreen />
         },
     }
