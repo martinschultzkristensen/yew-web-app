@@ -1,5 +1,5 @@
 use crate::{components::molecules::video_list::Video, Route};
-use yew_router::prelude::use_navigator;
+use yew_router::{navigator, prelude::use_navigator, Switch};
 use yew::prelude::*;
 use yew_router::prelude::Router;
 //use yew_router::service::RouteRequest;
@@ -52,11 +52,13 @@ pub fn exit_video(v: &Vec<Video>, video_index: UseStateHandle<usize>) -> Callbac
 
     Callback::from(move |event: KeyboardEvent| {
         if event.key() == "x"{
-            let new_route = Route::MainMenu.into();
-            let navigator = use_navigator().unwrap();
-            if let Some(navigator) = use_navigator() {
-            }
-            //RouteRequest::ChangeRoute(new_route).send();
+            let new_route = Route::MainMenu;
+            let navigator = use_navigator();
+            
+            Switch::into(new_route).send();
         }
     })
 }
+
+// if let navigator = use_navigator() {
+            // }
