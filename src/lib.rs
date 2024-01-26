@@ -48,7 +48,7 @@ fn switch(routes: Route) -> Html {
             <MainMenu />
          },
         Route::IntroScreen1 => html! {
-            <IntroScreen />
+            <IntroScreen/>
         },
         Route::IntroScreen2 => html! {
             <IntroScreen />
