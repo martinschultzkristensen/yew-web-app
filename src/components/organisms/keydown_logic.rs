@@ -1,8 +1,7 @@
 use crate::{components::molecules::video_list::Video, Route};
-use yew_router::{navigator, prelude::use_navigator, Switch};
+use yew_router::{navigator::Navigator, prelude::use_navigator};
 use yew::prelude::*;
 use yew_router::prelude::Router;
-//use yew_router::service::RouteRequest;
 
 
 
@@ -43,22 +42,12 @@ pub fn get_toggle_key(v: &Vec<Video>, video_index: UseStateHandle<usize>) -> Cal
     })
 }
 
-pub fn exit_video(v: &Vec<Video>, video_index: UseStateHandle<usize>) -> Callback<KeyboardEvent> {
+// pub fn exit_video(v: &Vec<Video>, video_index: UseStateHandle<usize>) -> Callback<KeyboardEvent> {
     
 
-    let videos = v.clone();
-    let current_video_index =  video_index;
-    //let current_video_index = use_state(|| 0);
-
-    Callback::from(move |event: KeyboardEvent| {
-        if event.key() == "x"{
-            let new_route = Route::MainMenu;
-            let navigator = use_navigator();
-            
-            Switch::into(new_route).send();
-        }
-    })
-}
-
-// if let navigator = use_navigator() {
-            // }
+//     let videos = v.clone();
+//     let current_video_index =  video_index;
+//     let current_video_index = use_state(|| 0);
+    
+    
+// }

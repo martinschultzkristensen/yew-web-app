@@ -8,6 +8,7 @@ use components::molecules::video_list::VideosList;
 use components::data::video_data::*;
 use components::organisms::keydown_logic::get_toggle_key;
 use crate::components::organisms::intro_screen::IntroScreen;
+use crate::components::organisms::main_menu::MainMenu;
 
 
 mod components;
@@ -43,7 +44,9 @@ pub fn app() -> Html {
 fn switch(routes: Route) -> Html {
     match routes {
         Route::Home => html! { <h1>{ "Home" }</h1> },
-        Route::MainMenu => html! { <h1>{ "Main" }</h1> },
+        Route::MainMenu => html! { 
+            <MainMenu />
+         },
         Route::IntroScreen1 => html! {
             <IntroScreen />
         },
