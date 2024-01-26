@@ -1,5 +1,7 @@
-use crate::components::molecules::video_list::Video;
+use crate::{components::molecules::video_list::Video, Route};
+use yew_router::{navigator::Navigator, prelude::use_navigator};
 use yew::prelude::*;
+use yew_router::prelude::Router;
 
 
 
@@ -39,3 +41,13 @@ pub fn get_toggle_key(v: &Vec<Video>, video_index: UseStateHandle<usize>) -> Cal
         }
     })
 }
+
+// pub fn exit_video(v: &Vec<Video>, video_index: UseStateHandle<usize>) -> Callback<KeyboardEvent> {
+    
+
+//     let videos = v.clone();
+//     let current_video_index =  video_index;
+//     let current_video_index = use_state(|| 0);
+    
+    
+// }
