@@ -30,7 +30,7 @@ pub fn get_intro_video() -> Vec<Video> {
         Video {
             id: 0,
             title: "IntroVideo".to_string(),
-            url: "static/Flash_Hej-Nihao.mp4".to_string(),
+            url: "static/Flash_Culture4Fun".to_string(),
         },
     ]
 }
