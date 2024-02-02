@@ -42,12 +42,3 @@ pub fn get_toggle_key(v: &Vec<Video>, video_index: UseStateHandle<usize>) -> Cal
     })
 }
 
-// pub fn exit_video(v: &Vec<Video>, video_index: UseStateHandle<usize>) -> Callback<KeyboardEvent> {
-    
-
-//     let videos = v.clone();
-//     let current_video_index =  video_index;
-//     let current_video_index = use_state(|| 0);
-    
-    
-// }
