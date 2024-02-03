@@ -1,3 +1,4 @@
+use components::organisms::about_choreo1::AboutChoreo1;
 //lib.rs
 //gloo writes stuff to the web console
 //use gloo::console::log; use serde::{Serialize, Deserialize}; //<-- Uncomment to write to the webconsole
@@ -17,8 +18,8 @@ mod components;
 
 #[derive(Clone, Routable, Debug, PartialEq)]
 pub enum Route {
-    #[at("/home")]
-    Home,
+    #[at("/about-choreo1")]
+    AboutChoreo1,
     #[at("/main-menu")]
     MainMenu,
     #[at("/intro-screen")]
@@ -43,7 +44,7 @@ pub fn app() -> Html {
 
 fn switch(routes: Route) -> Html {
     match routes {
-        Route::Home => html! { <h1>{ "Home" }</h1> },
+        Route::AboutChoreo1 => html! { <AboutChoreo1 /> },
         Route::MainMenu => html! { 
             <MainMenu />
          },
