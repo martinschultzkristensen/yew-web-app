@@ -1,4 +1,5 @@
 use yew::prelude::*;
+use std::cell::RefCell;
 
 #[derive(Clone, PartialEq)]
 pub struct Video {
@@ -10,18 +11,14 @@ pub struct Video {
 #[derive(Properties, PartialEq)]
 pub struct VideosListProps {
     pub videos: Vec<Video>,
-    pub current_index: usize, // New property for the current index
+    pub current_index: yew::UseStateHandle<RefCell<usize>>, // New property for the current index
 }
 
 #[function_component(VideosList)]
-pub fn videos_list(
-    VideosListProps {
-        videos,
-        current_index,
-    }: 
-    &VideosListProps,) -> Html {
+pub fn videos_list(props: &VideosListProps,) -> Html {
     // Use the current_index to display the corresponding video
-    let current_video = &videos[*current_index];
+    let current_index = *props.current_index.borrow();
+    let current_video = &props.videos[current_index];
 
     html! {
         <div>
