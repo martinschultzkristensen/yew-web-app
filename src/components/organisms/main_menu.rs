@@ -23,23 +23,23 @@ pub fn main_menu() -> Html {
     let current_video_index = use_state(|| 0);
     let navigator = use_navigator();
     
-    pub fn navigate_to_about(index: usize, navigator: Option<Navigator>) {
+    pub fn navigate_to_about(index: usize, navigator: Option<Navigator>) -> usize {
         if let Some(navigator) = navigator {
             match index {
-                1 => navigator.push(&Route::AboutChoreo1),
-                2 => navigator.push(&Route::AboutChoreo2),
-                3 => navigator.push(&Route::AboutChoreo3),
-                4 => navigator.push(&Route::AboutChoreo4),
+                0 => navigator.push(&Route::AboutChoreo1),
+                1 => navigator.push(&Route::AboutChoreo2),
+                2 => navigator.push(&Route::AboutChoreo3),
+                3 => navigator.push(&Route::AboutChoreo4),
                 _ => {}
             }
         } else {
             log!("Navigator is None");
         }
+        index
     }
-    navigate_to_about(*current_video_index, navigator.clone());
-    //Handle keydown events to switch videos
+    
     let handle_keydown_toggle =
-        get_toggle_key(&demo_videos, current_video_index.clone(), Callback::from(handle_index_change));
+        get_toggle_key(&demo_videos, current_video_index.clone());
 
         let current_video_index_clone = current_video_index.clone();
         let press_r_for_about = Callback::from(move |event: KeyboardEvent| {
@@ -68,3 +68,5 @@ pub fn main_menu() -> Html {
         </div>
     }
 }
+
+
