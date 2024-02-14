@@ -1,6 +1,5 @@
 use crate::{components::molecules::video_list::Video, Route};
 use yew::prelude::*;
-use yew_router::{navigator::Navigator, prelude::use_navigator};
 
 // Handle keydown events to switch videos
 pub fn get_toggle_key(v: &Vec<Video>, video_index: UseStateHandle<usize>, callback: Callback<usize>) -> Callback<KeyboardEvent> {
@@ -35,6 +34,7 @@ pub fn get_toggle_key(v: &Vec<Video>, video_index: UseStateHandle<usize>, callba
             let audio = web_sys::HtmlAudioElement::new_with_src("static/button-124476.mp3").unwrap();
             let _ = audio.play();
         }
+        
     })
 }
 
