@@ -4,18 +4,12 @@ use crate::get_toggle_key;
 use crate::VideosList;
 use gloo::console::log;
 use yew::prelude::*;
+use yew_router::navigator;
 use crate::Route;
 use yew_router::prelude::{use_navigator, Navigator};
 
-pub fn navigate_to_about(index: usize, navigator: Navigator) {
-        match index {
-            1 => navigator.push(&Route::AboutChoreo1),
-            2 => navigator.push(&Route::AboutChoreo2),
-            3 => navigator.push(&Route::AboutChoreo3),
-            4 => navigator.push(&Route::AboutChoreo4),
-            _ => {}
-        }
-}
+
+
 
 pub fn handle_index_change(new_index: usize) {
     
@@ -27,12 +21,24 @@ pub fn main_menu() -> Html {
     let demo_videos = get_demo_videos();
     // State to track the index of the currently displayed demo video
     let current_video_index = use_state(|| 0);
-    let current_video_index_ref = &current_video_index;
+    
+    pub fn navigate_to_about(index: usize) {
+        let navigator = use_navigator();
+        let navigate_closure = ||{
+            match index {
+                1 => navigator.push(&Route::AboutChoreo1),
+                2 => navigator.push(&Route::AboutChoreo2),
+                3 => navigator.push(&Route::AboutChoreo3),
+                4 => navigator.push(&Route::AboutChoreo4),
+                _ => {}
+            }
+        };
 
+        navigation_closure();
+    }
     //Handle keydown events to switch videos
     let handle_keydown_toggle =
         get_toggle_key(&demo_videos, current_video_index.clone(), Callback::from(handle_index_change));
-    let navigator = use_navigator();
 
     let press_r_for_about = Callback::from(move |event: KeyboardEvent| {
         if event.key() == "r" {
