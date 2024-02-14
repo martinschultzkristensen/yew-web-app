@@ -1,4 +1,4 @@
-use crate::{components::molecules::video_list::Video, Route};
+use crate::components::molecules::video_list::Video;
 use yew::prelude::*;
 
 // Handle keydown events to switch videos
