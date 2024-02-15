@@ -1,7 +1,7 @@
 use yew::prelude::*;
 use crate::Route;
 use yew_router::prelude::use_navigator;
-use crate::components::molecules::video_list::_VideosListProps::current_index;
+
 
 
 #[function_component(AboutChoreo1)]
