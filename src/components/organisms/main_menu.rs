@@ -19,13 +19,13 @@ pub fn main_menu() -> Html {
     
     pub fn navigate_to_about(index: usize, navigator: Option<Navigator>) -> usize {
         if let Some(navigator) = navigator {
-            match index {
-                0 => navigator.push(&Route::AboutChoreo1),
-                1 => navigator.push(&Route::AboutChoreo2),
-                2 => navigator.push(&Route::AboutChoreo3),
-                3 => navigator.push(&Route::AboutChoreo4),
-                _ => {}
-            }
+            let current_id = match index {
+                0 => "demo1".to_string(),
+                1 => "demo2".to_string(),
+                _ => "".to_string(), // Default case if needed
+            };
+            let route = Route::MainMenu { id: current_id };
+            navigator.push(&route);
         } else {
             log!("Navigator is None");
         }
