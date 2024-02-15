@@ -11,8 +11,7 @@ use yew_router::prelude::{use_navigator, Navigator};
 #[function_component(MainMenu)]
 pub fn main_menu() -> Html {
     let demo_videos = get_demo_videos();
-    // State to track the index of the currently displayed demo video
-    let current_video_index = use_state(|| 0);
+    let current_video_index = use_state(|| 0);  // State to track the index of the currently displayed demo video
     let navigator = use_navigator();
     
     pub fn navigate_to_about(index: usize, navigator: Option<Navigator>, current_video_index: &UseStateHandle<usize>) {
@@ -25,7 +24,7 @@ pub fn main_menu() -> Html {
                 },
                 1 => {
                     navigator.push_with_state(&Route::AboutChoreo2, 1); // Pass the index to AboutChoreo2
-                    2 // Set new index to 2
+                    1 // Set new index to 2
                 },
                 2 => {
                     navigator.push_with_state(&Route::AboutChoreo3, 3); // Pass the index to AboutChoreo3
@@ -38,8 +37,7 @@ pub fn main_menu() -> Html {
                 _ => return, // Return early if index is invalid
             };
             
-            // Update the current_video_index state
-            current_video_index.set(new_index);
+            current_video_index.set(new_index)
         } else {
             log!("Navigator is None");
         }
