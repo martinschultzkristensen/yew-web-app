@@ -1,5 +1,5 @@
 use yew::prelude::*;
-use crate::Route;
+use crate::{choreo_videos, Route};
 use yew_router::prelude::use_navigator;
 
 
@@ -48,13 +48,11 @@ pub fn about_choreo3() -> Html {
         match event.key().as_str() {
             "q" => navigator.push(&Route::IntroScreen1),
             "r" => navigator.push_with_state(&Route::MainMenu, 2),
+            "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
             _ => (),
         }
-        // if event.key() == "q"{
-        //     navigator.push(&Route::IntroScreen1);
-        //     } else if event.key() == "r" {
-        //         navigator.push_with_state(&Route::MainMenu, 2);        
-        //     }
+
+
     });
    
 
