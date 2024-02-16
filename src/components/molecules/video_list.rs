@@ -1,3 +1,4 @@
+use gloo::utils::history;
 use yew::prelude::*;
 use yew_router::prelude::*;
 use crate::Route;
@@ -27,14 +28,13 @@ pub fn videos_list(
     let current_video = &videos[*current_index];
 
     // Obtain the current location, ensuring it implements the History trait
-
     let location = use_location();
 
+    // Create a callback function to update the URL with the new current_video_index
     let switch_video = Callback::from(move |id: usize| {
         // Update the URL with the new video ID
         let new_url = format!("/main-menu/{}", id); // Modify the URL as needed
-        let location = location::path();
-        location.set_path(&new_url);
+        location.path(&new_url);
     });
 
     html! {
