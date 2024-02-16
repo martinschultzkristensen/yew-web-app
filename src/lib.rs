@@ -23,8 +23,8 @@ pub enum Route {
     AboutChoreo3,
     #[at("/about-choreo4")]
     AboutChoreo4,
-    #[at("/main-menu")]
-    MainMenu,
+    #[at("/main-menu/:id")] // Include ID field for MainMenu
+    MainMenu { id: String },
     #[at("/intro-screen")]
     IntroScreen2,
     #[at("/")]
@@ -48,7 +48,7 @@ fn switch(routes: Route) -> Html {
         Route::AboutChoreo2 => html! { <AboutChoreo2 /> },
         Route::AboutChoreo3 => html! { <AboutChoreo3 /> },
         Route::AboutChoreo4 => html! { <AboutChoreo4 /> },
-        Route::MainMenu => html! { <MainMenu /> },
+        Route::MainMenu {id: current_id}=> html! { <MainMenu /> },
         Route::IntroScreen1 => html! { <IntroScreen/> },
         Route::IntroScreen2 => html! { <IntroScreen /> },
     }

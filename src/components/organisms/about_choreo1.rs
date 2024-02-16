@@ -11,7 +11,7 @@ pub fn about_choreo1() -> Html {
         if event.key() == "q"{
         navigator.push(&Route::IntroScreen1);
         } else if event.key() == "r" {
-            navigator.push_with_state(&Route::MainMenu, 0);        
+            navigator.push(&Route::MainMenu {id: String::from("demo1")});        
         }});
 
     
@@ -30,7 +30,7 @@ pub fn about_choreo2() -> Html {
         if event.key() == "q" {
             navigator.push(&Route::IntroScreen1);
         } else if event.key() == "r" {
-            navigator.push_with_state(&Route::MainMenu, 1); // Navigate back to MainMenu with index 2
+            navigator.push(&Route::MainMenu {id: String::from("demo2")}); // Navigate back to MainMenu with index 2
         }
     });
 
@@ -48,7 +48,7 @@ pub fn about_choreo3() -> Html {
         if event.key() == "q"{
             navigator.push(&Route::IntroScreen1);
             } else if event.key() == "r" {
-                navigator.push_with_state(&Route::MainMenu, 2);        
+                navigator.push(&Route::MainMenu {id: String::from("demo2")});        
             }});
    
 
@@ -67,7 +67,7 @@ pub fn about_choreo4() -> Html {
         if event.key() == "q"{
             navigator.push(&Route::IntroScreen1);
             } else if event.key() == "r" {
-                navigator.push_with_state(&Route::MainMenu, 2);        
+                navigator.push(&Route::MainMenu {id: String::from("demo2")});        
             }});
    
 

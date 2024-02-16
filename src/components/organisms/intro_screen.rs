@@ -13,7 +13,7 @@ pub fn intro_screen() -> Html {
 
     let press_x_for_main = Callback::from(move |event: KeyboardEvent| {
         if event.key() == "x"{
-        navigator.push(&Route::MainMenu);
+        navigator.push(&Route::MainMenu {id: String::from("Demo1")});
         let audio = web_sys::HtmlAudioElement::new_with_src("static/coinSound.mp3").unwrap();
         let _ = audio.play();
         }});
