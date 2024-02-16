@@ -1,6 +1,6 @@
 use crate::get_demo_videos;
 use crate::get_toggle_key;
-
+use crate::use_location;
 use crate::VideosList;
 use gloo::console::log;
 use yew::prelude::*;
@@ -18,7 +18,8 @@ pub struct MainMenuProps {
 pub fn main_menu() -> Html {
     let demo_videos = get_demo_videos();
     // State to track the index of the currently displayed demo video
-    let current_video_index = use_state(|| 0);
+    let current_video_index: usize = use_location().map(|l| l.state::<usize>().map(|i| *i)).flatten().unwrap_or(0);
+    let current_video_index: UseStateHandle<usize> = use_state(|| current_video_index);
     let navigator = use_navigator();
     
     pub fn navigate_to_about(index: usize, navigator: Option<Navigator>) -> usize {
