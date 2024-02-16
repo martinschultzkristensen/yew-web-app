@@ -1,16 +1,16 @@
 use crate::components::molecules::video_list::Video;
 use yew::prelude::*;
-use core::pin::Pin;
+use std::cell::RefCell;
+use std::rc::Rc;
 
-// Handle keydown events to switch videos
-pub fn get_toggle_key(v: &Vec<Video>, video_index: usize ) -> Callback<KeyboardEvent> {
+
+pub fn get_toggle_key(v: &Vec<Video>, video_index: &usize) -> Callback<KeyboardEvent> {
     let videos = v.clone();
-    let current_video_index = video_index;
-    //let current_video_index = use_state(|| 0);
+    let current_video_index = video_index.clone();
 
     Callback::from(move |event: KeyboardEvent| {
         if event.key() == "w" || event.key() == "s" {
-            let mut current_index = current_video_index.clone();
+            let mut current_index = current_video_index;
             let new_index = match event.key().as_str() {
                 "w" => {
                     let next_index = current_index + 1;
@@ -30,13 +30,9 @@ pub fn get_toggle_key(v: &Vec<Video>, video_index: usize ) -> Callback<KeyboardE
                 }
                 _ => current_index,
             };
-            //callback.emit(new_index);
-            Pin::new(&mut current_index).set(new_index);
+            current_index = new_index;
             let audio = web_sys::HtmlAudioElement::new_with_src("static/button-124476.mp3").unwrap();
             let _ = audio.play();
         }
-        
     })
 }
-
-

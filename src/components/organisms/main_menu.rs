@@ -18,7 +18,7 @@ pub struct MainMenuProps {
 pub fn main_menu() -> Html {
     let demo_videos = get_demo_videos();
     // State to track the index of the currently displayed demo video
-    //let current_video_index = use_state(|| 0); 
+    // let current_video_index = use_state(|| 0); 
     let current_video_index = use_location().map(|l| l.state::<usize>().map(|i| *i)).flatten().unwrap_or(0);
     let navigator = use_navigator();
     
@@ -38,7 +38,7 @@ pub fn main_menu() -> Html {
     }
     
     let handle_keydown_toggle =
-        get_toggle_key(&demo_videos, current_video_index.clone());
+        get_toggle_key(&demo_videos, &current_video_index.clone());
 
         let current_video_index_clone = current_video_index.clone();
         let press_r_for_about = Callback::from(move |event: KeyboardEvent| {
