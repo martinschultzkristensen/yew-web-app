@@ -1,4 +1,7 @@
 use yew::prelude::*;
+use yew_router::prelude::*;
+use crate::Route;
+use yew_router::history::History;
 
 #[derive(Clone, PartialEq)]
 pub struct Video {
@@ -18,10 +21,21 @@ pub fn videos_list(
     VideosListProps {
         videos,
         current_index,
-    }: 
-    &VideosListProps,) -> Html {
+    }: &VideosListProps,
+) -> Html {
     // Use the current_index to display the corresponding video
     let current_video = &videos[*current_index];
+
+    // Obtain the current location, ensuring it implements the History trait
+
+    let location = use_location();
+
+    let switch_video = Callback::from(move |id: usize| {
+        // Update the URL with the new video ID
+        let new_url = format!("/main-menu/{}", id); // Modify the URL as needed
+        let location = location::path();
+        location.set_path(&new_url);
+    });
 
     html! {
         <div>
@@ -29,4 +43,4 @@ pub fn videos_list(
             <video src={format!("{}", current_video.url)} autoplay=true loop=true />
         </div>
     }
-} 
+}
