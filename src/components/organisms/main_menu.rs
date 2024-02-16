@@ -8,6 +8,10 @@ use crate::Route;
 use yew_router::prelude::{use_navigator, Navigator};
 
 
+#[derive(Properties, Clone, PartialEq)]
+pub struct MainMenuProps {
+    pub current_index: usize,
+}
 
 
 #[function_component(MainMenu)]
