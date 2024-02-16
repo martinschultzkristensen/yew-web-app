@@ -44,17 +44,23 @@ pub fn about_choreo2() -> Html {
 #[function_component(AboutChoreo3)]
 pub fn about_choreo3() -> Html {
     let navigator = use_navigator().unwrap();
-    let restart_app = Callback::from(move |event: KeyboardEvent| {
-        if event.key() == "q"{
-            navigator.push(&Route::IntroScreen1);
-            } else if event.key() == "r" {
-                navigator.push_with_state(&Route::MainMenu, 2);        
-            }});
+    let event_key = Callback::from(move |event: KeyboardEvent| {
+        match event.key().as_str() {
+            "q" => navigator.push(&Route::IntroScreen1),
+            "r" => navigator.push_with_state(&Route::MainMenu, 2),
+            _ => (),
+        }
+        // if event.key() == "q"{
+        //     navigator.push(&Route::IntroScreen1);
+        //     } else if event.key() == "r" {
+        //         navigator.push_with_state(&Route::MainMenu, 2);        
+        //     }
+    });
    
 
 
     html! { 
-        <div onkeydown={restart_app} tabindex="0">
+        <div onkeydown={event_key} tabindex="0">
             <p>{ "Choreo3" }</p>
         </div>
     }
