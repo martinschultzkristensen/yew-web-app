@@ -18,7 +18,7 @@ pub struct MainMenuProps {
 pub fn main_menu() -> Html {
     let demo_videos = get_demo_videos();
     // State to track the index of the currently displayed demo video
-    // let current_video_index = use_state(|| 0); 
+    // let current_video_index: UseStateHandle<i32> = use_state(|| 0); 
     let current_video_index = use_location().map(|l| l.state::<usize>().map(|i| *i)).flatten().unwrap_or(0);
     let navigator = use_navigator();
     
