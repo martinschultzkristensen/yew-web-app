@@ -1,22 +1,19 @@
-use yew::prelude::*;
 use crate::Route;
+use yew::prelude::*;
 use yew_router::prelude::use_navigator;
-
-
 
 #[function_component(AboutChoreo1)]
 pub fn about_choreo1() -> Html {
     let navigator = use_navigator().unwrap();
     let event_key = Callback::from(move |event: KeyboardEvent| {
-        if event.key() == "q"{
-        navigator.push(&Route::IntroScreen1);
+        if event.key() == "q" {
+            navigator.push(&Route::IntroScreen1);
         } else if event.key() == "r" {
-            navigator.push_with_state(&Route::MainMenu, 0);        
-        }});
+            navigator.push_with_state(&Route::MainMenu, 0usize);
+        }
+    });
 
-    
-   
-    html! { 
+    html! {
         <div onkeydown={event_key} tabindex="0">
             <p>{ "Choreo1" }</p>
         </div>
@@ -30,7 +27,7 @@ pub fn about_choreo2() -> Html {
         if event.key() == "q" {
             navigator.push(&Route::IntroScreen1);
         } else if event.key() == "r" {
-            navigator.push_with_state(&Route::MainMenu, 1); // Navigate back to MainMenu with index 2
+            navigator.push_with_state(&Route::MainMenu, 1usize); // Navigate back to MainMenu with index 2
         }
     });
 
@@ -45,15 +42,14 @@ pub fn about_choreo2() -> Html {
 pub fn about_choreo3() -> Html {
     let navigator = use_navigator().unwrap();
     let restart_app = Callback::from(move |event: KeyboardEvent| {
-        if event.key() == "q"{
+        if event.key() == "q" {
             navigator.push(&Route::IntroScreen1);
-            } else if event.key() == "r" {
-                navigator.push_with_state(&Route::MainMenu, 2);        
-            }});
-   
+        } else if event.key() == "r" {
+            navigator.push_with_state(&Route::MainMenu, 2usize);
+        }
+    });
 
-
-    html! { 
+    html! {
         <div onkeydown={restart_app} tabindex="0">
             <p>{ "Choreo3" }</p>
         </div>
@@ -64,15 +60,14 @@ pub fn about_choreo3() -> Html {
 pub fn about_choreo4() -> Html {
     let navigator = use_navigator().unwrap();
     let restart_app = Callback::from(move |event: KeyboardEvent| {
-        if event.key() == "q"{
+        if event.key() == "q" {
             navigator.push(&Route::IntroScreen1);
-            } else if event.key() == "r" {
-                navigator.push_with_state(&Route::MainMenu, 2);        
-            }});
-   
+        } else if event.key() == "r" {
+            navigator.push_with_state(&Route::MainMenu, 2usize);
+        }
+    });
 
-
-    html! { 
+    html! {
         <div onkeydown={restart_app} tabindex="0">
             <p>{ "Choreo4" }</p>
         </div>
