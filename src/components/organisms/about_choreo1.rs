@@ -63,7 +63,7 @@ pub fn about_choreo4() -> Html {
         if event.key() == "q" {
             navigator.push(&Route::IntroScreen1);
         } else if event.key() == "r" {
-            navigator.push_with_state(&Route::MainMenu, 2);
+            navigator.push_with_state(&Route::MainMenu, 2usize);
         }
     });
 
