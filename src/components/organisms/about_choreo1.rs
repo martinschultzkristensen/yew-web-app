@@ -6,10 +6,11 @@ use yew_router::prelude::use_navigator;
 pub fn about_choreo1() -> Html {
     let navigator = use_navigator().unwrap();
     let event_key = Callback::from(move |event: KeyboardEvent| {
-        if event.key() == "q" {
-            navigator.push(&Route::IntroScreen1);
-        } else if event.key() == "r" {
-            navigator.push_with_state(&Route::MainMenu, 0usize);
+        match event.key().as_str() {
+            "q" => navigator.push(&Route::IntroScreen1),
+            "r" => navigator.push_with_state(&Route::MainMenu, 0usize),
+           // "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
+            _ => (),
         }
     });
 
@@ -24,10 +25,11 @@ pub fn about_choreo1() -> Html {
 pub fn about_choreo2() -> Html {
     let navigator = use_navigator().unwrap();
     let event_key = Callback::from(move |event: KeyboardEvent| {
-        if event.key() == "q" {
-            navigator.push(&Route::IntroScreen1);
-        } else if event.key() == "r" {
-            navigator.push_with_state(&Route::MainMenu, 1usize); // Navigate back to MainMenu with index 2
+        match event.key().as_str() {
+            "q" => navigator.push(&Route::IntroScreen1),
+            "r" => navigator.push_with_state(&Route::MainMenu, 1usize),
+           // "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
+            _ => (),
         }
     });
 
@@ -44,12 +46,10 @@ pub fn about_choreo3() -> Html {
     let event_key = Callback::from(move |event: KeyboardEvent| {
         match event.key().as_str() {
             "q" => navigator.push(&Route::IntroScreen1),
-            "r" => navigator.push_with_state(&Route::MainMenu, 2),
-            "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
+            "r" => navigator.push_with_state(&Route::MainMenu, 2usize),
+           // "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
             _ => (),
         }
-
-
     });
    
 
@@ -65,10 +65,11 @@ pub fn about_choreo3() -> Html {
 pub fn about_choreo4() -> Html {
     let navigator = use_navigator().unwrap();
     let restart_app = Callback::from(move |event: KeyboardEvent| {
-        if event.key() == "q" {
-            navigator.push(&Route::IntroScreen1);
-        } else if event.key() == "r" {
-            navigator.push_with_state(&Route::MainMenu, 2usize);
+        match event.key().as_str() {
+            "q" => navigator.push(&Route::IntroScreen1),
+            "r" => navigator.push_with_state(&Route::MainMenu, 3usize),
+           // "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
+            _ => (),
         }
     });
 
