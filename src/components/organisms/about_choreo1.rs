@@ -28,7 +28,7 @@ pub fn about_choreo2() -> Html {
         match event.key().as_str() {
             "q" => navigator.push(&Route::IntroScreen1),
             "r" => navigator.push_with_state(&Route::MainMenu, 1usize),
-           // "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
+            "e" => navigator.push_with_state(&Route::ChoreoVideo, 2),
             _ => (),
         }
     });

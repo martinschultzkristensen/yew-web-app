@@ -20,7 +20,7 @@ pub fn choreographic_videos() -> Html { //<-- change to performance video
 
     html! {
         <div onkeydown={restart_app} tabindex="0">
-            <VideosList videos={performance_video} current_index={*performance_video_index} />
+            <VideosList videos={performance_video} current_index={*performance_video_index}/>
         </div>
     }
 }
