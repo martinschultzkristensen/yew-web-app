@@ -1,12 +1,12 @@
-use yew::prelude::*;
-use crate::VideosList;
 use crate::choreo_videos;
-use yew_router::prelude::use_navigator;
 use crate::Route;
-
+use crate::VideosList;
+use yew::prelude::*;
+use yew_router::prelude::use_navigator;
 
 #[function_component(ChoreoVideo)]
-pub fn choreographic_videos() -> Html { //<-- change to performance video
+pub fn choreographic_videos() -> Html {
+    //<-- change to performance video
     let navigator = use_navigator().unwrap();
     let performance_video = choreo_videos();
     let performance_video_index = use_state(|| 0);
@@ -16,7 +16,6 @@ pub fn choreographic_videos() -> Html { //<-- change to performance video
             navigator.push(&Route::IntroScreen1);
         }
     });
-
 
     html! {
         <div onkeydown={restart_app} tabindex="0">
