@@ -9,7 +9,7 @@ pub fn about_choreo1() -> Html {
         match event.key().as_str() {
             "q" => navigator.push(&Route::IntroScreen1),
             "r" => navigator.push_with_state(&Route::MainMenu, 0usize),
-           // "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
+            "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
             _ => (),
         }
     });
@@ -68,7 +68,7 @@ pub fn about_choreo4() -> Html {
         match event.key().as_str() {
             "q" => navigator.push(&Route::IntroScreen1),
             "r" => navigator.push_with_state(&Route::MainMenu, 3usize),
-           // "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
+            // "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
             _ => (),
         }
     });
