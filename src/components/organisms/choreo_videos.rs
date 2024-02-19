@@ -1,8 +1,11 @@
+use yew::prelude::*;
 use crate::choreo_videos;
 use yew_router::prelude::{use_navigator, Navigator};
 use crate::use_location;
 use crate::Route;
 use gloo::console::log;
+use crate::VideosList;
+
 
 
 #[function_component(ChoreoVideo)]
@@ -12,7 +15,7 @@ pub fn choreographic_videos() -> Html { //<-- change to performance video
         .and_then(|l| l.state::<usize>().map(|i| *i))
         .unwrap_or(0);
 
-    let current_video_index: UseStateHandle<usize> = use_state(|| showdown_video_index);
+    let showdown_video_index: UseStateHandle<usize> = use_state(|| showdown_video_index);
     let navigator = use_navigator();
 
     pub fn navigate_to_about(index: usize, navigator: Option<Navigator>) -> usize {
