@@ -1,9 +1,8 @@
-use yew::prelude::*;
-use crate::VideosList;
 use crate::get_intro_video;
-use yew_router::prelude::use_navigator;
 use crate::Route;
-
+use crate::VideosList;
+use yew::prelude::*;
+use yew_router::prelude::use_navigator;
 
 #[function_component(IntroScreen)]
 pub fn intro_screen() -> Html {
@@ -12,12 +11,12 @@ pub fn intro_screen() -> Html {
     let current_video_index = use_state(|| 0);
 
     let press_x_for_main = Callback::from(move |event: KeyboardEvent| {
-        if event.key() == "x"{
-        navigator.push(&Route::MainMenu);
-        let audio = web_sys::HtmlAudioElement::new_with_src("static/coinSound.mp3").unwrap();
-        let _ = audio.play();
-        }});
-
+        if event.key() == "x" {
+            navigator.push(&Route::MainMenu);
+            let audio = web_sys::HtmlAudioElement::new_with_src("static/coinSound.mp3").unwrap();
+            let _ = audio.play();
+        }
+    });
 
     html! {
         <div onkeydown={press_x_for_main} tabindex="0">

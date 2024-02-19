@@ -2,9 +2,9 @@ use components::organisms::about_choreo1::*;
 //lib.rs
 //gloo writes stuff to the web console
 //use gloo::console::log; use serde::{Serialize, Deserialize}; //<-- Uncomment to write to the webconsole
+use crate::components::organisms::choreo_videos::ChoreoVideo;
 use crate::components::organisms::intro_screen::IntroScreen;
 use crate::components::organisms::main_menu::MainMenu;
-use crate::components::organisms::choreo_videos::ChoreoVideo;
 use components::data::video_data::*;
 use components::molecules::video_list::VideosList;
 use components::organisms::keydown_logic::get_toggle_key;
