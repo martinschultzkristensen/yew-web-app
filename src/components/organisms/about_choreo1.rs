@@ -5,13 +5,11 @@ use yew_router::prelude::use_navigator;
 #[function_component(AboutChoreo1)]
 pub fn about_choreo1() -> Html {
     let navigator = use_navigator().unwrap();
-    let event_key = Callback::from(move |event: KeyboardEvent| {
-        match event.key().as_str() {
-            "q" => navigator.push(&Route::IntroScreen1),
-            "r" => navigator.push_with_state(&Route::MainMenu, 0usize),
-            "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
-            _ => (),
-        }
+    let event_key = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
+        "q" => navigator.push(&Route::IntroScreen1),
+        "r" => navigator.push_with_state(&Route::MainMenu, 0usize),
+        "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
+        _ => (),
     });
 
     html! {
@@ -24,13 +22,11 @@ pub fn about_choreo1() -> Html {
 #[function_component(AboutChoreo2)]
 pub fn about_choreo2() -> Html {
     let navigator = use_navigator().unwrap();
-    let event_key = Callback::from(move |event: KeyboardEvent| {
-        match event.key().as_str() {
-            "q" => navigator.push(&Route::IntroScreen1),
-            "r" => navigator.push_with_state(&Route::MainMenu, 1usize),
-            "e" => navigator.push_with_state(&Route::ChoreoVideo, 2),
-            _ => (),
-        }
+    let event_key = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
+        "q" => navigator.push(&Route::IntroScreen1),
+        "r" => navigator.push_with_state(&Route::MainMenu, 1usize),
+        "e" => navigator.push_with_state(&Route::ChoreoVideo, 2),
+        _ => (),
     });
 
     html! {
@@ -47,14 +43,12 @@ pub fn about_choreo3() -> Html {
         match event.key().as_str() {
             "q" => navigator.push(&Route::IntroScreen1),
             "r" => navigator.push_with_state(&Route::MainMenu, 2usize),
-           // "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
+            // "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
             _ => (),
         }
     });
-   
 
-
-    html! { 
+    html! {
         <div onkeydown={event_key} tabindex="0">
             <p>{ "Choreo3" }</p>
         </div>
