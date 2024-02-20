@@ -8,7 +8,7 @@ pub fn about_choreo1() -> Html {
     let event_key = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
         "q" => navigator.push(&Route::IntroScreen1),
         "r" => navigator.push_with_state(&Route::MainMenu, 0usize),
-        "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
+        "e" => navigator.push_with_state(&Route::ChoreoVideo, 0usize),
         _ => (),
     });
 
@@ -25,7 +25,7 @@ pub fn about_choreo2() -> Html {
     let event_key = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
         "q" => navigator.push(&Route::IntroScreen1),
         "r" => navigator.push_with_state(&Route::MainMenu, 1usize),
-        "e" => navigator.push_with_state(&Route::ChoreoVideo, 2),
+        "e" => navigator.push_with_state(&Route::ChoreoVideo, 1usize),
         _ => (),
     });
 
@@ -43,7 +43,7 @@ pub fn about_choreo3() -> Html {
         match event.key().as_str() {
             "q" => navigator.push(&Route::IntroScreen1),
             "r" => navigator.push_with_state(&Route::MainMenu, 2usize),
-            // "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
+            "e" => navigator.push_with_state(&Route::ChoreoVideo, 2usize),
             _ => (),
         }
     });
@@ -62,7 +62,7 @@ pub fn about_choreo4() -> Html {
         match event.key().as_str() {
             "q" => navigator.push(&Route::IntroScreen1),
             "r" => navigator.push_with_state(&Route::MainMenu, 3usize),
-            // "e" => navigator.push_with_state(&Route::ChoreoVideo, 3),
+            "e" => navigator.push_with_state(&Route::ChoreoVideo, 3usize),
             _ => (),
         }
     });

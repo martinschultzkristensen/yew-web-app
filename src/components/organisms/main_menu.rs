@@ -38,6 +38,21 @@ pub fn main_menu() -> Html {
         index
     }
 
+    pub fn execute_showdown_video(index: usize, navigator: Option<Navigator>) -> usize {
+        if let Some(navigator) = navigator {
+            match index {
+                0 => navigator.push_with_state(&Route::ChoreoVideo, 0usize),
+                1 => navigator.push_with_state(&Route::ChoreoVideo, 1usize),
+                2 => navigator.push_with_state(&Route::ChoreoVideo, 2usize),
+                3 => navigator.push_with_state(&Route::ChoreoVideo, 3usize),
+                _ => {}
+            }
+        } else {
+            log!("Navigator is None");
+        }
+        index
+    }
+
     let handle_keydown_toggle = get_toggle_key(&demo_videos, current_video_index.clone());
 
     let current_video_index_clone = current_video_index.clone();
@@ -48,6 +63,9 @@ pub fn main_menu() -> Html {
             let soundeffect =
                 web_sys::HtmlAudioElement::new_with_src("static/buttonClick.mp3").unwrap();
             let _ = soundeffect.play();
+        }
+        else if event.key() == "e" {
+            execute_showdown_video(*current_video_index_clone, navigator.clone());
         }
     });
 
