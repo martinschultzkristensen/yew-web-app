@@ -5,6 +5,8 @@ use crate::use_location;
 use crate::Route;
 use gloo::console::log;
 use crate::VideosList;
+use crate::loadscreen_video;
+use std::borrow::Borrow;
 
 
 
@@ -16,24 +18,24 @@ pub fn choreographic_videos() -> Html { //<-- change to performance video
         .unwrap_or(0);
 
     let showdown_video_index: UseStateHandle<usize> = use_state(|| showdown_video_index);
-    let navigator = use_navigator();
 
-    pub fn navigate_to_about(index: usize, navigator: Option<Navigator>) -> usize {
-        if let Some(navigator) = navigator {
-            match index {
-                0 => navigator.push(&Route::AboutChoreo1),
-                1 => navigator.push(&Route::AboutChoreo2),
-                2 => navigator.push(&Route::AboutChoreo3),
-                3 => navigator.push(&Route::AboutChoreo4),
-                _ => {}
-            }
-        } else {
-            log!("Navigator is None");
-        }
-        index
-    }
+     // Use state to track whether the video has finished playing
+     let has_video_finished = use_state(|| false);
 
-    let navigator = use_navigator().unwrap();
+     // Callback for handling the ended event of the video element
+     let navigator = use_navigator().unwrap();
+     let handle_video_ended = {
+         let navigator = navigator.clone();
+         let selected_video_index = showdown_video_index; //<-- if not working try type usize
+         Callback::from(move |_| {
+             // If the video has finished playing, navigate to the load video action
+             if **has_video_finished.borrow() {
+                 navigator.push(&loadscreen_video());
+             }
+         })
+     };
+
+
     let restart_app = Callback::from(move |event: KeyboardEvent| {
         if event.key() == "q" {
             navigator.push(&Route::IntroScreen1);
