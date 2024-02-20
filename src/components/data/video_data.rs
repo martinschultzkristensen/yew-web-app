@@ -37,22 +37,22 @@ pub fn choreo_videos() -> Vec<Video> {
     vec![
         Video {
             id: 1,
-            title: "dancevideo nr.1".to_string(),
+            title: "Performance video nr.1".to_string(),
             url: "static/LetsDuet_中文_countdown.mp4".to_string(),
         },
         Video {
             id: 2,
-            title: "dancevideo nr.2".to_string(),
+            title: "Performance video nr.2".to_string(),
             url: "static/siblings_中文_countdown.mp4".to_string(),
         },
         Video {
             id: 3,
-            title: "dancevideo nr.3".to_string(),
+            title: "Performance video nr.3".to_string(),
             url: "static/culture4Fun_中文_countdown.mp4".to_string(),
         },
         Video {
             id: 4,
-            title: "dancevideo nr.4".to_string(),
+            title: "Performance video nr.4".to_string(),
             url: "static/HejNihao_中文_countdown.mp4".to_string(),
         },
     ]
