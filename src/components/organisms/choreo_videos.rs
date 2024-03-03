@@ -23,13 +23,12 @@ pub fn choreographic_videos() -> Html { //<-- change to performance video
      let has_video_finished = use_state(|| false);
 
      // Callback for handling the ended event of the video element
-     let navigator = use_navigator().unwrap();
      let handle_video_ended = {
-         let navigator = navigator.clone();
-         let selected_video_index = showdown_video_index; //<-- if not working try type usize
+        let navigator = navigator.clone();
+        let has_video_finished = has_video_finished.clone();
          Callback::from(move |_| {
              // If the video has finished playing, navigate to the load video action
-             if **has_video_finished.borrow() {
+             if *has_video_finished.get() {
                  navigator.push(&loadscreen_video());
              }
          })
