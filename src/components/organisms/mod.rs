@@ -5,3 +5,4 @@ pub mod choreo_videos;
 pub mod intro_screen;
 pub mod keydown_logic;
 pub mod main_menu;
+pub mod load_screen;
