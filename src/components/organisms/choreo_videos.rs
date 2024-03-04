@@ -1,6 +1,7 @@
 use yew::prelude::*;
 use yew_router::navigator;
 use crate::choreo_videos;
+use crate::components::molecules::video_list::SingleVideoPlayer;
 use yew_router::prelude::{use_navigator, Navigator};
 use crate::use_location;
 use crate::Route;
@@ -19,7 +20,7 @@ pub fn choreographic_videos() -> Html { //<-- change to performance video
         .and_then(|l| l.state::<usize>().map(|i| *i))
         .unwrap_or(0);
 
-    let choreo_video_index: UseStateHandle<usize> = use_state(|| choreo_video_index);
+    let _choreo_video_index: UseStateHandle<usize> = use_state(|| choreo_video_index);
 
      // Use state to track whether the video has finished playing
      let has_video_finished = use_state(|| false);
@@ -45,7 +46,7 @@ pub fn choreographic_videos() -> Html { //<-- change to performance video
 
     html! {
         <div onkeydown={restart_app} tabindex="0">
-            <VideosList videos={choreo_videos} current_index={*choreo_video_index} />
+            <SingleVideoPlayer video={choreo_videos} on_ended={handle_video_ended.clone()}/>
         </div>
     }
 }

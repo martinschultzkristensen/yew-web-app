@@ -33,33 +33,46 @@ pub fn get_intro_video() -> Vec<Video> {
     }]
 }
 
-pub fn choreo_videos() -> Vec<Video> {
-    let mut videos = vec![
-        Video {
-            id: 1,
-            title: "Performance video nr.1".to_string(),
-            url: "static/LetsDuet_中文_countdown.mp4".to_string(),
-        },
-        Video {
-            id: 2,
-            title: "Performance video nr.2".to_string(),
-            url: "static/siblings_中文_countdown.mp4".to_string(),
-        },
-        Video {
-            id: 3,
-            title: "Performance video nr.3".to_string(),
-            url: "static/culture4Fun_中文_countdown.mp4".to_string(),
-        },
-        Video {
-            id: 4,
-            title: "Performance video nr.4".to_string(),
-            url: "static/Flash_Hej-Nihao.mp4".to_string(),
-        },
-    ];
-    videos.push(loadscreen_video());
+pub fn choreo_videos() -> Video {
+    // Select the video you want to return
+    let selected_video = Video {
+        id: 4,
+        title: "Performance video nr.4".to_string(),
+        url: "static/Flash_Hej-Nihao.mp4".to_string()
+    };
+    // You can also choose the video dynamically based on some condition
+    // For example, you can use a match statement or an if-else block to select the appropriate video
 
-    videos
+    // Return the selected video
+    selected_video
 }
+// pub fn choreo_videos() -> Vec<Video> {
+//     let mut videos = vec![
+//         Video {
+//             id: 1,
+//             title: "Performance video nr.1".to_string(),
+//             url: "static/LetsDuet_中文_countdown.mp4".to_string(),
+//         },
+//         Video {
+//             id: 2,
+//             title: "Performance video nr.2".to_string(),
+//             url: "static/siblings_中文_countdown.mp4".to_string(),
+//         },
+//         Video {
+//             id: 3,
+//             title: "Performance video nr.3".to_string(),
+//             url: "static/culture4Fun_中文_countdown.mp4".to_string(),
+//         },
+//         Video {
+//             id: 4,
+//             title: "Performance video nr.4".to_string(),
+//             url: "static/Flash_Hej-Nihao.mp4".to_string(),
+//         },
+//     ];
+//     videos.push(loadscreen_video());
+
+//     videos
+// }
 
 pub fn loadscreen_video() -> Video {
     Video {
