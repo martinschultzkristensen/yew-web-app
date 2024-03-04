@@ -1,8 +1,5 @@
-use crate::Route;
-use gloo::utils::history;
 use yew::prelude::*;
-use yew_router::history::History;
-use yew_router::prelude::*;
+use yew::Callback;
 
 #[derive(Clone, PartialEq)]
 pub struct Video {
@@ -14,7 +11,7 @@ pub struct Video {
 #[derive(Properties, PartialEq)]
 pub struct VideosListProps {
     pub videos: Vec<Video>,
-    pub current_index: usize, // New property for the current index
+    pub current_index: usize,
 }
 
 #[function_component(VideosList)]
@@ -31,6 +28,29 @@ pub fn videos_list(
         <div>
             <p>{format!("{}", current_video.title)}</p>
             <video src={format!("{}", current_video.url)} autoplay=true loop=true />
+        </div>
+    }
+}
+
+#[derive(Properties, PartialEq, Clone)]
+pub struct SingleVideoPlayerProps {
+    pub video: Video, // Using the Video struct here
+    pub on_ended: Callback<()>,
+}
+
+#[function_component(SingleVideoPlayer)]
+pub fn single_video_player(props: &SingleVideoPlayerProps) -> Html {
+    let SingleVideoPlayerProps { video, on_ended } = props.clone();
+
+    let video_ended_callback = Callback::from(move |_| {
+        // Call the on_ended callback when the video ends
+        on_ended.emit(());
+    });
+
+    html! {
+        <div>
+            <p>{&video.title}</p>
+            <video src={format! ("{}", video.url)} autoplay=true onended={video_ended_callback} />
         </div>
     }
 }

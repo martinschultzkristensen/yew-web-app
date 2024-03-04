@@ -8,6 +8,7 @@ use yew_router::prelude::use_navigator;
 pub fn load_video() -> Html {
     let navigator = use_navigator().unwrap();
     let load_screen = loadscreen_video();
+    let load_screen_vec = vec![load_screen];
     let current_video_index = use_state(|| 0);
 
     let press_x_for_main = Callback::from(move |event: KeyboardEvent| {
@@ -20,7 +21,7 @@ pub fn load_video() -> Html {
 
     html! {
         <div onkeydown={press_x_for_main} tabindex="0">
-            <VideosList videos={load_screen} current_index={*current_video_index} />
+            <VideosList videos={load_screen_vec} current_index={*current_video_index} />
         </div>
     }
 }

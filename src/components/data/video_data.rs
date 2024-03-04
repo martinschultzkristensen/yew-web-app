@@ -61,11 +61,10 @@ pub fn choreo_videos() -> Vec<Video> {
     videos
 }
 
-pub fn loadscreen_video() -> Vec<Video> {
-    vec![
+pub fn loadscreen_video() -> Video {
     Video {
         id: 5,
         title: "Load Video".to_string(),
         url: "static/loadingscreen1min_nielsmingcolab.mp4".to_string(),
-    }]
+    }
 }
