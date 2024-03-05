@@ -6,6 +6,7 @@ use crate::VideosList;
 use gloo::console::log;
 use yew::prelude::*;
 use yew_router::prelude::{use_navigator, Navigator};
+use crate::components::molecules::video_list::Video;
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct MainMenuProps {
@@ -38,20 +39,18 @@ pub fn main_menu() -> Html {
         index
     }
 
-    pub fn execute_showdown_video(index: usize, navigator: Option<Navigator>) -> usize {
+    pub fn execute_showdown_video(video: Video, navigator: Option<Navigator>) {
         if let Some(navigator) = navigator {
-            match index {
-                0 => navigator.push_with_state(&Route::ChoreoVideo, 0usize),
-                1 => navigator.push_with_state(&Route::ChoreoVideo, 1usize),
-                2 => navigator.push_with_state(&Route::ChoreoVideo, 2usize),
-                3 => navigator.push_with_state(&Route::ChoreoVideo, 3usize),
-                _ => {}
-            }
+            navigator.push_with_state(&Route::ChoreoVideo, video.id);
         } else {
             log!("Navigator is None");
         }
-        index
     }
+
+    let selected_video = demo_videos[current_video_index];
+execute_showdown_video(selected_video, navigator.clone());
+
+    
 
     let handle_keydown_toggle = get_toggle_key(&demo_videos, current_video_index.clone());
 
