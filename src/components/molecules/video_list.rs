@@ -9,7 +9,7 @@ pub struct Video {
     pub id: usize,
     pub title: String,
     pub url: String,
-    pub loop_video: bool, // Add a boolean field to indicate if the video should loop
+    pub loop_video: bool, // boolean field indicates if the video should loop
 }
 
 impl Video {
@@ -32,18 +32,19 @@ pub fn videos_list(props: &VideosListProps) -> Html {
 
     let should_loop = videos[*current_index].should_loop();
 
-    let video_ended_callback = if should_loop {
-        None // Don't attach any callback if the video should loop
+    let onended_attr = if !should_loop {
+        Some(Callback::from(move |_| {
+            on_ended.clone().unwrap().emit(());
+        }))
     } else {
-        Some(on_ended.clone()) // Attach the provided callback if the video should not loop
+        None
     };
-    // Use the current_index to display the corresponding video
-    let current_video = &videos[*current_index];
+    let current_video = &videos[*current_index]; // <- get current_index to display the corresponding video
 
     html! {
         <div>
             <p>{format!("{}", current_video.title)}</p>
-            <video src={format!("{}", current_video.url)} autoplay=true loop=true onended={video_ended_callback.unwrap_or_default()}/>
+            <video src={format!("{}", current_video.url)} autoplay=true loop=true onended={onended_attr}/>
         </div>
     }
 }
