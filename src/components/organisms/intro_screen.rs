@@ -10,6 +10,15 @@ pub fn intro_screen() -> Html {
     let intro_video = get_intro_video();
     let current_video_index = use_state(|| 0);
 
+    let should_loop = intro_video[*current_video_index].should_loop();
+    let onended_attr = if !should_loop {
+        Some(Callback::from(move |_| {
+            on_ended.clone().unwrap().emit(());
+        }))
+    } else {
+        None
+    };
+
     let press_x_for_main = Callback::from(move |event: KeyboardEvent| {
         if event.key() == "x" {
             navigator.push(&Route::MainMenu);
@@ -20,7 +29,7 @@ pub fn intro_screen() -> Html {
 
     html! {
         <div onkeydown={press_x_for_main} tabindex="0">
-            <VideosList videos={intro_video} current_index={*current_video_index} />
+            <VideosList videos={intro_video} current_index={*current_video_index} on_ended={onended_attr}/>
         </div>
     }
 }

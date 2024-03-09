@@ -44,7 +44,7 @@ pub fn choreographic_videos() -> Html { //<-- change to performance video
 
     html! {
         <div onkeydown={restart_app} tabindex="0">
-            <VideosListNoLoop videos={choreo_videos} current_index={*choreo_video_index}/>
+            <VideosList videos={choreo_videos} current_index={*choreo_video_index} />
         </div>
     }
 }
