@@ -10,7 +10,7 @@ https://artfarm.dk/repertoire/danceomatic
 https://vimeo.com/237552947
 https://vimeo.com/250489328
 
-
+To run program in developer mode install YEW & TAURI
 
 Installation Guide:
 Follow the instalation guide on https://yew.rs/docs/getting-started/introduction

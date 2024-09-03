@@ -68,12 +68,10 @@ pub fn choreo_videos() -> Vec<Video> {
 }
 
 pub fn loadscreen_video() -> Vec<Video> {
-    vec![
-        Video {
+    vec![Video {
         id: 1,
         title: "Load Video".to_string(),
         url: "static/loadingscreen1min_nielsmingcolab.mp4".to_string(),
-        loop_video: false
-        }
-    ]
+        loop_video: false,
+    }]
 }

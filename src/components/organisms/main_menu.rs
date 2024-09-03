@@ -63,8 +63,7 @@ pub fn main_menu() -> Html {
             let soundeffect =
                 web_sys::HtmlAudioElement::new_with_src("static/buttonClick.mp3").unwrap();
             let _ = soundeffect.play();
-        }
-        else if event.key() == "e" {
+        } else if event.key() == "e" {
             execute_showdown_video(*current_video_index_clone, navigator.clone());
         }
     });
