@@ -28,14 +28,20 @@ pub struct VideosListProps {
 
 #[function_component(VideosList)]
 pub fn videos_list(props: &VideosListProps) -> Html {
-    let VideosListProps {videos, current_index, on_ended} = props;
+    let VideosListProps {
+        videos,
+        current_index,
+        on_ended,
+    } = props;
 
     let should_loop = videos[*current_index].should_loop();
 
     let onended_attr = if !should_loop {
-        Some(Callback::from(move |_| {
-            on_ended.clone().unwrap().emit(());
-        }))
+        on_ended.clone().map(|callback| {
+            Callback::from(move |_| {
+                callback.emit(());
+            })
+        })
     } else {
         None
     };
@@ -48,8 +54,6 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         </div>
     }
 }
-
-    
 
 #[derive(Properties, PartialEq, Clone)]
 pub struct SingleVideoPlayerProps {
@@ -79,6 +83,7 @@ pub fn videos_list(
     VideosListProps {
         videos,
         current_index,
+        on_ended,
     }: &VideosListProps,
 ) -> Html {
     // Use the current_index to display the corresponding video
