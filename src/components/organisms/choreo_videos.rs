@@ -34,6 +34,14 @@ pub fn choreographic_videos() -> Html {
     //      })
     //  };
 
+    // Callback for handling the ended event of the video element
+    let handle_video_ended = {
+        let navigator = navigator.clone();
+        Callback::from(move |_| {
+            navigator.push(&Route::IntroScreen1);
+        })
+    };
+
     let restart_app = Callback::from(move |event: KeyboardEvent| {
         if event.key() == "q" {
             navigator.push(&Route::IntroScreen1);
@@ -42,7 +50,8 @@ pub fn choreographic_videos() -> Html {
 
     html! {
         <div onkeydown={restart_app} tabindex="0">
-            <VideosList videos={choreo_videos} current_index={*choreo_video_index} />
+            <VideosList videos={choreo_videos} current_index={*choreo_video_index} on_ended={Some(handle_video_ended)} // Ensure you pass the callback here
+             />
         </div>
     }
 }
