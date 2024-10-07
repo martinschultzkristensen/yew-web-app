@@ -38,7 +38,7 @@ pub fn choreographic_videos() -> Html {
     let handle_video_ended = {
         let navigator = navigator.clone();
         Callback::from(move |_| {
-            navigator.push(&Route::IntroScreen1);
+            navigator.push(&Route::LoadScreenVideo);
         })
     };
 

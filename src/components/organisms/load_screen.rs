@@ -17,10 +17,23 @@ pub fn load_video() -> Html {
             let _ = audio.play();
         }
     });
+    let navigator = use_navigator().unwrap();
+    let handle_video_ended = {
+        let navigator = navigator.clone();
+        Callback::from(move |_| {
+            navigator.push(&Route::IntroScreen1);
+        })
+    };
+
+    let restart_app = Callback::from(move |event: KeyboardEvent| {
+        if event.key() == "q" {
+            navigator.push(&Route::IntroScreen1);
+        }
+    });
 
     html! {
         <div onkeydown={press_x_for_main} tabindex="0">
-            <VideosList videos={load_screen} current_index={*current_video_index} />
+            <VideosList videos={load_screen} current_index={*current_video_index} on_ended={Some(handle_video_ended)}/>
         </div>
     }
 }
