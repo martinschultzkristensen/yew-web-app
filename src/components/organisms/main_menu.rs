@@ -74,12 +74,19 @@ pub fn main_menu() -> Html {
             navigator.push(&Route::IntroScreen1);
         }
     });
+    let navigator = use_navigator().unwrap();
+    let handle_video_ended = {
+        let navigator = navigator.clone();
+        Callback::from(move |_| {
+            navigator.push(&Route::IntroScreen1);
+        })
+    };
 
     html! {
         <div onkeydown={restart_app} onkeydown={press_r_for_about} tabindex="0">
             <audio src={format!("static/8bit-menusong-short-ed.aif")} autoplay=true loop=true />
             <div onkeydown={handle_keydown_toggle} tabindex="0">
-                <VideosList videos={demo_videos} current_index={*current_video_index} />
+                <VideosList videos={demo_videos} current_index={*current_video_index} on_ended={Some(handle_video_ended)}/>
                 <img src="static/danceOmatic_logo.png" alt="logo of danceomatic"/>
             </div>
         </div>
