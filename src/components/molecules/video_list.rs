@@ -77,22 +77,3 @@ pub fn single_video_player(props: &SingleVideoPlayerProps) -> Html {
         </div>
     }
 }
-
-#[function_component(VideosListNoLoop)]
-pub fn videos_list(
-    VideosListProps {
-        videos,
-        current_index,
-        on_ended,
-    }: &VideosListProps,
-) -> Html {
-    // Use the current_index to display the corresponding video
-    let current_video = &videos[*current_index];
-
-    html! {
-        <div>
-            <p>{format!("{}", current_video.title)}</p>
-            <video src={format!("{}", current_video.url)} autoplay=true loop=false />
-        </div>
-    }
-}

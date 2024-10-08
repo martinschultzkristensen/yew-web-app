@@ -12,7 +12,7 @@ pub fn intro_screen(props: &VideosListProps) -> Html {
     let intro_video = get_intro_video();
     let current_video_index = use_state(|| 0);
 
-    let should_loop = intro_video[*current_video_index].should_loop();
+    //let should_loop = intro_video[*current_video_index].should_loop();
     let onended_attr = match &props.on_ended {
         Some(callback) => Some(callback.clone()), // Clone the Callback if it's Some
         None => None,
