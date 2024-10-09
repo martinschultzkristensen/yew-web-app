@@ -7,10 +7,7 @@ use gloo::console::log;
 use yew::prelude::*;
 use yew_router::prelude::{use_navigator, Navigator};
 
-#[derive(Properties, Clone, PartialEq)]
-pub struct MainMenuProps {
-    pub current_index: usize,
-}
+
 
 #[function_component(MainMenu)]
 pub fn main_menu() -> Html {
