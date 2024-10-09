@@ -33,7 +33,7 @@ pub fn get_intro_video() -> Vec<Video> {
     vec![Video {
         id: 0,
         title: "IntroVideo".to_string(),
-        url: "static/Intro-Movie_2015Horsens.mp4".to_string(),
+        url: "static/IntroDemoVid_4sec.mp4".to_string(),
         loop_video: true,
     }]
 }
@@ -71,7 +71,7 @@ pub fn loadscreen_video() -> Vec<Video> {
     vec![Video {
         id: 1,
         title: "Load Video".to_string(),
-        url: "static/loadingscreen1min_nielsmingcolab.mp4".to_string(),
+        url: "static/LoadScreenTest4s.mp4".to_string(),
         loop_video: false,
     }]
 }
