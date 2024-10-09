@@ -43,7 +43,7 @@ pub fn choreo_videos() -> Vec<Video> {
         Video {
             id: 1,
             title: "Performance video nr.1".to_string(),
-            url: "static/LetsDuet_中文_countdown.mp4".to_string(),
+            url: "static/fodbold_tiny.mp4".to_string(),
             loop_video: false,
         },
         Video {
