@@ -50,7 +50,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
     html! {
         <div>
             <p>{format!("{}", current_video.title)}</p>
-            <video src={format!("{}", current_video.url)} autoplay=true loop=true onended={onended_attr}/>
+            <video src={format!("{}", current_video.url)} autoplay=true loop={should_loop} onended={onended_attr}/>
         </div>
     }
 }
