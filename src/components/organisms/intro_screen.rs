@@ -7,15 +7,21 @@ use yew_router::prelude::use_navigator;
 use crate::components::molecules::video_list::VideosListProps;
 
 #[function_component(IntroScreen)]
-pub fn intro_screen(props: &VideosListProps) -> Html {
+pub fn intro_screen() -> Html {
     let navigator = use_navigator().unwrap();
     let intro_video = get_intro_video();
     let current_video_index = use_state(|| 0);
 
-    //let should_loop = intro_video[*current_video_index].should_loop();
-    let onended_attr = match &props.on_ended {
-        Some(callback) => Some(callback.clone()), // Clone the Callback if it's Some
-        None => None,
+    let should_loop = intro_video[*current_video_index].should_loop();
+    // let onended_attr = match &props.on_ended {
+    //     Some(callback) => Some(callback.clone()), // Clone the Callback if it's Some
+    //     None => None,
+    // };
+    let handle_video_ended = {
+        let navigator = navigator.clone();
+        Callback::from(move |_| {
+            navigator.push(&Route::IntroScreen1);
+        })
     };
 
     let press_x_for_main = Callback::from(move |event: KeyboardEvent| {
@@ -28,7 +34,7 @@ pub fn intro_screen(props: &VideosListProps) -> Html {
 
     html! {
         <div onkeydown={press_x_for_main} tabindex="0">
-            <VideosList videos={intro_video} current_index={*current_video_index} on_ended={onended_attr}/>
+            <VideosList videos={intro_video} current_index={*current_video_index} on_ended={Some(handle_video_ended)}/>
         </div>
     }
 }

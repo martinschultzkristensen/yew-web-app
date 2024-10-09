@@ -1,5 +1,5 @@
 use crate::choreo_videos;
-use crate::components::molecules::video_list::VideosListNoLoop;
+use crate::components::molecules::video_list::VideosListProps;
 use crate::loadscreen_video;
 use crate::use_location;
 use crate::Route;
