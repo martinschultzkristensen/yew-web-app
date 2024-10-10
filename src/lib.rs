@@ -4,7 +4,9 @@ use components::organisms::about_choreo1::*;
 //use gloo::console::log; use serde::{Serialize, Deserialize}; //<-- Uncomment to write to the webconsole
 use crate::components::organisms::choreo_videos::ChoreoVideo;
 use crate::components::organisms::intro_screen::IntroScreen;
+use crate::components::organisms::load_screen::LoadScreenVideo;
 use crate::components::organisms::main_menu::MainMenu;
+
 use components::data::video_data::*;
 use components::molecules::video_list::VideosList;
 use components::organisms::keydown_logic::get_toggle_key;
@@ -32,6 +34,8 @@ pub enum Route {
     IntroScreen1,
     #[at("/choreo-video")]
     ChoreoVideo,
+    #[at("/loadscreen_video")]
+    LoadScreenVideo,
 }
 
 #[function_component(DanceOmatic)]
@@ -55,5 +59,6 @@ fn switch(routes: Route) -> Html {
         Route::IntroScreen1 => html! { <IntroScreen/> },
         Route::IntroScreen2 => html! { <IntroScreen /> },
         Route::ChoreoVideo => html! { < ChoreoVideo/> },
+        Route::LoadScreenVideo => html! { < LoadScreenVideo/> },
     }
 }

@@ -1,10 +1,12 @@
 {
   "build": {
-    "beforeBuildCommand": "trunk serve --release",
     "beforeDevCommand": "trunk serve",
-    "devPath": "http://127.0.0.1:8080/",
+    "beforeBuildCommand": "trunk build",
+    "devPath": "http://localhost:8080/",
     "distDir": "../dist"
   },
+ 
+
   "package": {
     "productName": "danceOmatic",
     "version": "0.1.0"

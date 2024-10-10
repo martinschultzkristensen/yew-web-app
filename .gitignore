@@ -1,4 +1,3 @@
-/target/**
-/dist/**
-target/
-/target/*
+/dist/
+/target/
+/target/.*
