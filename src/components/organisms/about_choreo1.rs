@@ -39,13 +39,11 @@ pub fn about_choreo2() -> Html {
 #[function_component(AboutChoreo3)]
 pub fn about_choreo3() -> Html {
     let navigator = use_navigator().unwrap();
-    let event_key = Callback::from(move |event: KeyboardEvent| {
-        match event.key().as_str() {
-            "q" => navigator.push(&Route::IntroScreen1),
-            "r" => navigator.push_with_state(&Route::MainMenu, 2usize),
-            "e" => navigator.push_with_state(&Route::ChoreoVideo, 2usize),
-            _ => (),
-        }
+    let event_key = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
+        "q" => navigator.push(&Route::IntroScreen1),
+        "r" => navigator.push_with_state(&Route::MainMenu, 2usize),
+        "e" => navigator.push_with_state(&Route::ChoreoVideo, 2usize),
+        _ => (),
     });
 
     html! {
@@ -58,13 +56,11 @@ pub fn about_choreo3() -> Html {
 #[function_component(AboutChoreo4)]
 pub fn about_choreo4() -> Html {
     let navigator = use_navigator().unwrap();
-    let restart_app = Callback::from(move |event: KeyboardEvent| {
-        match event.key().as_str() {
-            "q" => navigator.push(&Route::IntroScreen1),
-            "r" => navigator.push_with_state(&Route::MainMenu, 3usize),
-            "e" => navigator.push_with_state(&Route::ChoreoVideo, 3usize),
-            _ => (),
-        }
+    let restart_app = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
+        "q" => navigator.push(&Route::IntroScreen1),
+        "r" => navigator.push_with_state(&Route::MainMenu, 3usize),
+        "e" => navigator.push_with_state(&Route::ChoreoVideo, 3usize),
+        _ => (),
     });
 
     html! {
