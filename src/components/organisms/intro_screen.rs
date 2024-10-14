@@ -4,7 +4,7 @@ use crate::Route;
 use crate::VideosList;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
-
+use crate::components::atoms::use_focus_div::use_focus_div;
 use crate::components::molecules::video_list::VideosListProps;
 
 #[function_component(IntroScreen)]
@@ -12,18 +12,7 @@ pub fn intro_screen() -> Html {
     let navigator = use_navigator().unwrap();
     let intro_video = get_intro_video();
     let current_video_index = use_state(|| 0);
-    let div_ref = use_node_ref();
-
-    // Set focus on the div when the component mounts. This code is trying to be created and called from components::atoms::use_focus_div;
-    {
-        let div_ref = div_ref.clone();
-        use_effect(move || {
-            if let Some(div) = div_ref.cast::<web_sys::HtmlElement>() {
-                div.focus().unwrap();
-            }
-            || ()
-        });
-    }
+    let div_ref = use_focus_div(); // Hook sets focus on the div when the component mounts.
 
 
     let handle_video_ended = {
