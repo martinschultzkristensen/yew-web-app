@@ -4,8 +4,6 @@ use crate::loadscreen_video;
 use crate::use_location;
 use crate::Route;
 use crate::VideosList;
-use gloo::console::log;
-use std::borrow::Borrow;
 use yew::prelude::*;
 use yew_router::prelude::{use_navigator, Navigator};
 use crate::components::atoms::use_focus_div::use_focus_div;
@@ -21,20 +19,6 @@ pub fn choreographic_videos() -> Html {
 
     let choreo_video_index: UseStateHandle<usize> = use_state(|| choreo_video_index);
     let navigator = use_navigator().unwrap();
-    // Use state to track whether the video has finished playing
-    //  let has_video_finished = use_state(|| false);
-
-    // Callback for handling the ended event of the video element
-    //  let handle_video_ended = {
-    //     let navigator = navigator.clone();
-    //     let has_video_finished = has_video_finished.clone();
-    //      Callback::from(move |_| {
-    //          // If the video has finished playing, navigate to the load video action
-    //          if *has_video_finished.get() {
-    //              navigator.push(&loadscreen_video());
-    //          }
-    //      })
-    //  };
 
     // Callback for handling the ended event of the video element
     let handle_video_ended = {
@@ -51,7 +35,7 @@ pub fn choreographic_videos() -> Html {
     });
 
     html! {
-        <div onkeydown={restart_app} tabindex="0">
+        <div ref={div_ref} onkeydown={restart_app} tabindex="0">
             < VideosList videos={choreo_videos} current_index={*choreo_video_index} on_ended={Some(handle_video_ended)} /> // Ensure you pass the callback here
         </div>
     }

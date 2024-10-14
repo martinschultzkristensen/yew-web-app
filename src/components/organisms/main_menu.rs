@@ -6,6 +6,7 @@ use crate::VideosList;
 use gloo::console::log;
 use yew::prelude::*;
 use yew_router::prelude::{use_navigator, Navigator};
+use crate::components::atoms::use_focus_div::use_focus_div;
 
 
 
@@ -19,6 +20,7 @@ pub fn main_menu() -> Html {
 
     let current_video_index: UseStateHandle<usize> = use_state(|| current_video_index);
     let navigator = use_navigator();
+    let div_ref = use_focus_div(); // Hook sets focus on the div when the component mounts.
 
     pub fn navigate_to_about(index: usize, navigator: Option<Navigator>) -> usize {
         if let Some(navigator) = navigator {
@@ -82,7 +84,7 @@ pub fn main_menu() -> Html {
     html! {
         <div onkeydown={restart_app} onkeydown={press_r_for_about} tabindex="0">
             <audio src={format!("static/8bit-menusong-short-ed.aif")} autoplay=true loop=true />
-            <div onkeydown={handle_keydown_toggle} tabindex="0">
+            <div ref={div_ref} onkeydown={handle_keydown_toggle} tabindex="0">
                 <VideosList videos={demo_videos} current_index={*current_video_index} on_ended={Some(handle_video_ended)}/>
                 <img src="static/danceOmatic_logo.png" alt="logo of danceomatic"/>
             </div>
