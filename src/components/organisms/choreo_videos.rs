@@ -7,11 +7,13 @@ use crate::VideosList;
 use yew::prelude::*;
 use yew_router::prelude::{use_navigator, Navigator};
 use crate::components::atoms::use_focus_div::use_focus_div;
+use crate::components::atoms::use_focus_div::use_focus_div;
 
 #[function_component(ChoreoVideo)]
 pub fn choreographic_videos() -> Html {
     //<-- change to performance video
     let choreo_videos = choreo_videos();
+    let div_ref = use_focus_div();
     let div_ref = use_focus_div();
     let choreo_video_index: usize = use_location()
         .and_then(|l| l.state::<usize>().map(|i| *i))
