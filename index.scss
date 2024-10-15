@@ -1,4 +1,13 @@
-// taken directly from sccs file in yew/boids examble
+@font-face {
+    font-family: "PressStart2P-vaV7";
+    src: url("static/PressStart2P-vaV7.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+h1 {
+    font-family:"PressStart2P-vaV7", sans-serif;
+}
 
 $shade-0: #fff !default;
 $shade-1: #d7dcdf !default;
@@ -12,7 +21,7 @@ body {
 
   background-color: rgb(24 24 27);
   color: whitesmoke;
-  font-family: "Roboto", sans-serif;
+  font-family:  "Roboto", sans-serif;
   height: 100%;
   overflow: hidden;
 }
@@ -34,12 +43,39 @@ body {
 // goes for all images. Must align img to right
 img {
     max-height: 500px;
-    max-width: 50%;
+    max-width: 20%;
 
 }
 
-video {
-    max-height: 500px;
-    max-width: 50%;
+// video {
+//     max-height: 200px;
+//     max-width: 50%;
+// }
 
-}
+.fullscreenvideo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    //z-index: -1; /* This ensures the video stays in the background */
+  }
+  
+  .smallscreenvideo {
+    max-width: 50%;
+    max-height: 300px;
+    display: block;
+    margin: 20px auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .smallscreenvideo {
+      max-width: 90%;
+      max-height: 200px;
+    }
+  }
+  

@@ -24,6 +24,8 @@ pub struct VideosListProps {
     pub videos: Vec<Video>,
     pub current_index: usize, // New property for the current index
     pub on_ended: Option<Callback<()>>,
+    #[prop_or_default]
+    pub video_class: String,
 }
 
 #[function_component(VideosList)]
@@ -32,8 +34,10 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         videos,
         current_index,
         on_ended,
+        video_class,
     } = props;
 
+    let current_video = &videos[*current_index]; // <- get current_index to display the corresponding video
     let should_loop = videos[*current_index].should_loop();
 
     let onended_attr = if !should_loop {
@@ -45,12 +49,16 @@ pub fn videos_list(props: &VideosListProps) -> Html {
     } else {
         None
     };
-    let current_video = &videos[*current_index]; // <- get current_index to display the corresponding video
 
     html! {
         <div>
             <p>{format!("{}", current_video.title)}</p>
-            <video src={format!("{}", current_video.url)} autoplay=true loop={should_loop} onended={onended_attr}/>
+            <video
+                src={format!("{}", current_video.url)}
+                autoplay=true
+                loop={should_loop}
+                onended={onended_attr}
+                class={video_class.clone()}/>
         </div>
     }
 }
@@ -73,7 +81,7 @@ pub fn single_video_player(props: &SingleVideoPlayerProps) -> Html {
     html! {
         <div>
             <p>{&video.title}</p>
-            <video src={format! ("{}", video.url)} autoplay=true onended={video_ended_callback} />
+            <video src={format! ("{}", video.url)} autoplay=true onended={video_ended_callback}/>
         </div>
     }
 }
