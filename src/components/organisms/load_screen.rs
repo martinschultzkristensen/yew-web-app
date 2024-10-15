@@ -35,7 +35,7 @@ pub fn load_video() -> Html {
 
     html! {
         <div ref={div_ref} onkeydown={restart_app} tabindex="0">
-            <VideosList videos={load_screen} current_index={*current_video_index} on_ended={Some(handle_video_ended)}/>
+            <VideosList videos={load_screen} current_index={*current_video_index} on_ended={Some(handle_video_ended)} video_class="fullscreenvideo"/>
         </div>
     }
 }
