@@ -6,3 +6,4 @@ pub mod intro_screen;
 pub mod keydown_logic;
 pub mod load_screen;
 pub mod main_menu;
+pub mod fullscreen_enforcer;
