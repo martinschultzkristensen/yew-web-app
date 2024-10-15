@@ -38,7 +38,7 @@ pub fn choreographic_videos() -> Html {
 
     html! {
         <div ref={div_ref} onkeydown={restart_app} tabindex="0">
-            < VideosList videos={choreo_videos} current_index={*choreo_video_index} on_ended={Some(handle_video_ended)} /> // Ensure you pass the callback here
+            < VideosList videos={choreo_videos} current_index={*choreo_video_index} on_ended={Some(handle_video_ended)} video_class="fullscreenvideo"/>
         </div>
     }
 }
