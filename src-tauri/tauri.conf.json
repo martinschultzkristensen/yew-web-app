@@ -13,11 +13,7 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false,
-      "window": {
-        "all": false,
-        "setFullscreen": true
-      }
+      "all": false
     },
     "bundle": {
       "active": true,
@@ -61,7 +57,6 @@
     "windows": [
       {
         "fullscreen": true,
-        "decorations": false,
         "height": 600,
         "resizable": true,
         "title": "danceOmatic",
