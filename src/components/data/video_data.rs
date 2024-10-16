@@ -1,77 +1,81 @@
-use crate::components::molecules::video_list::Video;
+use crate::components::molecules::video_list::{DemoVideo, Video, VideoType};
 
-pub fn get_demo_videos() -> Vec<Video> {
+pub fn get_demo_videos() -> Vec<VideoType> {
     vec![
-        Video {
-            id: 1,
+        VideoType::Demo(DemoVideo {
+            video: Video {
+                id: 1,
+                url: "static/Flash_AI&Boy.mp4".to_string(),
+                loop_video: true,
+            },
             title: "dancevideo nr.1".to_string(),
-            url: "static/Flash_AI&Boy.mp4".to_string(),
-            loop_video: true,
-        },
-        Video {
-            id: 2,
+            duration: "30".to_string(), // Add appropriate duration
+            displayed_id: "Demo 1".to_string(),
+        }),
+        VideoType::Demo(DemoVideo {
+            video: Video {
+                id: 2,
+                url: "static/Flash_Siblings.mp4".to_string(),
+                loop_video: true,
+            },
             title: "dancevideo nr.2".to_string(),
-            url: "static/Flash_Siblings.mp4".to_string(),
-            loop_video: true,
-        },
-        Video {
-            id: 3,
-            title: "dancevideo nr.3".to_string(),
-            url: "static/Flash_Culture4Fun.mp4".to_string(),
-            loop_video: true,
-        },
-        Video {
-            id: 4,
-            title: "dancevideo nr.4".to_string(),
-            url: "static/Flash_Hej-Nihao.mp4".to_string(),
-            loop_video: true,
-        },
+            duration: "25".to_string(), // Add appropriate duration
+            displayed_id: "Demo 2".to_string(),
+        }),
+        // Video {
+        //     id: 3,
+        //     title: "dancevideo nr.3".to_string(),
+        //     url: "static/Flash_Culture4Fun.mp4".to_string(),
+        //     loop_video: true,
+        // },
+        // Video {
+        //     id: 4,
+        //     title: "dancevideo nr.4".to_string(),
+        //     url: "static/Flash_Hej-Nihao.mp4".to_string(),
+        //     loop_video: true,
+        // },
     ]
 }
 
-pub fn get_intro_video() -> Vec<Video> {
-    vec![Video {
+pub fn get_intro_video() -> Vec<VideoType> {
+    vec![
+        VideoType::Regular(Video {
         id: 0,
-        title: "IntroVideo".to_string(),
         url: "static/IntroDemoVid_4sec.mp4".to_string(),
         loop_video: true,
-    }]
+    })]
 }
 
-pub fn choreo_videos() -> Vec<Video> {
+pub fn choreo_videos() -> Vec<VideoType> {
     vec![
-        Video {
+        VideoType::Regular(Video {
             id: 1,
-            title: "Performance video nr.1".to_string(),
             url: "static/fodbold_tiny.mp4".to_string(),
             loop_video: false,
-        },
-        Video {
+        }),
+        VideoType::Regular(Video {
             id: 2,
-            title: "Performance video nr.2".to_string(),
             url: "static/siblings_中文_countdown.mp4".to_string(),
             loop_video: false,
-        },
-        Video {
+        }),
+        VideoType::Regular(Video {
             id: 3,
-            title: "TEST VIDEO 3 CHOREO".to_string(),
             url: "static/Hej-Nihao.mp4".to_string(),
             loop_video: false,
-        },
-        Video {
+        }),
+        VideoType::Regular(Video {
             id: 4,
-            title: "TEST CHOREO VIDEO 4".to_string(), //<-- update string before registering videoUpdate
             url: "static/AI&Boy.mp4".to_string(),
             loop_video: false,
-        },
+        }),
     ]
 }
 
-pub fn loadscreen_video() -> Vec<Video> {
-    vec![Video {
+pub fn loadscreen_video() -> Vec<VideoType> {
+    vec![
+        VideoType::Regular(Video {
         id: 1,
-        title: "Load Video".to_string(),
         url: "static/LoadScreenTest4s.mp4".to_string(),
         loop_video: false,
-    }]
+    })]
 }

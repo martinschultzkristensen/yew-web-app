@@ -67,13 +67,13 @@ pub fn main_menu() -> Html {
         }
     });
 
-    let navigator = use_navigator().unwrap();
+    let navigator = use_navigator().unwrap(); //<-- #2 navigator. Is it enough with one? Test!
     let restart_app = Callback::from(move |event: KeyboardEvent| {
         if event.key() == "q" {
             navigator.push(&Route::IntroScreen1);
         }
     });
-    let navigator = use_navigator().unwrap();
+    let navigator = use_navigator().unwrap(); //<-- #1 navigator. Is it enough with one? Test!
     let handle_video_ended = {
         let navigator = navigator.clone();
         Callback::from(move |_| {
