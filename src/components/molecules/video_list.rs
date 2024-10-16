@@ -7,21 +7,40 @@ use yew_router::prelude::*;
 #[derive(Clone, PartialEq)]
 pub struct Video {
     pub id: usize,
-    pub title: String,
     pub url: String,
     pub loop_video: bool, // boolean field indicates if the video should loop
 }
 
-impl Video {
+#[derive(Clone, PartialEq)]
+pub struct DemoVideo {
+    pub video: Video,
+    pub title: String,
+    pub duration: String,
+    pub displayed_id: String,
+}
+
+#[derive(Clone, PartialEq)]
+pub enum VideoType {
+    Regular(Video),
+    Demo(DemoVideo),
+}
+
+impl VideoType {
+    pub fn get_video(&self) -> &Video {
+        match self {
+            VideoType::Regular(v) => v,
+            VideoType::Demo(d) => &d.video,
+        }
+    }
     // Method to check if the video should loop
     pub fn should_loop(&self) -> bool {
-        self.loop_video
+        self.get_video().loop_video
     }
 }
 
 #[derive(Properties, PartialEq)]
 pub struct VideosListProps {
-    pub videos: Vec<Video>,
+    pub videos: Vec<VideoType>,
     pub current_index: usize, // New property for the current index
     pub on_ended: Option<Callback<()>>,
     #[prop_or_default]
@@ -37,9 +56,9 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         video_class,
     } = props;
 
-    let current_video = &videos[*current_index]; // <- get current_index to display the corresponding video
-    let should_loop = videos[*current_index].should_loop();
-
+    let current_video = &videos[*current_index]; // <- get current_index to display the corresponding video. Access the inner Video with .video
+    let video = current_video.get_video();
+    let should_loop = current_video.should_loop();
     let onended_attr = if !should_loop {
         on_ended.clone().map(|callback| {
             Callback::from(move |_| {
@@ -52,9 +71,20 @@ pub fn videos_list(props: &VideosListProps) -> Html {
 
     html! {
         <div>
-            <p>{format!("{}", current_video.title)}</p>
+            {
+                match current_video {
+                    VideoType::Demo(demo) => html! {
+                        <>
+                            <p class="video-title">{format!("{}", &demo.title)}</p>
+                            <p>{"Demo ID: "}{&demo.displayed_id}</p>
+                            <p>{"Duration: "}{&demo.duration}{" seconds"}</p>
+                        </>
+                    },
+                    VideoType::Regular(_) => html! {},
+                }
+            }
             <video
-                src={format!("{}", current_video.url)}
+                src={format!("{}", video.url)}
                 autoplay=true
                 loop={should_loop}
                 onended={onended_attr}
@@ -63,6 +93,8 @@ pub fn videos_list(props: &VideosListProps) -> Html {
     }
 }
 
+
+//rest of code is not used. Soon check and delete!
 #[derive(Properties, PartialEq, Clone)]
 pub struct SingleVideoPlayerProps {
     pub video: Video, // Using the Video struct here
@@ -80,7 +112,6 @@ pub fn single_video_player(props: &SingleVideoPlayerProps) -> Html {
 
     html! {
         <div>
-            <p>{&video.title}</p>
             <video src={format! ("{}", video.url)} autoplay=true onended={video_ended_callback}/>
         </div>
     }

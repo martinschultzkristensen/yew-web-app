@@ -1,9 +1,10 @@
-use crate::components::molecules::video_list::Video;
+use crate::components::molecules::video_list::VideoType;
+
 use yew::prelude::*;
 
 // Handle keydown events to switch videos
 pub fn get_toggle_key(
-    v: &Vec<Video>,
+    v: &Vec<VideoType>,
     video_index: UseStateHandle<usize>,
 ) -> Callback<KeyboardEvent> {
     let videos = v.clone();
