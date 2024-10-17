@@ -87,10 +87,13 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                         class={classes!(video_class.clone(), "smallscreenvideo")}
                     />
                 </div>
-                    <div class="video-info arcadefont">
-                        <p>{format!("{}", &demo.title)}</p>
-                        <p>{"Duration: "}{&demo.duration}{" seconds"}</p>
-                    </div>
+                <div class="right-column">
+                <img src="static/danceOmatic_logo.png" alt="logo of danceomatic" class="logo-image"/>
+                <div class="video-info arcadefont">
+                    <p>{format!("{}", &demo.title)}</p>
+                    <p>{"Duration: "}{&demo.duration}{" seconds"}</p>
+                </div>
+            </div>
             </div>
         },
         VideoType::Regular(_) => html! {
@@ -104,7 +107,6 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         },
     }
 }
-
 
 //rest of code is not used. Soon check and delete!
 #[derive(Properties, PartialEq, Clone)]

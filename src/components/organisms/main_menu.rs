@@ -86,7 +86,7 @@ pub fn main_menu() -> Html {
             <audio src={format!("static/8bit-menusong-short-ed.aif")} autoplay=true loop=true />
             <div ref={div_ref} onkeydown={handle_keydown_toggle} tabindex="0">
                 <VideosList videos={demo_videos} current_index={*current_video_index} on_ended={Some(handle_video_ended)} video_class="smallscreenvideo"/>
-                <img src="static/danceOmatic_logo.png" alt="logo of danceomatic"/>
+                
             </div>
         </div>
     }
