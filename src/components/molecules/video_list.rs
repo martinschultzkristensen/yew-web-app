@@ -28,7 +28,7 @@ pub enum VideoType {
 impl VideoType {
     pub fn get_displayed_id(&self) -> Option<String> {
         match self {
-            VideoType::Demo(demo) => Some(format!("{}", demo.video.id)), // Generate based on video.id
+            VideoType::Demo(demo) => Some(format!("NR. {}", demo.video.id)), // Generate based on video.id
             _ => None, // Regular videos don't have a displayed_id
         }
     }
@@ -74,27 +74,34 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         None
     };
 
-    html! {
-        <div class="arcadefont">
-            {
-                match current_video {
-                    VideoType::Demo(demo) => html! {
-                        <>
-                            <p>{"Choreography NR. "}{current_video.get_displayed_id().unwrap_or_default()}</p>
-                            <p>{format!("{}", &demo.title)}</p>
-                            <p>{"Duration: "}{&demo.duration}{" seconds"}</p>
-                        </>
-                    },
-                    VideoType::Regular(_) => html! {},
-                }
-            }
+    match current_video {
+        VideoType::Demo(demo) => html! {
+            <div class="video-container">
+                <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>
+                <div class="video-wrapper">
+                    <video
+                        src={format!("{}", video.url)}
+                        autoplay=true
+                        loop={should_loop}
+                        onended={onended_attr}
+                        class={classes!(video_class.clone(), "smallscreenvideo")}
+                    />
+                    <div class="video-info arcadefont">
+                        <p>{format!("{}", &demo.title)}</p>
+                        <p>{"Duration: "}{&demo.duration}{" seconds"}</p>
+                    </div>
+                </div>
+            </div>
+        },
+        VideoType::Regular(_) => html! {
             <video
                 src={format!("{}", video.url)}
                 autoplay=true
                 loop={should_loop}
                 onended={onended_attr}
-                class={video_class.clone()}/>
-        </div>
+                class={classes!(video_class.clone(), "fullscreenvideo")}
+            />
+        },
     }
 }
 
