@@ -77,12 +77,27 @@ img {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.video-info {
+.right-column {
+  position: relative;
+  top: -20%;
+  left: 0px;
   flex: 0 0 45%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding-left: 5%;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 0px;
+}
+
+.logo-image {
+  max-width: 50%;
+  height: auto;
+  margin-bottom: 10px; // Adds space between the image and video info
+}
+
+.video-info {
+  width: 100%;
+  text-align: left; // Centers the text within the video-info div
 }
 
 .arcadefont {
@@ -92,5 +107,6 @@ img {
 }
 
 .video-info p {
-  margin: 10px 0;
+  margin: 0 0;
+  padding-bottom: 5%;
 }
