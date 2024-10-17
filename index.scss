@@ -1,12 +1,12 @@
 @font-face {
-    font-family: "PressStart2P-vaV7";
-    src: url("static/PressStart2P-vaV7.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
+  font-family: "PressStart2P-vaV7";
+  src: url("static/PressStart2P-vaV7.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 
 h1 {
-    font-family:"PressStart2P-vaV7", sans-serif;
+  font-family: "PressStart2P-vaV7", sans-serif;
 }
 
 $shade-0: #fff !default;
@@ -21,73 +21,96 @@ body {
 
   background-color: rgb(24 24 27);
   color: whitesmoke;
-  font-family:  "Roboto", sans-serif;
+  font-family: "Roboto", sans-serif;
   height: 100%;
   overflow: hidden;
 }
 
-
 .page {
-    min-height: 100vh;
-    min-width: 100vw;
+  min-height: 100vh;
+  min-width: 100vw;
 
-    line-height: 1.5;
-    tab-size: 4;
-    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    font-feature-settings: normal;
+  line-height: 1.5;
+  tab-size: 4;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-feature-settings: normal;
 
-    margin: 0;
-    line-height: inherit;
+  margin: 0;
+  line-height: inherit;
 }
 
 // goes for all images. Must align img to right
 img {
-    max-height: 500px;
-    max-width: 20%;
-
+  max-height: 500px;
+  max-width: 20%;
 }
 
-// this class will target all video tags without class specefications
-// video {
-//     max-height: 200px;
-//     max-width: 50%;
-// }
 
 .fullscreenvideo {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    //z-index: -1; /* This ensures the video stays in the background */
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  //z-index: -1; /* This ensures the video stays in the background */
+}
+
+
+//code from claude
+.video-container {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.title-center {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.video-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.smallscreenvideo {
+  max-width: 50%;
+  max-height: 400px;
+  display: block;
+  margin-right: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.video-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.arcadefont {
+  font-family: "PressStart2P-vaV7", sans-serif;
+  font-size: 24px;
+  color: $teal;
+  text-align: left;
+}
+
+.video-container p {
+  margin: 0 0 10px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
   .smallscreenvideo {
-    max-width: 50%;
-    max-height: 400px;
-    display: block;
-    position: absolute;
-    transform: translateY(-50%);
-    top: 50%;
-    left: 5%;
-    margin: 20px auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 90%;
+    max-height: 200px;
   }
-  
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .smallscreenvideo {
-      max-width: 90%;
-      max-height: 200px;
-    }
-  }
-  
-  .arcadefont {
-    font-family: "PressStart2P-vaV7", sans-serif;
-    font-size: 24px;
-    color: $teal;
-    margin-bottom: 20px;
-    text-align: left;
-  }
+}

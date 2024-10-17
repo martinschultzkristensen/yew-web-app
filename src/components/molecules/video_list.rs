@@ -61,7 +61,6 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         on_ended,
         video_class,
     } = props;
-
     let current_video = &videos[*current_index]; // <- get current_index to display the corresponding video. Access the inner Video with .video
     let video = current_video.get_video();
     let should_loop = current_video.should_loop();
@@ -81,8 +80,8 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                 match current_video {
                     VideoType::Demo(demo) => html! {
                         <>
-                            <p>{format!("{}", &demo.title)}</p>
                             <p>{"Choreography NR. "}{current_video.get_displayed_id().unwrap_or_default()}</p>
+                            <p>{format!("{}", &demo.title)}</p>
                             <p>{"Duration: "}{&demo.duration}{" seconds"}</p>
                         </>
                     },
