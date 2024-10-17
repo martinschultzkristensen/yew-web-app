@@ -8,9 +8,9 @@ pub fn get_demo_videos() -> Vec<VideoType> {
                 url: "static/Flash_AI&Boy.mp4".to_string(),
                 loop_video: true,
             },
-            title: "dancevideo nr.1".to_string(),
+            title: "Title to dancevideo nr.1".to_string(),
             duration: "30".to_string(), // Add appropriate duration
-            displayed_id: "Demo 1".to_string(),
+
         }),
         VideoType::Demo(DemoVideo {
             video: Video {
@@ -18,9 +18,9 @@ pub fn get_demo_videos() -> Vec<VideoType> {
                 url: "static/Flash_Siblings.mp4".to_string(),
                 loop_video: true,
             },
-            title: "dancevideo nr.2".to_string(),
+            title: "Title to dancevideo nr.2".to_string(),
             duration: "25".to_string(), // Add appropriate duration
-            displayed_id: "Demo 2".to_string(),
+
         }),
         // Video {
         //     id: 3,
