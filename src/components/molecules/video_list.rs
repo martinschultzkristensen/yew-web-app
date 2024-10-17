@@ -16,7 +16,7 @@ pub struct DemoVideo {
     pub video: Video,
     pub title: String,
     pub duration: String,
-    pub displayed_id: String,
+    //  We removed the displayed_id field because we are now dynamically generating it using the get_displayed_id() method in VideoType
 }
 
 #[derive(Clone, PartialEq)]
@@ -26,6 +26,12 @@ pub enum VideoType {
 }
 
 impl VideoType {
+    pub fn get_displayed_id(&self) -> Option<String> {
+        match self {
+            VideoType::Demo(demo) => Some(format!("{}", demo.video.id)), // Generate based on video.id
+            _ => None, // Regular videos don't have a displayed_id
+        }
+    }
     pub fn get_video(&self) -> &Video {
         match self {
             VideoType::Regular(v) => v,
@@ -44,7 +50,7 @@ pub struct VideosListProps {
     pub current_index: usize, // New property for the current index
     pub on_ended: Option<Callback<()>>,
     #[prop_or_default]
-    pub video_class: String,
+    pub video_class: String, // currently used to determine which fond-styling is used in index.scss
 }
 
 #[function_component(VideosList)]
@@ -70,13 +76,13 @@ pub fn videos_list(props: &VideosListProps) -> Html {
     };
 
     html! {
-        <div>
+        <div class="arcadefont">
             {
                 match current_video {
                     VideoType::Demo(demo) => html! {
                         <>
-                            <p class="video-title">{format!("{}", &demo.title)}</p>
-                            <p>{"Demo ID: "}{&demo.displayed_id}</p>
+                            <p>{format!("{}", &demo.title)}</p>
+                            <p>{"Choreography NR. "}{current_video.get_displayed_id().unwrap_or_default()}</p>
                             <p>{"Duration: "}{&demo.duration}{" seconds"}</p>
                         </>
                     },
