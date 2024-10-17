@@ -76,9 +76,9 @@ pub fn videos_list(props: &VideosListProps) -> Html {
 
     match current_video {
         VideoType::Demo(demo) => html! {
-            <div class="video-container">
-                <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>
+            <div class="main_menu-container">
                 <div class="video-wrapper">
+                <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>
                     <video
                         src={format!("{}", video.url)}
                         autoplay=true
@@ -86,11 +86,11 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                         onended={onended_attr}
                         class={classes!(video_class.clone(), "smallscreenvideo")}
                     />
+                </div>
                     <div class="video-info arcadefont">
                         <p>{format!("{}", &demo.title)}</p>
                         <p>{"Duration: "}{&demo.duration}{" seconds"}</p>
                     </div>
-                </div>
             </div>
         },
         VideoType::Regular(_) => html! {
