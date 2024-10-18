@@ -3,6 +3,8 @@ use gloo::utils::history;
 use yew::prelude::*;
 use yew_router::history::History;
 use yew_router::prelude::*;
+use crate::components::atoms::dance_o_matic_logo::DanceOMaticLogo;
+
 
 #[derive(Clone, PartialEq)]
 pub struct Video {
@@ -88,7 +90,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                     />
                 </div>
                 <div class="right-column">
-                <img src="static/danceOmatic_logo.png" alt="logo of danceomatic" class="logo-image"/>
+                    <DanceOMaticLogo />
                 <div class="video-info arcadefont">
                     <p>{format!("{}", &demo.title)}</p>
                     <p>{"Duration: "}{&demo.duration}{" seconds"}</p>
