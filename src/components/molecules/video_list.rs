@@ -90,7 +90,6 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                     />
                 </div>
                 <div class="right-column">
-                    <DanceOMaticLogo />
                 <div class="video-info arcadefont">
                     <p>{format!("{}", &demo.title)}</p>
                     <p>{"Duration: "}{&demo.duration}{" seconds"}</p>

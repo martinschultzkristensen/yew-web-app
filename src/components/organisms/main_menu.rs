@@ -7,6 +7,7 @@ use gloo::console::log;
 use yew::prelude::*;
 use yew_router::prelude::{use_navigator, Navigator};
 use crate::components::atoms::use_focus_div::use_focus_div;
+use crate::components::atoms::dance_o_matic_logo::DanceOMaticLogo;
 
 
 
@@ -85,8 +86,8 @@ pub fn main_menu() -> Html {
         <div onkeydown={restart_app} onkeydown={press_r_for_about} tabindex="0">
             <audio src={format!("static/8bit-menusong-short-ed.aif")} autoplay=true loop=true />
             <div ref={div_ref} onkeydown={handle_keydown_toggle} tabindex="0">
-                <VideosList videos={demo_videos} current_index={*current_video_index} on_ended={Some(handle_video_ended)} video_class="smallscreenvideo"/>
-                
+                <DanceOMaticLogo class="top-right-logo"/>
+                <VideosList videos={demo_videos} current_index={*current_video_index} on_ended={Some(handle_video_ended)} video_class="smallscreenvideo"/> 
             </div>
         </div>
     }
