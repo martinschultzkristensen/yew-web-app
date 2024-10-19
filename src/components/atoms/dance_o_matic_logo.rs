@@ -80,7 +80,8 @@ pub fn dance_o_matic_logo(_props: &DanceOMaticLogoProps) -> Html {
 
     html! {
         <div>
-        
+          <p>{"DanceOMaticLogo component is rendering"}</p>
+          <object type="image/svg+xml" data="/static/danceOmatic_logoT2.svg"></object>
         </div>
     }
 }
