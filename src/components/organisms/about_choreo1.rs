@@ -1,7 +1,7 @@
+use crate::components::atoms::use_focus_div::use_focus_div;
 use crate::Route;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
-use crate::components::atoms::use_focus_div::use_focus_div;
 
 #[function_component(AboutChoreo1)]
 pub fn about_choreo1() -> Html {
@@ -15,10 +15,20 @@ pub fn about_choreo1() -> Html {
     });
 
     html! {
-        <div ref={div_ref} onkeydown={event_key} tabindex="0">
-            <p>{ "Choreo1" }</p>
-        </div>
-    }
+            <div ref={div_ref} onkeydown={event_key} tabindex="0">
+                <p>{ "Choreo1" }</p>
+                <svg>
+                <defs>
+        <symbol id="star" viewBox="0 0 100 100">
+          <polygon points="50,15 61,35 82,35 67,50 73,72 50,60 27,72 33,50 18,35 39,35" />
+        </symbol>
+      </defs>
+      <use href="#star" x="0" y="0" width="50" height="50" />
+      <use href="#star" x="50" y="50" width="50" height="50" />
+      <use href="#star" x="100" y="0" width="50" height="50" />
+    </svg>
+            </div>
+        }
 }
 
 #[function_component(AboutChoreo2)]
