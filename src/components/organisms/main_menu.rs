@@ -87,6 +87,9 @@ pub fn main_menu() -> Html {
             <audio src={format!("static/8bit-menusong-short-ed.aif")} autoplay=true loop=true />
             <div ref={div_ref} onkeydown={handle_keydown_toggle} tabindex="0">
                 <DanceOMaticLogo class="top-right-logo"/>
+                <object type="image/svg+xml" data="static/greenBtn.svg" class="green-btn"></object>
+                <object type="image/svg+xml" data="static/yellow_btn.svg" class="yellow-btn"></object>
+                <object type="image/svg+xml" data="static/pointFinger.svg" class="point-finger"></object>
                 <VideosList videos={demo_videos} current_index={*current_video_index} on_ended={Some(handle_video_ended)} video_class="smallscreenvideo"/> 
             </div>
         </div>

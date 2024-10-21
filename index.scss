@@ -27,8 +27,8 @@ body {
   line-height: 1.5;
   tab-size: 4;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-      "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-feature-settings: normal;
   margin: 0;
   line-height: inherit;
@@ -89,7 +89,6 @@ img {
   padding-left: 0px;
 }
 
-
 .video-info {
   width: 100%;
   text-align: left; // Centers the text within the video-info div
@@ -135,7 +134,6 @@ img {
   }
 }
 
-
 #Pil {
   transform-origin: center bottom;
   animation: Pil 0.5s forwards;
@@ -154,176 +152,227 @@ img {
     opacity: 1;
     transform: translate(0%, 0%);
   }
-
 }
-  #Lyn {
+#Lyn {
+  opacity: 0;
+  animation: Lyn 0.15s alternate forwards;
+  transform-origin: center;
+  transform-box: fill-box;
+  animation-delay: 0.3s;
+}
+
+@keyframes Explotion {
+  0% {
+    transform: scale(0);
     opacity: 0;
-    animation: Lyn 0.15s alternate forwards;
-    transform-origin: center;
-    transform-box: fill-box;
-    animation-delay: 0.3s;
   }
-
-  @keyframes Explotion {
-    0% {
-      transform: scale(0);
-      opacity: 0;
-    }
-    50% {
-      transform: scale(1.5);
-      opacity: 1;
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-
-  #Explotion {
-    opacity: 0;
-    animation: Explotion 0.2s alternate ease-out forwards;
-    transform-origin: center;
-    transform-box: fill-box;
-    animation-delay: 2.7s;
-  }
-
-  @keyframes showLetter {
-    0% {
-      opacity: 0;
-      transform: scale(
-        10
-      ); /* Start with the letter scaled up and positioned above */
-    }
-    50% {
-      opacity: 1;
-      transform: scale(1); /* Scale down and move to original position */
-    }
-  }
-
-  .letter {
-    opacity: 0;
-    animation-fill-mode: forwards;
-    transform-origin: center; /* Ensure the scaling happens from the center of the letter */
-  }
-
-  .letter.show {
-    opacity: 1;
-    animation: showLetter 1s ease-in forwards;
-  }
-  
-  #O_inside_Shade-2 {
-    opacity: 0; /* Initially hidden */
-    animation: fadeInPath 0.3s forwards; /* Animation to fade in */
-    animation-delay: 2.4s;
-  }
-
-  @keyframes fadeInPath {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  #shadeEffect {
-    opacity: 0;
-    transition: 0.5s;
-  }
-
-  #shadeEffect.show {
+  50% {
+    transform: scale(1.5);
     opacity: 1;
   }
-  .cls-1 {
-    fill: #e82827;
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
+}
 
-  .cls-2 {
-    fill: #fcc326;
-  }
+#Explotion {
+  opacity: 0;
+  animation: Explotion 0.2s alternate ease-out forwards;
+  transform-origin: center;
+  transform-box: fill-box;
+  animation-delay: 2.7s;
+}
 
-  .cls-3 {
-    fill: #fce837;
+@keyframes showLetter {
+  0% {
+    opacity: 0;
+    transform: scale(
+      10
+    ); /* Start with the letter scaled up and positioned above */
   }
+  50% {
+    opacity: 1;
+    transform: scale(1); /* Scale down and move to original position */
+  }
+}
 
-  .cls-4 {
-    fill: #fc7800;
-  }
+.letter {
+  opacity: 0;
+  animation-fill-mode: forwards;
+  transform-origin: center; /* Ensure the scaling happens from the center of the letter */
+}
 
-  .cls-20, .cls-5 {
-    fill: #fdf600;
-  }
+.letter.show {
+  opacity: 1;
+  animation: showLetter 1s ease-in forwards;
+}
 
-  .cls-14, .cls-18, .cls-6 {
-    fill: none;
-  }
+#O_inside_Shade-2 {
+  opacity: 0; /* Initially hidden */
+  animation: fadeInPath 0.3s forwards; /* Animation to fade in */
+  animation-delay: 2.4s;
+}
 
-  .cls-19, .cls-20, .cls-6 {
-    stroke: #000;
-    stroke-miterlimit: 10;
+@keyframes fadeInPath {
+  from {
+    opacity: 0;
   }
+  to {
+    opacity: 1;
+  }
+}
 
-  .cls-6 {
-    stroke-width: 5px;
-  }
+#shadeEffect {
+  opacity: 0;
+  transition: 0.5s;
+}
 
-  .cls-7 {
-    fill: #ee582a;
-  }
+#shadeEffect.show {
+  opacity: 1;
+}
+.cls-1 {
+  fill: #e82827;
+}
 
-  .cls-8 {
-    fill: #f18c2d;
-  }
+.cls-2 {
+  fill: #fcc326;
+}
 
-  .cls-9 {
-    fill: #ee692b;
-  }
+.cls-3 {
+  fill: #fce837;
+}
 
-  .cls-10 {
-    fill: #f29f2f;
-  }
+.cls-4 {
+  fill: #fc7800;
+}
 
-  .cls-11 {
-    fill: #ed7d2c;
-  }
+.cls-20,
+.cls-5 {
+  fill: #fdf600;
+}
 
-  .cls-12 {
-    fill: #f0bc31;
-  }
+.cls-14,
+.cls-18,
+.cls-6 {
+  fill: none;
+}
 
-  .cls-13 {
-    fill: #ef962e;
-  }
+.cls-19,
+.cls-20,
+.cls-6 {
+  stroke: #000;
+  stroke-miterlimit: 10;
+}
 
-  .cls-14 {
-    stroke: #0a0803;
-  }
+.cls-6 {
+  stroke-width: 5px;
+}
 
-  .cls-15 {
-    fill: #3d180c;
-  }
+.cls-7 {
+  fill: #ee582a;
+}
 
-  .cls-16 {
-    fill: #3c170c;
-  }
+.cls-8 {
+  fill: #f18c2d;
+}
 
-  .cls-17 {
-    fill: #413f00;
-  }
+.cls-9 {
+  fill: #ee692b;
+}
 
-  .cls-19 {
-    fill: #ed64a3;
-  }
+.cls-10 {
+  fill: #f29f2f;
+}
+
+.cls-11 {
+  fill: #ed7d2c;
+}
+
+.cls-12 {
+  fill: #f0bc31;
+}
+
+.cls-13 {
+  fill: #ef962e;
+}
+
+.cls-14 {
+  stroke: #0a0803;
+}
+
+.cls-15 {
+  fill: #3d180c;
+}
+
+.cls-16 {
+  fill: #3c170c;
+}
+
+.cls-17 {
+  fill: #413f00;
+}
+
+.cls-19 {
+  fill: #ed64a3;
+}
 
 // logo placement
 
 .top-right-logo {
   position: absolute;
   top: 1%;
-  right: 20%;
-  width: 400px; /* Adjust as needed */
+  right: 15%;
+  width: 20%; /* Adjust as needed */
   height: auto; /* Maintain aspect ratio */
   transform: (50%, 50%);
 }
 
 // end of danceOmatic logo animation and class
+
+.green-btn {
+  position: absolute;
+  bottom: 5%;
+  right: 30%;
+  width: 7%; /* Adjust to the size you want */
+  height: auto; /* Maintain aspect ratio */
+}
+
+@keyframes smCircel {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+#smCircel {
+  opacity: 0;
+  animation: Explotion 0.2s alternate ease-out forwards;
+  transform-origin: center;
+  transform-box: fill-box;
+  animation-delay: 2.7s;
+}
+
+.yellow-btn {
+  position: absolute;
+  bottom: 10%;
+  right: 20%;
+  width: 7%; /* Adjust to the size you want */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.point-finger {
+  position: absolute;
+  bottom: -12%;
+  right: 32%;
+  width: 15%; /* Adjust to the size you want */
+  height: auto;
+}
