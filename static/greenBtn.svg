@@ -79,5 +79,19 @@
   <g id="smCircel">
     <circle class="cls-4" cx="141.25" cy="122.36" r="112.5"/>
     <path class="cls-5" d="M971.37,407A113.44,113.44,0,1,1,963,363.53,113.34,113.34,0,0,1,971.37,407Zm-1.74,0a111.61,111.61,0,1,0-8.28,42.81A111.75,111.75,0,0,0,969.63,407Z" transform="translate(-716.75 -284.64)"/>
+  
+   <!-- Animation for pressing down effect -->
+   
+    <animateTransform
+      attributeName="transform"
+      type="translate"
+      values="0 0; 0 13; 0 0"
+      dur="0.2s"
+      additive="sum"
+      repeatCount="1"
+      begin="5s"
+       />
+
   </g>
 </svg>
+

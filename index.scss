@@ -336,30 +336,11 @@ img {
   right: 30%;
   width: 7%; /* Adjust to the size you want */
   height: auto; /* Maintain aspect ratio */
+  animation: pressDown 1.5s infinite ease-in-out;
+  z-index: 1;
 }
 
-@keyframes smCircel {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.5);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
 
-#smCircel {
-  opacity: 0;
-  animation: Explotion 0.2s alternate ease-out forwards;
-  transform-origin: center;
-  transform-box: fill-box;
-  animation-delay: 2.7s;
-}
 
 .yellow-btn {
   position: absolute;
@@ -371,8 +352,45 @@ img {
 
 .point-finger {
   position: absolute;
-  bottom: -12%;
-  right: 32%;
+  bottom: -14%;
+  right: 32.5%;
   width: 15%; /* Adjust to the size you want */
   height: auto;
+  z-index: 2;
+
+}
+
+// styling for "start" animation at .green-btn press
+
+.txt_start {
+  position: absolute;
+  bottom: 14%;
+  right: 28%;
+  width: 10%;
+  height: auto;
+  z-index: 0;
+  opacity: 0; // Start hidden
+  transition: opacity 0.2s;
+}
+
+.txt_start-visible {
+  opacity: 1;
+  animation: txt_start 0.2s alternate ease-out forwards;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@keyframes txt_start {
+  0% {
+      transform: scale(0);
+      opacity: 0;
+  }
+  50% {
+      transform: scale(1.5);
+      opacity: 1;
+  }
+  100% {
+      transform: scale(1);
+      opacity: 1;
+  }
 }

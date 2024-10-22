@@ -81,5 +81,15 @@
   <g>
     <circle class="d" cx="141.25" cy="122.36" r="112.5"/>
     <path class="e" d="M1074.37,522a113.44,113.44,0,1,1-8.41-43.47A113.34,113.34,0,0,1,1074.37,522Zm-1.74,0a111.72,111.72,0,1,0-8.29,42.81A111.75,111.75,0,0,0,1072.63,522Z" transform="translate(-819.75 -399.64)"/>
+ 
+  <animateTransform
+      attributeName="transform"
+      type="translate"
+      values="0 0; 0 13; 0 0"
+      dur="0.2s"
+      additive="sum"
+      repeatCount="1"
+      begin="7s"
+       />
   </g>
 </svg>
