@@ -82,7 +82,7 @@
   
    <!-- Animation for pressing down effect -->
    
-    <animateTransform
+    <!-- <animateTransform
       attributeName="transform"
       type="translate"
       values="0 0; 0 13; 0 0"
@@ -90,7 +90,7 @@
       additive="sum"
       repeatCount="1"
       begin="5s"
-       />
+       /> -->
 
   </g>
 </svg>

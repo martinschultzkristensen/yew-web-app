@@ -334,12 +334,27 @@ img {
   position: absolute;
   bottom: 5%;
   right: 30%;
-  width: 7%; /* Adjust to the size you want */
-  height: auto; /* Maintain aspect ratio */
+  width: 7%; 
+  height: auto; 
   animation: pressDown 1.5s infinite ease-in-out;
   z-index: 1;
 }
 
+.green-btn-animate {
+  animation: btn_press_down 0.2s ease-in-out 2s;
+}
+
+@keyframes btn_press_down {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+      transform: translateY(13px);
+  }
+  100% {
+      transform: translateY(0);
+  }
+}
 
 
 .yellow-btn {
@@ -357,9 +372,38 @@ img {
   width: 15%; /* Adjust to the size you want */
   height: auto;
   z-index: 2;
-
+  transform: translateY(170px);
 }
 
+.point-finger-animate {
+  animation: 
+      pointFingerMove var(--finger-animation-duration) ease-in-out forwards,
+      pointFingerBounce var(--finger-bounce-duration) ease-in-out calc(var(--finger-animation-duration));
+}
+
+@keyframes pointFingerMove {
+  0% {
+      transform: translateY(170px);
+  }
+  50% {
+      transform: translateY(20px);
+  }
+  100% {
+      transform: translateY(0);
+  }
+}
+
+@keyframes pointFingerBounce {
+  0% {
+      transform: translateY(0);
+  }
+  50% {
+      transform: translateY(20px);
+  }
+  100% {
+      transform: translateY(0);
+  }
+}
 // styling for "start" animation at .green-btn press
 
 .txt_start {
