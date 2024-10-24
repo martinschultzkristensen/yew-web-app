@@ -7,6 +7,8 @@ use yew::prelude::*;
 use web_sys::wasm_bindgen::JsCast;
 use wasm_bindgen::closure::Closure;
 
+
+
 #[derive(Properties, PartialEq)]
 pub struct DanceOMaticLogoProps {
   #[prop_or_default]
