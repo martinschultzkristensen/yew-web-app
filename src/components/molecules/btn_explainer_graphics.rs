@@ -3,6 +3,29 @@ use gloo_timers::callback::Timeout;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
 
+
+#[function_component(GreenButton)]
+fn green_button() -> Html {
+    let svg_content = use_node_ref();
+    
+    use_effect(move || {
+        if let Some(document) = web_sys::window().and_then(|w| w.document()) {
+            if let Ok(Some(element)) = document.query_selector("#smCircel") {
+                element.set_attribute("class", "green-btn-animate")
+                    .expect("Failed to add animation class");
+            }
+        }
+        || ()
+    });
+
+    html! {
+        <div class="green-btn">
+            {svg_content}
+        </div>
+    }
+}
+
+
 #[function_component(BtnExplainerGraphics)]
 pub fn btn_explainer_graphics() -> Html {
     const FINGER_DELAY: u32 = 5000;  // 3 seconds
