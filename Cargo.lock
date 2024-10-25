@@ -1245,6 +1245,7 @@ dependencies = [
  "futures",
  "gloo 0.11.0",
  "gloo-timers 0.3.0",
+ "js-sys",
  "lazy_static",
  "serde",
  "serde_json",
