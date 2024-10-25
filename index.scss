@@ -340,21 +340,21 @@ img {
   z-index: 1;
 }
 
-.green-btn-animate {
-  animation: btn_press_down 0.2s ease-in-out 2s;
-}
+// .green-btn-animate {
+//   animation: btn_press_down 0.2s ease-in-out 2s;
+// }
 
-@keyframes btn_press_down {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-      transform: translateY(13px);
-  }
-  100% {
-      transform: translateY(0);
-  }
-}
+// @keyframes btn_press_down {
+//   0% {
+//     transform: translateY(0);
+//   }
+//   50% {
+//       transform: translateY(13px);
+//   }
+//   100% {
+//       transform: translateY(0);
+//   }
+// }
 
 
 .yellow-btn {
