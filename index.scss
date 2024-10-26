@@ -340,21 +340,21 @@ img {
   z-index: 1;
 }
 
-// .green-btn-animate {
-//   animation: btn_press_down 0.2s ease-in-out 2s;
-// }
+.green-btn-animate {
+  animation: btn_press_down 0.2s ease-in-out 2s;
+}
 
-// @keyframes btn_press_down {
-//   0% {
-//     transform: translateY(0);
-//   }
-//   50% {
-//       transform: translateY(13px);
-//   }
-//   100% {
-//       transform: translateY(0);
-//   }
-// }
+@keyframes btn_press_down {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+      transform: translateY(13px);
+  }
+  100% {
+      transform: translateY(0);
+  }
+}
 
 
 .yellow-btn {
@@ -377,32 +377,46 @@ img {
 
 .point-finger-animate {
   animation: 
-      pointFingerMove var(--finger-animation-duration) ease-in-out forwards,
-      pointFingerBounce var(--finger-bounce-duration) ease-in-out calc(var(--finger-animation-duration));
+    // First sequence
+    pointFingerMove1 var(--finger-animation-duration) ease-in-out forwards,
+    pointFingerBounce1 var(--finger-bounce-duration) ease-in-out calc(var(--finger-animation-duration)),
+    // 1 second delay before second sequence (using a dummy animation)
+    pauseAnimation 1s calc(var(--finger-animation-duration) + var(--finger-bounce-duration)),
+    // Second sequence
+    pointFingerMove2 var(--finger-animation-duration) calc(var(--finger-animation-duration) + var(--finger-bounce-duration) + 1s) ease-in-out forwards,
+    pointFingerBounce2 var(--finger-bounce-duration) ease-in-out calc(var(--finger-animation-duration) * 2 + var(--finger-bounce-duration) + 1s);
 }
 
-@keyframes pointFingerMove {
-  0% {
-      transform: translateY(170px);
-  }
-  50% {
-      transform: translateY(20px);
-  }
-  100% {
-      transform: translateY(0);
-  }
+// First move animation
+@keyframes pointFingerMove1 {
+  0% { transform: translateY(170px); }
+  50% { transform: translateY(20px); }
+  100% { transform: translateY(0); }
 }
 
-@keyframes pointFingerBounce {
-  0% {
-      transform: translateY(0);
-  }
-  50% {
-      transform: translateY(20px);
-  }
-  100% {
-      transform: translateY(0);
-  }
+// Second move animation (starts from where the first one ended)
+@keyframes pointFingerMove2 {
+  0% { transform: translateY(0); }
+  50% { transform: translate(135px, -10px); }
+  100% { transform: translate(145px, -40px); }
+}
+
+// Bounce animation remains the same
+@keyframes pointFingerBounce1 {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(20px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes pointFingerBounce2 {
+  0% { transform: translate(145px, -40px); }
+  50% { transform: translate(145px, -20px); }
+  100% { transform: translate(145px, -40px); }
+}
+
+// Dummy animation for creating a pause
+@keyframes pauseAnimation {
+  0%, 100% { transform: translateY(0); }
 }
 // styling for "start" animation at .green-btn press
 
