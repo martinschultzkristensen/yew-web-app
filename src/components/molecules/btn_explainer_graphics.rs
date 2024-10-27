@@ -12,7 +12,9 @@ use wasm_bindgen::JsCast;
 pub fn btn_explainer_graphics() -> Html {
     const FINGER_DELAY: u32 = 3000;  // 3 seconds
     const START_ADDITIONAL_DELAY: u32 = 2200; // 2.2 seconds after finger
+    const INFO_ADDITIONAL_DELAY: u32 = 3200; // 3.2 seconds after finger
     let is_start_visible = use_state(|| false);
+    let is_info_visible = use_state(|| false);
     
 
     
@@ -28,11 +30,29 @@ pub fn btn_explainer_graphics() -> Html {
             }
         );
     }
+    {
+        let is_info_visible = is_info_visible.clone();
+        use_effect(
+            move || {
+                let timeout = Timeout::new(START_ADDITIONAL_DELAY + FINGER_DELAY + INFO_ADDITIONAL_DELAY, move || {
+                    is_info_visible.set(true);
+                });
+                timeout.forget();
+                || ()
+            }
+        );
+    }
 
     let start_class = if *is_start_visible {
-        "txt_start txt_start-visible"
+        "txt_start_position txt_start txt_start-visible"
     } else {
-        "txt_start"
+        "txt_start_position txt_start"
+    };
+
+    let info_class = if *is_info_visible {
+        "txt_info_position txt_start-visible"
+    } else {
+        "txt_info_position txt_start"
     };
 
     let point_finger_visible = use_state(|| false);
@@ -110,6 +130,7 @@ pub fn btn_explainer_graphics() -> Html {
         <object ref={green_btn_ref} type="image/svg+xml" data="static/greenBtn.svg" class="green-btn"></object>
             <object type="image/svg+xml" data="static/yellow_btn.svg" class="yellow-btn"></object>
             <object type="image/svg+xml" data="static/start.svg" class={start_class}></object>
+            <object type="image/svg+xml" data="static/info.svg" class={info_class}></object>
             <object type="image/svg+xml" data="static/pointFinger.svg" class={finger_class}></object>
         </div>
     </>
