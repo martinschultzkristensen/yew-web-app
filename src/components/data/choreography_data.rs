@@ -17,7 +17,7 @@ pub fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
                 VideoType::Demo(demo) => demo.title.clone(), //is borrow possible? -research
                 _ => "Choreo 1".to_string(),
             },
-            choreo_image: "static/img/AI&Boy.png".to_string(),
+            choreo_image: "static/AI&Boy.png".to_string(),
             dancer_images: vec![
                 "static/img/Martinus.png".to_string(),
                 "static/img/Jon.png".to_string(),
