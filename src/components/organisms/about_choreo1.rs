@@ -45,6 +45,7 @@ pub fn about_choreo2() -> Html {
     html! {
         <div ref={div_ref} onkeydown={event_key} tabindex="1">
             <p>{ "Choreo2" }</p>
+            
         </div>
     }
 }
