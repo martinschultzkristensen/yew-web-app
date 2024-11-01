@@ -2,7 +2,7 @@ use crate::components::molecules::video_list::VideoType;
 
 use yew::prelude::*;
 
-// Handle keydown events to switch videos
+// Handle keydown events to switch demo videos in the main menu
 pub fn get_toggle_key(
     v: &Vec<VideoType>,
     video_index: UseStateHandle<usize>,
