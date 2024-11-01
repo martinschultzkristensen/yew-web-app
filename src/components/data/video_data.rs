@@ -40,7 +40,7 @@ pub fn get_intro_video() -> Vec<VideoType> {
     vec![
         VideoType::Regular(Video {
         id: 0,
-        url: "static/HCA_domprg.mp4".to_string(),
+        url: "static/IntroDemoVid_4sec.mp4".to_string(),
         loop_video: true,
     })]
 }
@@ -54,7 +54,7 @@ pub fn choreo_videos() -> Vec<VideoType> {
         }),
         VideoType::Regular(Video {
             id: 2,
-            url: "static/siblings_中文_countdown.mp4".to_string(),
+            url: "static/fodbold_tiny.mp4".to_string(),
             loop_video: false,
         }),
         VideoType::Regular(Video {
