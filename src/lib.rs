@@ -8,7 +8,7 @@ use crate::components::organisms::load_screen::LoadScreenVideo;
 use crate::components::organisms::main_menu::MainMenu;
 use components::data::video_data::*;
 use components::molecules::video_list::VideosList;
-use components::organisms::keydown_logic::get_toggle_key;
+use components::molecules::keydown_logic::get_toggle_key;
 use yew::functional::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
