@@ -18,7 +18,7 @@ pub struct DemoVideo {
     pub video: Video,
     pub title: String,
     pub duration: String,
-    //  We removed the displayed_id field because we are now dynamically generating it using the get_displayed_id() method in VideoType
+
 }
 
 #[derive(Clone, PartialEq)]

@@ -10,7 +10,6 @@ pub fn get_demo_videos() -> Vec<VideoType> {
             },
             title: "Title to dancevideo nr.1".to_string(),
             duration: "30".to_string(), // Add appropriate duration
-
         }),
         VideoType::Demo(DemoVideo {
             video: Video {

@@ -1,7 +1,15 @@
 use crate::components::atoms::use_focus_div::use_focus_div;
+use crate::components::molecules::video_list::{DemoVideo, Video, VideoType};
 use crate::Route;
+use crate::get_demo_videos;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
+
+#[derive(Properties, PartialEq)]
+pub struct AboutChoreoProps {
+    #[prop_or_default]
+    pub current_index: usize,
+}
 
 #[function_component(AboutChoreo1)]
 pub fn about_choreo1() -> Html {
@@ -32,9 +40,20 @@ pub fn about_choreo1() -> Html {
 }
 
 #[function_component(AboutChoreo2)]
-pub fn about_choreo2() -> Html {
+pub fn about_choreo2(props: &AboutChoreoProps) -> Html {
     let navigator = use_navigator().unwrap();
     let div_ref = use_focus_div();
+
+    // Get the videos list
+    let videos = get_demo_videos();
+
+    // Get the current video and its title
+    let current_video = &videos[props.current_index];
+    let title = match current_video {
+        VideoType::Demo(demo) => demo.title.clone(),
+        _ => "Choreo2".to_string(), // fallback title
+    };
+
     let event_key = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
         "q" => navigator.push(&Route::IntroScreen1),
         "r" => navigator.push_with_state(&Route::MainMenu, 1usize),
@@ -44,8 +63,8 @@ pub fn about_choreo2() -> Html {
 
     html! {
         <div ref={div_ref} onkeydown={event_key} tabindex="1">
-            <p>{ "Choreo2" }</p>
-            
+            <p>{ title }</p>
+
         </div>
     }
 }
