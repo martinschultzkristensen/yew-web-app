@@ -1,20 +1,23 @@
 use crate::components::atoms::use_focus_div::use_focus_div;
-use crate::components::molecules::video_list::{DemoVideo, Video, VideoType};
+use crate::components::data::choreography_data::get_choreography_data;
 use crate::Route;
-use crate::get_demo_videos;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
 
 #[derive(Properties, PartialEq)]
 pub struct AboutChoreoProps {
     #[prop_or_default]
-    pub current_index: usize,
+    pub choreo_number: usize,
 }
 
-#[function_component(AboutChoreo1)]
-pub fn about_choreo1() -> Html {
+#[function_component(AboutChoreo)]
+pub fn about_choreo(props: &AboutChoreoProps) -> Html {
     let navigator = use_navigator().unwrap();
     let div_ref = use_focus_div(); // Hook sets focus on the div when the component mounts.
+      
+      // Get all data for this choreography
+    let choreo_data = get_choreography_data(props.choreo_number);
+
     let event_key = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
         "q" => navigator.push(&Route::IntroScreen1),
         "r" => navigator.push_with_state(&Route::MainMenu, 0usize),
@@ -23,84 +26,30 @@ pub fn about_choreo1() -> Html {
     });
 
     html! {
-            <div ref={div_ref} onkeydown={event_key} tabindex="0">
-                <p>{ "Choreo1" }</p>
-                <svg>
-                <defs>
-        <symbol id="star" viewBox="0 0 100 100">
-          <polygon points="50,15 61,35 82,35 67,50 73,72 50,60 27,72 33,50 18,35 39,35" />
-        </symbol>
-      </defs>
-      <use href="#star" x="0" y="0" width="50" height="50" />
-      <use href="#star" x="50" y="50" width="50" height="50" />
-      <use href="#star" x="100" y="0" width="50" height="50" />
-    </svg>
+        <div ref={div_ref} onkeydown={event_key} tabindex="1" class="about-choreo-container">
+            // Title section
+            <h1 class="title">{ &choreo_data.title }</h1>
+            
+            // Main choreography image
+            <div class="choreo-image-container">
+                <img src={choreo_data.choreo_image} alt={format!("Choreography {}", props.choreo_number)} />
             </div>
-        }
-}
-
-#[function_component(AboutChoreo2)]
-pub fn about_choreo2(props: &AboutChoreoProps) -> Html {
-    let navigator = use_navigator().unwrap();
-    let div_ref = use_focus_div();
-
-    // Get the videos list
-    let videos = get_demo_videos();
-
-    // Get the current video and its title
-    let current_video = &videos[props.current_index];
-    let title = match current_video {
-        VideoType::Demo(demo) => demo.title.clone(),
-        _ => "Choreo2".to_string(), // fallback title
-    };
-
-    let event_key = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
-        "q" => navigator.push(&Route::IntroScreen1),
-        "r" => navigator.push_with_state(&Route::MainMenu, 1usize),
-        "e" => navigator.push_with_state(&Route::ChoreoVideo, 1usize),
-        _ => (),
-    });
-
-    html! {
-        <div ref={div_ref} onkeydown={event_key} tabindex="1">
-            <p>{ title }</p>
-
-        </div>
-    }
-}
-
-#[function_component(AboutChoreo3)]
-pub fn about_choreo3() -> Html {
-    let navigator = use_navigator().unwrap();
-    let div_ref = use_focus_div();
-    let event_key = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
-        "q" => navigator.push(&Route::IntroScreen1),
-        "r" => navigator.push_with_state(&Route::MainMenu, 2usize),
-        "e" => navigator.push_with_state(&Route::ChoreoVideo, 2usize),
-        _ => (),
-    });
-
-    html! {
-        <div ref={div_ref} onkeydown={event_key} tabindex="0">
-            <p>{ "Choreo3" }</p>
-        </div>
-    }
-}
-
-#[function_component(AboutChoreo4)]
-pub fn about_choreo4() -> Html {
-    let navigator = use_navigator().unwrap();
-    let div_ref = use_focus_div();
-    let restart_app = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
-        "q" => navigator.push(&Route::IntroScreen1),
-        "r" => navigator.push_with_state(&Route::MainMenu, 3usize),
-        "e" => navigator.push_with_state(&Route::ChoreoVideo, 3usize),
-        _ => (),
-    });
-
-    html! {
-        <div ref={div_ref} onkeydown={restart_app} tabindex="0">
-            <p>{ "Choreo4" }</p>
+            
+            // Dancers section
+            <div class="dancers-container">
+                {
+                    choreo_data.dancer_images.iter().map(|image_path| {
+                        html! {
+                            <div class="dancer-image">
+                                <img src={image_path.clone()} alt="Dancer" />
+                            </div>
+                        }
+                    }).collect::<Html>()
+                }
+            </div>
+            
+            // Description section
+            <p class="description">{ &choreo_data.description }</p>
         </div>
     }
 }
