@@ -17,14 +17,8 @@ mod components;
 
 #[derive(Clone, Routable, Debug, PartialEq)]
 pub enum Route {
-    #[at("/about-choreo1")]
-    AboutChoreo1,
-    #[at("/about-choreo2")]
-    AboutChoreo2,
-    #[at("/about-choreo3")]
-    AboutChoreo3,
-    #[at("/about-choreo4")]
-    AboutChoreo4,
+    #[at("/about-choreo/:number")]
+    AboutChoreo { number: usize },
     #[at("/main-menu")]
     MainMenu,
     #[at("/intro-screen")]
@@ -50,10 +44,8 @@ pub fn app() -> Html {
 
 fn switch(routes: Route) -> Html {
     match routes {
-        Route::AboutChoreo1 => html! { <AboutChoreo1 /> },
-        Route::AboutChoreo2 => html! { <AboutChoreo2 /> },
-        Route::AboutChoreo3 => html! { <AboutChoreo3 /> },
-        Route::AboutChoreo4 => html! { <AboutChoreo4 /> },
+        Route::AboutChoreo { number } => html! {
+            <AboutChoreo choreo_number={number} />},
         Route::MainMenu => html! { <MainMenu /> },
         Route::IntroScreen1 => html! { <IntroScreen/> },
         Route::IntroScreen2 => html! { <IntroScreen /> },

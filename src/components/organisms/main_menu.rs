@@ -26,18 +26,14 @@ pub fn main_menu() -> Html {
 
     pub fn navigate_to_about(index: usize, navigator: Option<Navigator>) -> usize {
         if let Some(navigator) = navigator {
-            match index {
-                0 => navigator.push(&Route::AboutChoreo1),
-                1 => navigator.push(&Route::AboutChoreo2),
-                2 => navigator.push(&Route::AboutChoreo3),
-                3 => navigator.push(&Route::AboutChoreo4),
-                _ => {}
-            }
-        } else {
-            log!("Navigator is None");
-        }
-        index
+            // Convert index (0-4) to choreo_number (1-5)
+        let choreo_number = index + 1;
+        navigator.push(&Route::AboutChoreo { number: choreo_number });
+    } else {
+        log!("Navigator is None");
     }
+    index
+}
 
     pub fn execute_showdown_video(index: usize, navigator: Option<Navigator>) -> usize {
         if let Some(navigator) = navigator {
