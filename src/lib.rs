@@ -1,4 +1,4 @@
-use components::organisms::about_choreo1::*;
+use components::organisms::about_choreo::*;
 //lib.rs
 //gloo writes stuff to the web console
 //use gloo::console::log; use serde::{Serialize, Deserialize}; //<-- Uncomment to write to the webconsole

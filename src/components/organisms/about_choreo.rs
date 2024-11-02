@@ -6,13 +6,14 @@ use yew_router::prelude::use_navigator;
 
 #[derive(Properties, PartialEq)]
 pub struct AboutChoreoProps {
-    #[prop_or_default]
     pub choreo_number: usize,
 }
 
 #[function_component(AboutChoreo)]
 pub fn about_choreo(props: &AboutChoreoProps) -> Html {
     let navigator = use_navigator().unwrap();
+    let video_index = props.choreo_number - 1;
+    let video_index = video_index; // Clone for closure
     let div_ref = use_focus_div(); // Hook sets focus on the div when the component mounts.
       
       // Get all data for this choreography
@@ -20,8 +21,8 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
 
     let event_key = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
         "q" => navigator.push(&Route::IntroScreen1),
-        "r" => navigator.push_with_state(&Route::MainMenu, 0usize),
-        "e" => navigator.push_with_state(&Route::ChoreoVideo, 0usize),
+        "r" => navigator.push_with_state(&Route::MainMenu, video_index),
+        "e" => navigator.push_with_state(&Route::ChoreoVideo, video_index),
         _ => (),
     });
 

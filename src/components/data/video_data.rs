@@ -21,18 +21,26 @@ pub fn get_demo_videos() -> Vec<VideoType> {
             duration: "25".to_string(), // Add appropriate duration
 
         }),
-        // Video {
-        //     id: 3,
-        //     title: "dancevideo nr.3".to_string(),
-        //     url: "static/Flash_Culture4Fun.mp4".to_string(),
-        //     loop_video: true,
-        // },
-        // Video {
-        //     id: 4,
-        //     title: "dancevideo nr.4".to_string(),
-        //     url: "static/Flash_Hej-Nihao.mp4".to_string(),
-        //     loop_video: true,
-        // },
+        VideoType::Demo(DemoVideo {
+            video: Video {
+                id: 3,
+                url: "static/Flash_Culture4Fun.mp4".to_string(),
+                loop_video: true,
+            },
+            title: "Title to dancevideo nr.3".to_string(),
+            duration: "125".to_string(), // Add appropriate duration
+
+        }),
+        VideoType::Demo(DemoVideo {
+            video: Video {
+                id: 4,
+                url: "static/Flash_Hej-Nihao.mp4".to_string(),
+                loop_video: true,
+            },
+            title: "Title to dancevideo nr.4".to_string(),
+            duration: "1".to_string(), // Add appropriate duration
+
+        }),
     ]
 }
 
@@ -49,22 +57,22 @@ pub fn choreo_videos() -> Vec<VideoType> {
     vec![
         VideoType::Regular(Video {
             id: 1,
-            url: "static/fodbold_tiny.mp4".to_string(),
+            url: "static/AI&Boy.mp4".to_string(),
             loop_video: false,
         }),
         VideoType::Regular(Video {
             id: 2,
-            url: "static/fodbold_tiny.mp4".to_string(),
+            url: "static/Siblings.mp4".to_string(),
             loop_video: false,
         }),
         VideoType::Regular(Video {
             id: 3,
-            url: "static/Hej-Nihao.mp4".to_string(),
+            url: "static/Culture4Fun.mp4".to_string(),
             loop_video: false,
         }),
         VideoType::Regular(Video {
             id: 4,
-            url: "static/AI&Boy.mp4".to_string(),
+            url: "static/fodbold_tiny.mp4".to_string(),
             loop_video: false,
         }),
     ]
