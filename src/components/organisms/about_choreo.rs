@@ -29,19 +29,21 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
     html! {
         <div ref={div_ref} onkeydown={event_key} tabindex="1" class="about-choreo-container">
             // Title section
-            <h1 class="title">{ &choreo_data.title }</h1>
+            <h1 class="arcadefont">{ &choreo_data.title }</h1>
             
             // Main choreography image
-            <div class="choreo-image-container">
+            <div class="info-section-container">
                 <img src={choreo_data.choreo_image} alt={format!("Choreography {}", props.choreo_number)} />
+                // Description section
+            <p class="description arcadefont">{ &choreo_data.description }</p>
             </div>
             
             // Dancers section
-            <div class="dancers-container">
+                <h1 class="arcadefont">{"Dancers"}</h1>
                 {
                     choreo_data.dancer_images.iter().map(|image_path| {
                         html! {
-                            <div class="dancer-image">
+                            <div class="info-section-container">
                                 <img src={image_path.clone()} alt="Dancer" />
                             </div>
                         }
@@ -49,8 +51,7 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
                 }
             </div>
             
-            // Description section
-            <p class="description">{ &choreo_data.description }</p>
+            
         </div>
     }
 }

@@ -34,11 +34,6 @@ body {
   line-height: inherit;
 }
 
-img {
-  max-height: 500px;
-  max-width: 20%;
-}
-
 .fullscreenvideo {
   position: fixed;
   top: 0;
@@ -470,25 +465,35 @@ img {
 .about-choreo-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 2rem;
+  align-items: flex-start;
+  padding: 3rem 5rem;
 }
 
-.choreo-image-container {
+.info-section-container {
+  display: flex;
+  flex-direction: row; /* Arrange items horizontally */
+  align-items: center; /* Align image and text vertically */
   width: 100%;
   max-width: 800px;
   margin: 2rem 0;
+  background-color: #e82827;
+  padding: 1rem; /* Optional padding for inner spacing */
 }
 
-.choreo-image-container img {
-  width: 100%;
+.info-section-container img {
+  width: 200px; /* Set to desired size */
   height: auto;
+  margin-right: 1rem; /* Space between image and text */
+}
+
+.info-section-container .description {
+  flex: 1; /* Allow text to take up remaining space */
 }
 
 .dancers-container {
-  display: flex;
+  display: block;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: left;
   gap: 1rem;
   margin: 2rem 0;
 }
@@ -497,10 +502,11 @@ img {
   width: 200px;
   height: 200px;
   overflow: hidden;
+  background-color: #e82827;
 }
 
 .dancer-image img {
   width: 100%;
-  height: 100%;
+  height: auto;
   object-fit: cover;
 }
