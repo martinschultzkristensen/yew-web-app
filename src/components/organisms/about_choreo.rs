@@ -50,8 +50,5 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
                     }).collect::<Html>()
                 }
             </div>
-            
-            
-        </div>
     }
 }
