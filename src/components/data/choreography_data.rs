@@ -5,7 +5,7 @@ use crate::components::data::video_data::get_demo_videos;
 pub struct ChoreographyData {
     pub title: String,
     pub choreo_image: String,
-    pub dancer_images: Vec<String>,
+    pub dancers: Vec<Dancer>,
     pub description: String,  // Optional: if you want to add descriptions
 }
 
