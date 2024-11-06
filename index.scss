@@ -467,6 +467,23 @@ body {
   flex-direction: column;
   align-items: flex-start;
   padding: 3rem 5rem;
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Webkit-specific style to hide scrollbar */
+.about-choreo-container::-webkit-scrollbar {
+  width: 0px;  /* Hides the scrollbar */
+  height: 0px;
+}
+
+.about-choreo-container::-webkit-scrollbar-thumb {
+  background: transparent;  /* Ensures thumb is invisible */
+}
+
+.about-choreo-container::-webkit-scrollbar-track {
+  background: transparent;  /* Ensures the track is invisible */
 }
 
 .info-section-container {
@@ -488,25 +505,4 @@ body {
 
 .info-section-container .description {
   flex: 1; /* Allow text to take up remaining space */
-}
-
-.dancers-container {
-  display: block;
-  flex-wrap: wrap;
-  justify-content: left;
-  gap: 1rem;
-  margin: 2rem 0;
-}
-
-.dancer-image {
-  width: 200px;
-  height: 200px;
-  overflow: hidden;
-  background-color: #e82827;
-}
-
-.dancer-image img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
 }
