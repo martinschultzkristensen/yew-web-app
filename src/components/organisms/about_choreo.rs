@@ -4,6 +4,7 @@ use crate::Route;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
 
+
 #[derive(Properties, PartialEq)]
 pub struct AboutChoreoProps {
     pub choreo_number: usize,
@@ -23,6 +24,18 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
         "q" => navigator.push(&Route::IntroScreen1),
         "r" => navigator.push_with_state(&Route::MainMenu, video_index),
         "e" => navigator.push_with_state(&Route::ChoreoVideo, video_index),
+        "w" => {
+                // Scroll up by 50px when "W" is pressed
+                if let Some(div) = div_ref.clone().cast::<web_sys::Element>() {
+                    div.scroll_with_x_and_y(0.0, -50.0);
+                }
+            },
+            "s" => {
+                // Scroll down by 50px when "S" is pressed
+                if let Some(div) = div_ref.clone().cast::<web_sys::HtmlElement>() {
+                    div.scroll_with_x_and_y(0.0, 50.0);
+                }
+            },
         _ => (),
     });
 
@@ -41,10 +54,11 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
             // Dancers section
                 <h1 class="arcadefont">{"Dancers"}</h1>
                 {
-                    choreo_data.dancer_images.iter().map(|image_path| {
+                    choreo_data.dancers.iter().map(|dancer| {
                         html! {
                             <div class="info-section-container">
-                                <img src={image_path.clone()} alt="Dancer" />
+                                <img src={dancer.image.clone()} alt="Dancer" />
+                                <p class="arcadefont">{dancer.name.clone()}</p>
                             </div>
                         }
                     }).collect::<Html>()
