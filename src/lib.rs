@@ -6,6 +6,8 @@ use crate::components::organisms::choreo_videos::ChoreoVideo;
 use crate::components::organisms::intro_screen::IntroScreen;
 use crate::components::organisms::load_screen::LoadScreenVideo;
 use crate::components::organisms::main_menu::MainMenu;
+use crate::components::organisms::music::Music;
+use crate::components::molecules::music_context::MusicContextProvider;
 use components::data::video_data::*;
 use components::molecules::video_list::VideosList;
 use components::molecules::keydown_logic::get_toggle_key;
@@ -35,9 +37,11 @@ pub enum Route {
 pub fn app() -> Html {
     html! {
     <div>
+        <MusicContextProvider>
         <BrowserRouter>
             <Switch<Route> render={switch} />
         </BrowserRouter>
+        </MusicContextProvider>
     </div>
     }
 }

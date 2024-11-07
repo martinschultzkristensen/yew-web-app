@@ -5,7 +5,6 @@ use crate::VideosList;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
 use crate::components::atoms::use_focus_div::use_focus_div;
-use crate::components::molecules::video_list::VideosListProps;
 
 #[function_component(IntroScreen)]
 pub fn intro_screen() -> Html {

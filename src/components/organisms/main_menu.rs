@@ -1,3 +1,4 @@
+//src/components/organisms/main_menu.rs
 use crate::get_demo_videos;
 use crate::get_toggle_key;
 use crate::use_location;
@@ -8,12 +9,41 @@ use yew::prelude::*;
 use yew_router::prelude::{use_navigator, Navigator};
 use crate::components::atoms::use_focus_div::use_focus_div;
 use crate::components::atoms::dance_o_matic_logo::DanceOMaticLogo;
+use crate::MusicContextProvider;
 use crate::components::molecules::btn_explainer_graphics::BtnExplainerGraphics;
+use crate::components::molecules::music_context::MusicContextAction;
+use crate::components::molecules::music_context::MusicContext;
+
 
 
 
 #[function_component(MainMenu)]
 pub fn main_menu() -> Html {
+    let ctx = use_context::<MusicContextProvider>().expect("No music context provider");
+    
+        // Start music when the component mounts and stop it when the component unmounts
+    use_effect_with(
+        (), // Empty dependency list
+        move |_| {
+            // Send the start music action to the context via the link of the MusicContextProvider
+            ctx.link().send_message(MusicContextAction::StartMusic);
+
+            // Cleanup: stop music when the component unmounts
+            || {
+                ctx.link().send_message(MusicContextAction::StopMusic);
+            }
+        },
+    );
+    
+    // let music = use_context::<MusicContext>().unwrap();
+    
+    // let music = music.clone();
+    //     use_effect(move || {
+    //         music.start_music.emit(());
+    //         || () // Return a cleanup function if needed (in this case, nothing to clean up)
+    //     });
+    
+
     let demo_videos = get_demo_videos();
     // State to track the index of the currently displayed demo video
     let current_video_index: usize = use_location()
@@ -26,7 +56,7 @@ pub fn main_menu() -> Html {
 
     pub fn navigate_to_about(index: usize, navigator: Option<Navigator>) -> usize {
         if let Some(navigator) = navigator {
-            // Convert index (0-4) to choreo_number (1-5)
+
         let choreo_number = index + 1;
         navigator.push(&Route::AboutChoreo { number: choreo_number });
     } else {
@@ -81,7 +111,6 @@ pub fn main_menu() -> Html {
 
     html! {
         <div onkeydown={restart_app} onkeydown={press_r_for_about} tabindex="0">
-            <audio src={format!("static/8bit-menusong-short-ed.aif")} autoplay=true loop=true />
             <div ref={div_ref} onkeydown={handle_keydown_toggle} tabindex="0">
                 <DanceOMaticLogo class="top-right-logo"/>
                 <BtnExplainerGraphics />
