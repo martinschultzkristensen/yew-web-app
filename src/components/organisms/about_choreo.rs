@@ -1,5 +1,6 @@
 use crate::components::atoms::use_focus_div::use_focus_div;
 use crate::components::data::choreography_data::get_choreography_data;
+use crate::components::molecules::scollable_div::ScrollableDiv;
 use crate::Route;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
@@ -15,32 +16,22 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
     let navigator = use_navigator().unwrap();
     let video_index = props.choreo_number - 1;
     let video_index = video_index; // Clone for closure
-    let div_ref = use_focus_div(); // Hook sets focus on the div when the component mounts.
+
       
       // Get all data for this choreography
     let choreo_data = get_choreography_data(props.choreo_number);
 
-    let event_key = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
+    let event_key = Callback::from(move |event: KeyboardEvent|{ 
+        match event.key().as_str() {
         "q" => navigator.push(&Route::IntroScreen1),
         "r" => navigator.push_with_state(&Route::MainMenu, video_index),
         "e" => navigator.push_with_state(&Route::ChoreoVideo, video_index),
-        "w" => {
-                // Scroll up by 50px when "W" is pressed
-                if let Some(div) = div_ref.clone().cast::<web_sys::Element>() {
-                    div.scroll_with_x_and_y(0.0, -50.0);
-                }
-            },
-            "s" => {
-                // Scroll down by 50px when "S" is pressed
-                if let Some(div) = div_ref.clone().cast::<web_sys::HtmlElement>() {
-                    div.scroll_with_x_and_y(0.0, 50.0);
-                }
-            },
         _ => (),
+        }
     });
 
     html! {
-        <div ref={div_ref} onkeydown={event_key} tabindex="1" class="about-choreo-container">
+        <ScrollableDiv onkeydown={event_key} tabindex="1" class="about-choreo-container">
             // Title section
             <h1 class="arcadefont">{ &choreo_data.title }</h1>
             
@@ -63,6 +54,8 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
                         }
                     }).collect::<Html>()
                 }
-            </div>
+        </ScrollableDiv>
     }
 }
+
+
