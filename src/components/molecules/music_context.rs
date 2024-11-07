@@ -1,0 +1,63 @@
+// src/components/music_context.rs
+use yew::prelude::*;
+use std::rc::Rc;
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct MusicContext {
+    pub audio_ref: NodeRef,
+}
+
+pub enum MusicContextAction {
+    StartMusic,
+    StopMusic,
+}
+
+#[derive(Properties, PartialEq)]
+pub struct MusicContextProviderProps {
+    #[prop_or_default]
+    pub children: Children,
+}
+
+#[derive(Clone, PartialEq)]
+pub struct MusicContextProvider {
+    music_context: MusicContext,
+}
+
+impl Component for MusicContextProvider {
+    type Message = MusicContextAction;
+    type Properties = MusicContextProviderProps;
+
+    fn create(_ctx: &Context<Self>) -> Self {
+        let music_context = MusicContext {
+            audio_ref: NodeRef::default(),
+        };
+        Self { music_context }
+    }
+
+    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
+        if let Some(audio) = self.music_context.audio_ref.cast::<web_sys::HtmlAudioElement>() {
+            match msg {
+                MusicContextAction::StartMusic => {
+                    let _ = audio.play().unwrap();
+                }
+                MusicContextAction::StopMusic => {
+                    let _ = audio.pause();
+                }
+            }
+        }
+        true
+    }
+
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        html! {
+            <ContextProvider<MusicContext> context={self.music_context.clone()}>
+                <audio 
+                    ref={self.music_context.audio_ref.clone()} 
+                    src="/static/8bit-menusong-short-ed.aif" 
+                    loop=true 
+                />
+                { for ctx.props().children.iter() }
+            </ContextProvider<MusicContext>>
+        }
+    }
+}
