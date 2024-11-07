@@ -1,5 +1,6 @@
 use crate::components::molecules::video_list::VideoType;
-
+use web_sys::HtmlElement;
+use yew::NodeRef;
 use yew::prelude::*;
 
 // Handle keydown events to switch demo videos in the main menu
@@ -9,7 +10,6 @@ pub fn get_toggle_key(
 ) -> Callback<KeyboardEvent> {
     let videos = v.clone();
     let current_video_index = video_index;
-    //let current_video_index = use_state(|| 0);
 
     Callback::from(move |event: KeyboardEvent| {
         if event.key() == "w" || event.key() == "s" {

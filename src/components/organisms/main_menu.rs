@@ -22,7 +22,7 @@ pub fn main_menu() -> Html {
 
     let current_video_index: UseStateHandle<usize> = use_state(|| current_video_index);
     let navigator = use_navigator();
-    let div_ref = use_focus_div(); // Hook sets focus on the div when the component mounts.
+    let div_ref = use_focus_div(); // Hook sets focus on the div (in this case demo video) when the component mounts.
 
     pub fn navigate_to_about(index: usize, navigator: Option<Navigator>) -> usize {
         if let Some(navigator) = navigator {
