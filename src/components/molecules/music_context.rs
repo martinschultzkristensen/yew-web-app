@@ -8,13 +8,11 @@ pub struct MusicContext {
     pub audio_ref: NodeRef,
     pub start_music: Callback<()>,
     pub stop_music: Callback<()>,
-    pub reset_music: Callback<()>,
 }
 
 pub enum MusicContextAction {
     StartMusic,
     StopMusic,
-    ResetMusic,
 } 
 
 #[derive(Properties, PartialEq)]
@@ -38,14 +36,12 @@ impl Component for MusicContextProvider {
         let start_music = Callback::from(move |_| link.send_message(MusicContextAction::StartMusic));
         let link = ctx.link().clone();
         let stop_music = Callback::from(move |_| link.send_message(MusicContextAction::StopMusic));
-        let link = ctx.link().clone();
-        let reset_music = Callback::from(move |_| link.send_message(MusicContextAction::ResetMusic));
+
 
         let music_context = MusicContext {
             audio_ref: NodeRef::default(),
             start_music,
             stop_music,
-            reset_music,
         };
 
         Self { music_context }
@@ -58,10 +54,6 @@ impl Component for MusicContextProvider {
                     let _ = audio.play().unwrap();
                 }
                 MusicContextAction::StopMusic => {
-                    let _ = audio.pause();
-                    audio.set_current_time(0.0);
-                }
-                MusicContextAction::ResetMusic => {
                     let _ = audio.pause();
                     audio.set_current_time(0.0);
             }}
