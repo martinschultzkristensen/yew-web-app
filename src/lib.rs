@@ -21,8 +21,6 @@ pub enum Route {
     AboutChoreo { number: usize },
     #[at("/main-menu")]
     MainMenu,
-    #[at("/intro-screen")]
-    IntroScreen2,
     #[at("/")]
     IntroScreen1,
     #[at("/choreo-video")]
@@ -43,13 +41,13 @@ pub fn app() -> Html {
 }
 
 fn switch(routes: Route) -> Html {
-    match routes {
+    let vnode = match routes {
         Route::AboutChoreo { number } => html! {
             <AboutChoreo choreo_number={number} />},
         Route::MainMenu => html! { <MainMenu /> },
         Route::IntroScreen1 => html! { <IntroScreen/> },
-        Route::IntroScreen2 => html! { <IntroScreen /> },
         Route::ChoreoVideo => html! { < ChoreoVideo/> },
         Route::LoadScreenVideo => html! { < LoadScreenVideo/> },
-    }
+    };
+    vnode
 }
