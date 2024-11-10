@@ -19,29 +19,16 @@ use crate::components::molecules::music_context::*;
 
 #[function_component(MainMenu)]
 pub fn main_menu() -> Html {
-    let ctx = use_context::<MusicContextProvider>().expect("No music context provider");
-    
-        // Start music when the component mounts and stop it when the component unmounts
-    use_effect_with(
-        (), // Empty dependency list
-        move |_| {
-            // Send the start music action to the context via the link of the MusicContextProvider
-            ctx.link().send_message(MusicContextAction::StartMusic);
+    let ctx = use_context::<MusicContext>().expect("No music context provider");
 
-            // Cleanup: stop music when the component unmounts
-            || {
-                ctx.link().send_message(MusicContextAction::StopMusic);
+        use_effect_with((), {
+            let start_music = ctx.start_music.clone();
+            move |_| {
+                // Use the start_music callback from the context directly
+                start_music.emit(());
+                || ()
             }
-        },
-    );
-    
-    // let music = use_context::<MusicContext>().unwrap();
-    
-    // let music = music.clone();
-    //     use_effect(move || {
-    //         music.start_music.emit(());
-    //         || () // Return a cleanup function if needed (in this case, nothing to clean up)
-    //     });
+        });
     
 
     let demo_videos = get_demo_videos();
@@ -114,7 +101,6 @@ pub fn main_menu() -> Html {
             <div ref={div_ref} onkeydown={handle_keydown_toggle} tabindex="0">
                 <DanceOMaticLogo class="top-right-logo"/>
                 <BtnExplainerGraphics />
-                // <object type="image/svg+xml" data="static/pointFinger.svg" class="point-finger"></object>
                 <VideosList videos={demo_videos} current_index={*current_video_index} on_ended={Some(handle_video_ended)} video_class="smallscreenvideo"/> 
             </div>
         </div>
