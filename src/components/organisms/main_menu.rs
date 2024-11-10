@@ -11,8 +11,8 @@ use crate::components::atoms::use_focus_div::use_focus_div;
 use crate::components::atoms::dance_o_matic_logo::DanceOMaticLogo;
 use crate::MusicContextProvider;
 use crate::components::molecules::btn_explainer_graphics::BtnExplainerGraphics;
-use crate::components::molecules::music_context::MusicContextAction;
-use crate::components::molecules::music_context::MusicContext;
+use crate::components::molecules::music_context::*;
+
 
 
 
