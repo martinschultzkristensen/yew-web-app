@@ -9,7 +9,6 @@ use yew::prelude::*;
 use yew_router::prelude::{use_navigator, Navigator};
 use crate::components::atoms::use_focus_div::use_focus_div;
 use crate::components::atoms::dance_o_matic_logo::DanceOMaticLogo;
-use crate::MusicContextProvider;
 use crate::components::molecules::btn_explainer_graphics::BtnExplainerGraphics;
 use crate::components::molecules::music_context::*;
 
@@ -52,9 +51,9 @@ pub fn main_menu() -> Html {
     index
 }
 
-    pub fn execute_showdown_video(index: usize, navigator: Option<Navigator>, reset_music: &Callback<()>) -> usize {
+    pub fn execute_showdown_video(index: usize, navigator: Option<Navigator>, stop_music: &Callback<()>) -> usize {
         if let Some(navigator) = navigator {
-            reset_music.emit(());
+            stop_music.emit(());
             match index {
                 0 => navigator.push_with_state(&Route::ChoreoVideo, 0usize),
                 1 => navigator.push_with_state(&Route::ChoreoVideo, 1usize),
@@ -79,14 +78,15 @@ pub fn main_menu() -> Html {
                 web_sys::HtmlAudioElement::new_with_src("static/buttonClick.mp3").unwrap();
             let _ = soundeffect.play();
         } else if event.key() == "e" {
-            execute_showdown_video(*current_video_index_clone, navigator.clone(), &ctx.reset_music);
+            execute_showdown_video(*current_video_index_clone, navigator.clone(), &ctx.stop_music);
         }
     });
-
+    let reset_music = ctx.reset_music.clone();
     let navigator = use_navigator().unwrap(); //<-- #2 navigator. Is it enough with one? Test!
     let restart_app = Callback::from(move |event: KeyboardEvent| {
         if event.key() == "q" {
             navigator.push(&Route::IntroScreen1);
+            reset_music.emit(());
         }
     });
     let navigator = use_navigator().unwrap(); //<-- #1 navigator. Is it enough with one? Test!

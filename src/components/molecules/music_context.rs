@@ -59,6 +59,7 @@ impl Component for MusicContextProvider {
                 }
                 MusicContextAction::StopMusic => {
                     let _ = audio.pause();
+                    audio.set_current_time(0.0);
                 }
                 MusicContextAction::ResetMusic => {
                     let _ = audio.pause();
