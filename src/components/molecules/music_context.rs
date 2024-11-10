@@ -1,5 +1,6 @@
 // src/components/music_context.rs
 use yew::prelude::*;
+use web_sys::HtmlAudioElement;
 
 
 #[derive(Clone, Debug, PartialEq)]
@@ -45,7 +46,7 @@ impl Component for MusicContextProvider {
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
-        if let Some(audio) = self.music_context.audio_ref.cast::<web_sys::HtmlAudioElement>() {
+        if let Some(audio) = self.music_context.audio_ref.cast::<HtmlAudioElement>() {
             match msg {
                 MusicContextAction::StartMusic => {
                     let _ = audio.play().unwrap();
