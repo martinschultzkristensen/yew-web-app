@@ -68,7 +68,7 @@ pub fn main_menu() -> Html {
     }
 
     let handle_keydown_toggle = get_toggle_key(&demo_videos, current_video_index.clone());
-
+    let stop_music = ctx.stop_music.clone();
     let current_video_index_clone = current_video_index.clone();
     let press_r_for_about = Callback::from(move |event: KeyboardEvent| {
         if event.key() == "r" {
@@ -81,12 +81,11 @@ pub fn main_menu() -> Html {
             execute_showdown_video(*current_video_index_clone, navigator.clone(), &ctx.stop_music);
         }
     });
-    let reset_music = ctx.reset_music.clone();
     let navigator = use_navigator().unwrap(); //<-- #2 navigator. Is it enough with one? Test!
     let restart_app = Callback::from(move |event: KeyboardEvent| {
         if event.key() == "q" {
             navigator.push(&Route::IntroScreen1);
-            reset_music.emit(());
+            stop_music.emit(());
         }
     });
     let navigator = use_navigator().unwrap(); //<-- #1 navigator. Is it enough with one? Test!
