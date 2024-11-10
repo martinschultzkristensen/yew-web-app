@@ -75,10 +75,13 @@ pub fn main_menu() -> Html {
             navigate_to_about(*current_video_index_clone, navigator.clone());
 
             let soundeffect =
-                web_sys::HtmlAudioElement::new_with_src("static/buttonClick.mp3").unwrap();
+                web_sys::HtmlAudioElement::new_with_src("/static/uiToAboutChoreo.mp3").unwrap();
             let _ = soundeffect.play();
         } else if event.key() == "e" {
             execute_showdown_video(*current_video_index_clone, navigator.clone(), &ctx.stop_music);
+            let soundeffect =
+                web_sys::HtmlAudioElement::new_with_src("/static/buttonSelect.mp3").unwrap();
+            let _ = soundeffect.play();
         }
     });
     let navigator = use_navigator().unwrap(); //<-- #2 navigator. Is it enough with one? Test!
