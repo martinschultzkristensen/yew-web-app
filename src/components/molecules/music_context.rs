@@ -1,16 +1,18 @@
 // src/components/music_context.rs
 use yew::prelude::*;
-use std::rc::Rc;
+
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct MusicContext {
     pub audio_ref: NodeRef,
+    pub start_music: Callback<()>,
+    pub stop_music: Callback<()>,
 }
 
 pub enum MusicContextAction {
     StartMusic,
     StopMusic,
-}
+} 
 
 #[derive(Properties, PartialEq)]
 pub struct MusicContextProviderProps {
@@ -24,13 +26,21 @@ pub struct MusicContextProvider {
 }
 
 impl Component for MusicContextProvider {
-    type Message = MusicContextAction;
+    type Message = MusicContextAction; 
     type Properties = MusicContextProviderProps;
 
-    fn create(_ctx: &Context<Self>) -> Self {
+    fn create(ctx: &Context<Self>) -> Self {
+        let link = ctx.link().clone();
+        let start_music = Callback::from(move |_| link.send_message(MusicContextAction::StartMusic));
+        let link = ctx.link().clone();
+        let stop_music = Callback::from(move |_| link.send_message(MusicContextAction::StopMusic));
+
         let music_context = MusicContext {
             audio_ref: NodeRef::default(),
+            start_music,
+            stop_music,
         };
+
         Self { music_context }
     }
 
