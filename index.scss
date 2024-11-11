@@ -271,13 +271,6 @@ body {
   height: 0px;
 }
 
-// posible delete!
-// .about-choreo-container::-webkit-scrollbar-thumb {
-//   background: transparent;  /* Ensures thumb is invisible */
-// }
-// .about-choreo-container::-webkit-scrollbar-track {
-//   background: transparent;  /* Ensures the track is invisible */
-// }
 
 .info-section-container {
   display: flex;
@@ -289,6 +282,7 @@ body {
   // background-color: #e82827;
   padding: 1rem; /* Optional padding for inner spacing */
   border-radius: 8px;
+  z-index: -1;
 }
 
 .info-section-container img {
@@ -303,17 +297,16 @@ body {
   flex: 1;
 }
 
-//dancer-card section for the styling of a progress bar
-
-
 .name-and-stats-container {
   display: flex;
   flex-direction: column;
   align-items: stretch;
   gap: 0.75rem;
   flex-grow: 1;
+  // background-color: yellow;
 }
 
+//section for the styling progress bar
 .stat-container {
   display: flex;
   align-items: center;
@@ -322,16 +315,16 @@ body {
 }
 
 .stat-label {
-  font-size: 2.5rem;
+  font-size: 1rem; //<--size of "strength" & "flexibility"
+  width: 11rem;
 }
 
-.stat-bar-background {
+.stat-bar-border {
   flex-grow: 1;
   height: 20px;
   border-color: #EB66A2;
   border-width: 2px; 
   border-style: solid;
-  
   border-radius: 4px;
   overflow: hidden;
 }
@@ -339,8 +332,14 @@ body {
 .stat-bar-fill {
   height: 100%;
   background-image: linear-gradient(to right, #EB66A2, #FC7800, #FCE837);
-  transition: width 0.3s ease;
+  transition: width;
+  animation: fill-bar 1.3s ease;
 }
+@keyframes fill-bar {
+  0% { width: 0%; }
+  100% {width: var(--stat-percentage); }
+}
+
 
 .stat-value {
   min-width: 24px;

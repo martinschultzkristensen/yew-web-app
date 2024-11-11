@@ -47,14 +47,13 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
         <ScrollableDiv onkeydown={event_key} tabindex="1" class="about-choreo-container">
             // Title section
             <div class="arcadefont">
-            <h2>{ &choreo_data.title }</h2> 
-            // Main choreography image
-            <div class="info-section-container">
-                <img src={choreo_data.choreo_image} alt={format!("Choreography {}", props.choreo_number)} />
-                // Description section
-            <p class="description">{ &choreo_data.description }</p>
-            </div>
-            
+                <h2>{ &choreo_data.title }</h2> 
+                // Main choreography image
+                <div class="info-section-container">
+                    <img src={choreo_data.choreo_image} alt={format!("Choreography {}", props.choreo_number)} />
+                    // Description section
+                    <p class="description">{ &choreo_data.description }</p>
+                </div>
             // Dancers section
                 <h2>{"Dancers"}</h2>
                 {
