@@ -91,8 +91,8 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                 </div>
                 <div class="right-column">
                 <div class="video-info arcadefont">
-                    <p>{format!("{}", &demo.title)}</p>
-                    <p>{"Duration: "}{&demo.duration}{" seconds"}</p>
+                    <h4>{format!("{}", &demo.title)}</h4>
+                    <h4>{"Duration: "}{&demo.duration}{" seconds"}</h4>
                 </div>
             </div>
             </div>

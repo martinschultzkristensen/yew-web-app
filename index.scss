@@ -10,18 +10,26 @@
 $shade-0: #fff !default;
 $shade-1: #d7dcdf !default;
 $shade-10: #2c3e50 !default;
-$teal: #1abc9c !default;
+$teal: #FCE837 !default;
+
+// Mixin for gradient text
+@mixin gradient-text {
+  background-image: linear-gradient(to bottom, $shade-1, $teal, #FC7800, );
+  -webkit-background-clip: text;
+  color: transparent;
+}
 
 html,
 body {
   margin: 0;
   padding: 0;
   background-color: rgb(24 24 27);
-  color: whitesmoke;
-  font-family: "Roboto", sans-serif;
+  font-family: "PressStart2P-vaV7";
   height: 100%;
   overflow: hidden;
 }
+
+h1, h2, h3, h4, h5, h6 {@include gradient-text;}
 
 .page {
   min-height: 100vh;
@@ -34,6 +42,12 @@ body {
   font-feature-settings: normal;
   margin: 0;
   line-height: inherit;
+}
+
+.arcadefont {
+  font-family: "PressStart2P-vaV7", sans-serif;
+  font-size: 24px;
+  color: $teal;
 }
 
 .fullscreenvideo {
@@ -91,11 +105,7 @@ body {
   text-align: left; // Centers the text within the video-info div
 }
 
-.arcadefont {
-  font-family: "PressStart2P-vaV7", sans-serif;
-  font-size: 24px;
-  color: $teal;
-}
+
 
 .video-info p {
   margin: 1 0;
@@ -282,7 +292,9 @@ body {
   // background-color: #e82827;
   padding: 1rem; /* Optional padding for inner spacing */
   border-radius: 8px;
-  z-index: -1;
+  border-color: #EB66A2;
+  border-width: 2px; 
+  border-style: solid;
 }
 
 .info-section-container img {
