@@ -271,13 +271,13 @@ body {
   height: 0px;
 }
 
-.about-choreo-container::-webkit-scrollbar-thumb {
-  background: transparent;  /* Ensures thumb is invisible */
-}
-
-.about-choreo-container::-webkit-scrollbar-track {
-  background: transparent;  /* Ensures the track is invisible */
-}
+// posible delete!
+// .about-choreo-container::-webkit-scrollbar-thumb {
+//   background: transparent;  /* Ensures thumb is invisible */
+// }
+// .about-choreo-container::-webkit-scrollbar-track {
+//   background: transparent;  /* Ensures the track is invisible */
+// }
 
 .info-section-container {
   display: flex;
