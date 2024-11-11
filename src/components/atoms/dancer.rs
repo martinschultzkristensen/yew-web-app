@@ -31,12 +31,12 @@ fn stat_bar(props: &StatBarProps) -> Html {
     let percentage: u8 = props.value * 10;
     
     html! {
-        <div class="stat-container">
+        <div class="stat-container" style={format!("--stat-percentage: {}%", percentage)}>
             <span class="stat-label">{&props.label}</span>
-            <div class="stat-bar-background">
+            <div class="stat-bar-border">
                 <div class="stat-bar-fill" style={format!("width: {}%", percentage)}></div>
             </div>
-            <span class="stat-value">{props.value}</span>
+            // <span class="stat-value">{props.value}</span>
         </div>
     }
 }
@@ -57,8 +57,8 @@ pub fn dancer_card(props: &DancerCardProps) -> Html {
             <img src={props.image.clone()} alt={format!("Image of {}", props.name)} />
             <div class="name-and-stats-container">
             <p>{&props.name}</p>
-                <StatBar value={props.strength} label="💪" />
-                <StatBar value={props.flexibility} label="🤸" />
+                <StatBar value={props.strength} label="strength" />
+                <StatBar value={props.flexibility} label="flexibility" />
             </div>
         </div>
     }
