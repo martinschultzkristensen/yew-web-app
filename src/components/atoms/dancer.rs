@@ -55,10 +55,10 @@ pub fn dancer_card(props: &DancerCardProps) -> Html {
     html! {
         <div class="info-section-container">
             <img src={props.image.clone()} alt={format!("Image of {}", props.name)} />
-            <h3>{&props.name}</h3>
-            <div class="stats-container">
-                <StatBar value={props.strength} label="Strength" />
-                <StatBar value={props.flexibility} label="Flexibility" />
+            <div class="name-and-stats-container">
+            <p>{&props.name}</p>
+                <StatBar value={props.strength} label="💪" />
+                <StatBar value={props.flexibility} label="🤸" />
             </div>
         </div>
     }
