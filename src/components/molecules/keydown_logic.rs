@@ -10,9 +10,10 @@ pub fn get_toggle_key(
 ) -> Callback<KeyboardEvent> {
     let videos = v.clone();
     let current_video_index = video_index;
-
+    let audio = web_sys::HtmlAudioElement::new_with_src("/static/button-124476.mp3").unwrap();
     Callback::from(move |event: KeyboardEvent| {
         if event.key() == "w" || event.key() == "s" {
+            let _ = audio.play();
             let current_index = current_video_index.clone();
             let new_index = match event.key().as_str() {
                 "w" => {
@@ -35,9 +36,7 @@ pub fn get_toggle_key(
             };
             //callback.emit(new_index);
             current_index.set(new_index);
-            let audio =
-                web_sys::HtmlAudioElement::new_with_src("static/button-124476.mp3").unwrap();
-            let _ = audio.play();
+            
         }
     })
 }
