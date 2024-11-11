@@ -91,6 +91,8 @@ pub fn main_menu() -> Html {
             stop_music.emit(());
         }
     });
+
+    ////there's no need for atribute handle_video_ended, since it loops. Changes must be made in src/components/molecules/video_list.rs before delete!
     let navigator = use_navigator().unwrap(); //<-- #1 navigator. Is it enough with one? Test!
     let handle_video_ended = {
         let navigator = navigator.clone();
