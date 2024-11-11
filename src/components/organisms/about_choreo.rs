@@ -1,4 +1,5 @@
 use crate::components::atoms::use_focus_div::use_focus_div;
+use crate::components::atoms::dancer::DancerCard;
 use crate::components::data::choreography_data::get_choreography_data;
 use crate::components::molecules::scollable_div::ScrollableDiv;
 use crate::Route;
@@ -47,10 +48,12 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
                 {
                     choreo_data.dancers.iter().map(|dancer| {
                         html! {
-                            <div class="info-section-container">
-                                <img src={dancer.image.clone()} alt="Dancer" />
-                                <p class="arcadefont">{dancer.name.clone()}</p>
-                            </div>
+                            <DancerCard
+                            image={dancer.image.clone()}
+                            name={dancer.name.clone()}
+                            strength={dancer.strength}
+                            flexibility={dancer.flexibility}
+                        />
                         }
                     }).collect::<Html>()
                 }
