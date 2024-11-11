@@ -1,3 +1,4 @@
+//src/components/atoms/use_focus_div.rs
 // This code sets focus on the div when the component mounts. This way the selected component is active and bind key can be pressed immediatly.
 
 use yew::prelude::*;

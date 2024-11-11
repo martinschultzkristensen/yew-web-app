@@ -295,6 +295,12 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
   border-color: #EB66A2;
   border-width: 2px; 
   border-style: solid;
+
+  &.focused {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(235, 102, 162, 0.3);
+    border-color: #FC7800;
+}
 }
 
 .info-section-container img {
