@@ -1,0 +1,133 @@
+//green and yellow button (btn) + finger animation grafics... button function explainer grafics
+
+// .btn-explainer-container {
+//   position: relative;
+//   width: 100%;  /* Can be adjusted based on needs */
+//   height: 100vh; /* Or any specific height */
+//   min-height: 300px; /* Ensures minimum space for animations */
+//   background-color: aliceblue;
+// }
+
+/* Button styling */
+.green-btn {
+  position: absolute;
+  bottom: 3%;
+  right: 30%;
+  width: clamp(40px, 7%, 100px); /* Responsive with min/max bounds */
+  height: auto;
+  animation: pressDown 1.5s infinite ease-in-out;
+  z-index: 1;
+}
+
+.green-btn-animate {
+  animation: btn_press_down 0.2s ease-in-out 2s;
+}
+
+.yellow-btn {
+  position: absolute;
+  bottom: 8%;
+  right: 20%;
+  width: clamp(40px, 7%, 100px);
+  height: auto;
+  z-index: 1;
+}
+
+/* Finger styling */
+.point-finger {
+  position: absolute;
+  bottom: -6%;
+  right: 32.5%;
+  width: clamp(60px, 15%, 150px);
+  height: auto;
+  z-index: 2;
+  transform: translateY(clamp(85px, 17vh, 170px));
+}
+
+/* Text positioning */
+.txt_info_position {
+  position: absolute;
+  bottom: 21%;
+  right: 18%;
+  width: clamp(50px, 10%, 120px);
+  height: auto;
+  z-index: 0;
+}
+
+.txt_start_position {
+  position: absolute;
+  bottom: 14%;
+  right: 28%;
+  width: clamp(50px, 10%, 120px);
+  height: auto;
+  z-index: 0;
+}
+
+.point-finger-animate {
+  animation: 
+    // First sequence
+    pointFingerMove1 var(--finger-animation-duration) ease-in-out forwards,
+    pointFingerBounce1 var(--finger-bounce-duration) ease-in-out calc(var(--finger-animation-duration)),
+    // 1 second delay before second sequence (using a dummy animation)
+    pauseAnimation 1s calc(var(--finger-animation-duration) + var(--finger-bounce-duration)),
+    // Second sequence
+    pointFingerMove2 var(--finger-animation-duration) calc(var(--finger-animation-duration) + var(--finger-bounce-duration) + 1s) ease-in-out forwards,
+    pointFingerBounce2 var(--finger-bounce-duration) ease-in-out calc(var(--finger-animation-duration) * 2 + var(--finger-bounce-duration) + 1s);
+}
+/* Animations */
+@keyframes btn_press_down {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(clamp(6px, 1.3vh, 13px)); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes pointFingerMove1 {
+  0% { transform: translateY(clamp(85px, 17vh, 170px)); }
+  50% { transform: translateY(clamp(10px, 2vh, 20px)); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes pointFingerMove2 {
+  0% { transform: translateY(0); }
+  50% { transform: translate(clamp(67px, 13.5vw, 135px), clamp(-5px, -1vh, -10px)); }
+  100% { transform: translate(clamp(72px, 14.5vw, 145px), clamp(-20px, -4vh, -40px)); }
+}
+
+@keyframes pointFingerBounce1 {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(clamp(10px, 2vh, 20px)); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes pointFingerBounce2 {
+  0% { transform: translate(clamp(72px, 14.5vw, 145px), clamp(-20px, -4vh, -40px)); }
+  50% { transform: translate(clamp(72px, 14.5vw, 145px), clamp(-10px, -2vh, -20px)); }
+  100% { transform: translate(clamp(72px, 14.5vw, 145px), clamp(-20px, -4vh, -40px)); }
+}
+
+/* Text animations remain the same as they use scale */
+.txt_start {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.txt_start-visible {
+  opacity: 1;
+  animation: txt_start 0.2s alternate ease-out forwards;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@keyframes txt_start {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
