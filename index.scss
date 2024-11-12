@@ -36,9 +36,6 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
   min-width: 100vw;
   line-height: 1.5;
   tab-size: 4;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-feature-settings: normal;
   margin: 0;
   line-height: inherit;
@@ -125,144 +122,10 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
   height: auto; /* Maintain aspect ratio */
   transform: (50%, 50%);
 }
-
 // end of danceOmatic logo animation and class
 
-.green-btn {
-  position: absolute;
-  bottom: 5%;
-  right: 30%;
-  width: 7%; 
-  height: auto; 
-  animation: pressDown 1.5s infinite ease-in-out;
-  z-index: 1;
-}
 
-.green-btn-animate {
-  animation: btn_press_down 0.2s ease-in-out 2s;
-}
-
-@keyframes btn_press_down {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-      transform: translateY(13px);
-  }
-  100% {
-      transform: translateY(0);
-  }
-}
-
-
-.yellow-btn {
-  position: absolute;
-  bottom: 10%;
-  right: 20%;
-  width: 7%; /* Adjust to the size you want */
-  height: auto; /* Maintain aspect ratio */
-  z-index: 1;
-}
-
-.point-finger {
-  position: absolute;
-  bottom: -14%;
-  right: 32.5%;
-  width: 15%; /* Adjust to the size you want */
-  height: auto;
-  z-index: 2;
-  transform: translateY(170px);
-}
-
-.point-finger-animate {
-  animation: 
-    // First sequence
-    pointFingerMove1 var(--finger-animation-duration) ease-in-out forwards,
-    pointFingerBounce1 var(--finger-bounce-duration) ease-in-out calc(var(--finger-animation-duration)),
-    // 1 second delay before second sequence (using a dummy animation)
-    pauseAnimation 1s calc(var(--finger-animation-duration) + var(--finger-bounce-duration)),
-    // Second sequence
-    pointFingerMove2 var(--finger-animation-duration) calc(var(--finger-animation-duration) + var(--finger-bounce-duration) + 1s) ease-in-out forwards,
-    pointFingerBounce2 var(--finger-bounce-duration) ease-in-out calc(var(--finger-animation-duration) * 2 + var(--finger-bounce-duration) + 1s);
-}
-
-// First move animation
-@keyframes pointFingerMove1 {
-  0% { transform: translateY(170px); }
-  50% { transform: translateY(20px); }
-  100% { transform: translateY(0); }
-}
-
-// Second move animation (starts from where the first one ended)
-@keyframes pointFingerMove2 {
-  0% { transform: translateY(0); }
-  50% { transform: translate(135px, -10px); }
-  100% { transform: translate(145px, -40px); }
-}
-
-// Bounce animation remains the same
-@keyframes pointFingerBounce1 {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(20px); }
-  100% { transform: translateY(0); }
-}
-
-@keyframes pointFingerBounce2 {
-  0% { transform: translate(145px, -40px); }
-  50% { transform: translate(145px, -20px); }
-  100% { transform: translate(145px, -40px); }
-}
-
-// Dummy animation for creating a pause
-@keyframes pauseAnimation {
-  0%, 100% { transform: translateY(0); }
-}
-// styling for "start" animation at .green-btn press
-
-.txt_info_position{
-  position: absolute;
-  bottom: 21%;
-  right: 18%;
-  width: 10%;
-  height: auto;
-  z-index: 0;
-}
-
-.txt_start_position{
-  position: absolute;
-  bottom: 14%;
-  right: 28%;
-  width: 10%;
-  height: auto;
-  z-index: 0;
-}
-
-.txt_start {
-  opacity: 0; // Start hidden
-  transition: opacity 0.2s;
-}
-
-.txt_start-visible {
-  opacity: 1;
-  animation: txt_start 0.2s alternate ease-out forwards;
-  transform-origin: center;
-  transform-box: fill-box;
-}
-
-@keyframes txt_start {
-  0% {
-      transform: scale(0);
-      opacity: 0;
-  }
-  50% {
-      transform: scale(1.5);
-      opacity: 1;
-  }
-  100% {
-      transform: scale(1);
-      opacity: 1;
-  }
-}
+@import "btn_explainer_graphics";
 
 //Styling for about_choreo pages
 .about-choreo-container {
@@ -296,11 +159,6 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
   border-width: 2px; 
   border-style: solid;
 
-  &.focused {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(235, 102, 162, 0.3);
-    border-color: #FC7800;
-}
 }
 
 .info-section-container img {
