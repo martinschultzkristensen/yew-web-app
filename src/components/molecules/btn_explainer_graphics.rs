@@ -126,7 +126,7 @@ pub fn btn_explainer_graphics() -> Html {
     html! {
     <>
     <style>{style}</style>
-       <div>//container is .page in index.scss
+       <div>//container is .page in index.scss OR .main_menu-container used in src/components/molecules/video_list.rs
         <object ref={green_btn_ref} type="image/svg+xml" data="static/greenBtn.svg" class="green-btn"></object>
             <object type="image/svg+xml" data="static/yellow_btn.svg" class="yellow-btn"></object>
             <object type="image/svg+xml" data="static/start.svg" class={start_class}></object>

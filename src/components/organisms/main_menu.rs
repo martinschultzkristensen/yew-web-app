@@ -102,11 +102,12 @@ pub fn main_menu() -> Html {
     };
 
     html! {
+        //styling of page mainly found in molecules::video_list
         <div onkeydown={restart_app} onkeydown={press_r_for_about} tabindex="0">
-            <div ref={div_ref} onkeydown={handle_keydown_toggle} tabindex="0">
+            <div ref={div_ref} onkeydown={handle_keydown_toggle} tabindex="0"> 
+                <VideosList videos={demo_videos} current_index={*current_video_index} on_ended={Some(handle_video_ended)} video_class="smallscreenvideo"/> 
                 <DanceOMaticLogo class="top-right-logo"/>
                 <BtnExplainerGraphics />
-                <VideosList videos={demo_videos} current_index={*current_video_index} on_ended={Some(handle_video_ended)} video_class="smallscreenvideo"/> 
             </div>
         </div>
     }
