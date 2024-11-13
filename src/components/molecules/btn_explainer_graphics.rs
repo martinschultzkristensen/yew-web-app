@@ -44,15 +44,15 @@ pub fn btn_explainer_graphics() -> Html {
     }
 
     let start_class = if *is_start_visible {
-        "txt_start_position txt_start txt_start-visible"
+        "txt_start_position txt_animation txt_animation-visible"
     } else {
-        "txt_start_position txt_start"
+        "txt_start_position txt_animation"
     };
 
     let info_class = if *is_info_visible {
-        "txt_info_position txt_start-visible"
+        "txt_info_position txt_animation-visible"
     } else {
-        "txt_info_position txt_start"
+        "txt_info_position txt_animation"
     };
 
     let point_finger_visible = use_state(|| false);
@@ -126,7 +126,7 @@ pub fn btn_explainer_graphics() -> Html {
     html! {
     <>
     <style>{style}</style>
-       <div class="btn-explainer-container"> //todo! implement this container, and make child container relative
+       <div>//container is .page in index.scss
         <object ref={green_btn_ref} type="image/svg+xml" data="static/greenBtn.svg" class="green-btn"></object>
             <object type="image/svg+xml" data="static/yellow_btn.svg" class="yellow-btn"></object>
             <object type="image/svg+xml" data="static/start.svg" class={start_class}></object>
