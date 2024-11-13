@@ -80,6 +80,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         VideoType::Demo(demo) => html! {
             <div class="main_menu-container">
                 <div class="video-wrapper">
+                    <object class="svg-arrow-in-main" type="image/svg+xml" data="static/arrow-up-circle.svg"></object>
                 <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>
                     <video
                         src={format!("{}", video.url)}
@@ -88,6 +89,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                         onended={onended_attr}
                         class={classes!(video_class.clone(), "smallscreenvideo")}
                     />
+                    <object class="svg-arrow-in-main" type="image/svg+xml" data="static/arrow-down-circle.svg"></object>
                 </div>
                 <div class="right-column">
                 <div class="video-info arcadefont">
@@ -106,28 +108,5 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                 class={classes!(video_class.clone(), "fullscreenvideo")}
             />
         },
-    }
-}
-
-//rest of code is not used. Soon check and delete!
-#[derive(Properties, PartialEq, Clone)]
-pub struct SingleVideoPlayerProps {
-    pub video: Video, // Using the Video struct here
-    pub on_ended: Callback<()>,
-}
-
-#[function_component(SingleVideoPlayer)]
-pub fn single_video_player(props: &SingleVideoPlayerProps) -> Html {
-    let SingleVideoPlayerProps { video, on_ended } = props.clone();
-
-    let video_ended_callback = Callback::from(move |_| {
-        // Call the on_ended callback when the video ends
-        on_ended.emit(());
-    });
-
-    html! {
-        <div>
-            <video src={format! ("{}", video.url)} autoplay=true onended={video_ended_callback}/>
-        </div>
     }
 }

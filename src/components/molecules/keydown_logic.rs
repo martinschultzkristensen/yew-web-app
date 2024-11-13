@@ -8,9 +8,11 @@ pub fn get_toggle_key(
     v: &Vec<VideoType>,
     video_index: UseStateHandle<usize>,
 ) -> Callback<KeyboardEvent> {
+    
     let videos = v.clone();
     let current_video_index = video_index;
     let audio = web_sys::HtmlAudioElement::new_with_src("/static/button-124476.mp3").unwrap();
+
     Callback::from(move |event: KeyboardEvent| {
         if event.key() == "w" || event.key() == "s" {
             let _ = audio.play();
