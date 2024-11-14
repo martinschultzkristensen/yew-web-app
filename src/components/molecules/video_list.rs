@@ -4,6 +4,7 @@ use yew::prelude::*;
 use yew_router::history::History;
 use yew_router::prelude::*;
 use crate::components::atoms::dance_o_matic_logo::DanceOMaticLogo;
+use crate::components::atoms::use_focus_div::*;
 
 
 #[derive(Clone, PartialEq)]
@@ -57,6 +58,7 @@ pub struct VideosListProps {
 
 #[function_component(VideosList)]
 pub fn videos_list(props: &VideosListProps) -> Html {
+    
     let VideosListProps {
         videos,
         current_index,
@@ -77,8 +79,9 @@ pub fn videos_list(props: &VideosListProps) -> Html {
     };
 
     match current_video {
+
         VideoType::Demo(demo) => html! {
-            <div class="main_menu-container">
+        <div class="main_menu-container">
                 <div class="video-wrapper">
                     <ArrowContainer class={classes!("svg-arrow-in-main")} show_top_arrow=true show_bottom_arrow=false is_interactive=true default_size=24 />
                 <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>

@@ -1,72 +1,6 @@
-//src/components/atoms/arrow_respond_ui.rs
-// use yew::prelude::*;
-
-// #[derive(Properties, PartialEq)]
-// pub struct ArrowProps {
-//     #[prop_or_default]
-//     pub class: Classes,
-//     #[prop_or(false)]
-//     pub is_up: bool,
-//     #[prop_or(32)]
-//     pub size: u32,
-// }
-
-// #[function_component(ArrowIcon)]
-// pub fn arrow(props: &ArrowProps) -> Html {
-//     let rotation = if props.is_up { "transform: rotate(180deg)" } else { "" };
-    
-//     html! {
-//         <svg 
-//             class={props.class.clone()}
-//             style={rotation}
-//             xmlns="http://www.w3.org/2000/svg" 
-//             width={props.size.to_string()} // Dynamically set width
-//             height={props.size.to_string()} // Dynamically set height
-//             viewBox="0 0 24 24" 
-//             fill="white" 
-//             stroke="white" 
-//             stroke-width="2" 
-//             stroke-linecap="round" 
-//             stroke-linejoin="round"
-//         >
-//             <line x1="12" y1="5" x2="12" y2="19"></line>
-//             <polyline points="19 12 12 19 5 12"></polyline>
-//         </svg>
-//     }
-// }
-
-// #[function_component(ArrowRespondUi)]
-// pub fn arrow_respond_ui() -> Html {
-//     // Explicitly annotate `arrow_size` as `UseStateHandle<u32>`
-//     let arrow_size: yew::UseStateHandle<u32> = use_state(|| 30); // Adjust initial size as needed
-
-//     // Create a callback for handling keyboard events
-//     let on_key_down = {
-//         let arrow_size = arrow_size.clone();
-//         Callback::from(move |event: KeyboardEvent| {
-//             match event.key().as_str() {
-//                 "w" => {
-//                     // Increase size on "w" press
-//                     arrow_size.set((*arrow_size + 5).min(100)); // Max size limit
-//                 }
-//                 "s" => {
-//                     // Decrease size on "s" press
-//                     arrow_size.set((*arrow_size - 5).max(10)); // Min size limit
-//                 }
-//                 _ => {}
-//             }
-//         })
-//     };
-
-//     html! {
-//         <div tabindex="1" onkeydown={on_key_down}>
-//             <ArrowIcon class={classes!("svg-arrow-in-about-top")} is_up={true} size={*arrow_size} />
-//             <ArrowIcon class={classes!("svg-arrow-in-about-bottom")} is_up={false} size={*arrow_size} />
-//         </div>
-//     }
-// }
-
 use yew::prelude::*;
+use crate::components::atoms::use_focus_div::*;
+use std::rc::Rc;
 
 #[derive(Properties, PartialEq)]
 pub struct ArrowIconProps {
@@ -119,32 +53,31 @@ pub struct ArrowContainerProps {
 
 #[function_component(ArrowContainer)]
 pub fn arrow_container(props: &ArrowContainerProps) -> Html {
+    
     let arrow_size = use_state(|| props.default_size);
+    let arrow_ref = use_focus_div();
+
 
     // Only handle keyboard events if `is_interactive` is true
-    let on_key_down = {
+    let handle_keydown = {
         let arrow_size = arrow_size.clone();
-        if props.is_interactive {
-            Callback::from(move |event: KeyboardEvent| {
-                match event.key().as_str() {
-                    "w" => {
-                        arrow_size.set((*arrow_size + 5).min(100));
-                    }
-                    "s" => {
-                        arrow_size.set((*arrow_size - 5).max(10));
-                    }
-                    _ => {}
+        Callback::from(move |event: KeyboardEvent| {
+            match event.key().as_str() {
+                "w" => {
+                    arrow_size.set((*arrow_size + 5).min(100));
                 }
-            })
-        } else {
-            Callback::noop()
-        }
+                "s" => {
+                    arrow_size.set((*arrow_size - 5).max(10));
+                }
+                _ => {}
+            }
+        })
     };
 
     html! {
         <div class={props.class.clone()}
             tabindex="1"
-            onkeydown={if props.is_interactive { Some(on_key_down) } else { None }}
+            onkeydown={if props.is_interactive { handle_keydown } else { None }}
         >
 
             // Conditionally render top arrow if `show_top_arrow` is true
