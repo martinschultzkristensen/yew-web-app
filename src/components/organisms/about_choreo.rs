@@ -1,6 +1,7 @@
 //src/components/organisms/about_choreo.rs
 // use crate::components::atoms::use_focus_div::use_focus_div;
 use crate::components::atoms::dancer::DancerCard;
+use crate::components::atoms::arrow_respnd_ui::*;
 use crate::components::data::choreography_data::get_choreography_data;
 use crate::components::molecules::scollable_div::ScrollableDiv;
 use crate::components::molecules::music_context::*;
@@ -45,6 +46,7 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
 
     html! {
         <ScrollableDiv onkeydown={event_key} tabindex="1" class="about-choreo-container">
+                    <ArrowIcon class={classes!("svg-arrow-in-about-top")} is_up={true} />
             // Title section
             <div class="arcadefont">
                 <h2>{ &choreo_data.title }</h2> 
@@ -67,8 +69,9 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
                         />
                         }
                     }).collect::<Html>()
-                }
+                    }
                 </div>
+                    <ArrowIcon class={classes!("svg-arrow-in-about-bottom")} is_up={false} />
         </ScrollableDiv>
     }
 }
