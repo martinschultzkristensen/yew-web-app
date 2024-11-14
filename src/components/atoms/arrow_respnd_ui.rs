@@ -145,7 +145,6 @@ pub fn arrow_container(props: &ArrowContainerProps) -> Html {
         <div class={props.class.clone()}
             tabindex="1"
             onkeydown={if props.is_interactive { Some(on_key_down) } else { None }}
-            style="display: flex; flex-direction: column; align-items: center;" // Stack arrows vertically
         >
 
             // Conditionally render top arrow if `show_top_arrow` is true
