@@ -77,10 +77,14 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
   width: 100%;
 }
 
-.svg-arrow-in-main {
-  text-align: center;
-  margin: 20px;
-  width: 40px;
+.video-wrapper > .svg-arrow-in-main {
+  align-items: inherit;
+  margin: 5% 0;
+  width: 100%;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
 }
 
 .smallscreenvideo {
@@ -142,6 +146,26 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
   overflow-x: hidden;
   overflow-y: auto;
 }
+
+
+.svg-arrow-in-about-top {
+  position: absolute;
+  left: 30em;
+  top: 1rem;
+  z-index: 2;
+  width: 2vw;
+  height: auto;
+}
+
+.svg-arrow-in-about-bottom {
+  position: absolute;
+  left: 30em;/* Centers it horizontally */
+  z-index: 2;
+  bottom: 2rem;
+  width: 2vw;
+  height: auto;
+}
+
 
 /* Webkit-specific style to hide scrollbar */
 .about-choreo-container::-webkit-scrollbar {

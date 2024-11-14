@@ -1,5 +1,5 @@
 use crate::Route;
-use gloo::utils::history;
+use crate::components::atoms::arrow_respnd_ui::*;
 use yew::prelude::*;
 use yew_router::history::History;
 use yew_router::prelude::*;
@@ -80,7 +80,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         VideoType::Demo(demo) => html! {
             <div class="main_menu-container">
                 <div class="video-wrapper">
-                    <object class="svg-arrow-in-main" type="image/svg+xml" data="static/arrow-up-circle.svg"></object>
+                    <ArrowIcon class={classes!("svg-arrow-in-main")} is_up={true} />
                 <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>
                     <video
                         src={format!("{}", video.url)}
@@ -89,7 +89,10 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                         onended={onended_attr}
                         class={classes!(video_class.clone(), "smallscreenvideo")}
                     />
-                    <object class="svg-arrow-in-main" type="image/svg+xml" data="static/arrow-down-circle.svg"></object>
+                    
+                    <ArrowIcon class={classes!("svg-arrow-in-main")} is_up={false} />
+
+                    // <object class="svg-arrow-in-main" type="image/svg+xml" data="static/arrow-down-circle.svg"></object>
                 </div>
                 <div class="right-column">
                 <div class="video-info arcadefont">
