@@ -83,7 +83,12 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         VideoType::Demo(demo) => html! {
         <div class="main_menu-container">
                 <div class="video-wrapper">
-                    <ArrowContainer class={classes!("svg-arrow-in-main")} show_top_arrow=true show_bottom_arrow=false is_interactive=true default_size=24 />
+                    <ArrowContainer 
+                        class={classes!("svg-arrow-in-main")} 
+                        show_top_arrow=true 
+                        show_bottom_arrow=false 
+                        is_interactive=true 
+                        />
                 <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>
                     <video
                         src={format!("{}", video.url)}

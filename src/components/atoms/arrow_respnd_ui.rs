@@ -45,7 +45,7 @@ pub struct ArrowContainerProps {
     pub show_top_arrow: bool,
     #[prop_or(true)]
     pub show_bottom_arrow: bool,
-    #[prop_or(24)]
+    #[prop_or_default]
     pub default_size: u32, // Default size for the arrows
     #[prop_or(false)]
     pub is_interactive: bool, // Whether arrow size should respond to keyboard input
@@ -57,27 +57,31 @@ pub fn arrow_container(props: &ArrowContainerProps) -> Html {
     let arrow_size = use_state(|| props.default_size);
     let arrow_ref = use_focus_div();
 
-
+    
     // Only handle keyboard events if `is_interactive` is true
-    let handle_keydown = {
+    let on_key_down = {
         let arrow_size = arrow_size.clone();
-        Callback::from(move |event: KeyboardEvent| {
-            match event.key().as_str() {
-                "w" => {
-                    arrow_size.set((*arrow_size + 5).min(100));
+        if props.is_interactive {
+            Callback::from(move |event: KeyboardEvent| {
+                match event.key().as_str() {
+                    "w" => {
+                        arrow_size.set((*arrow_size + 5).min(100));
+                    }
+                    "s" => {
+                        arrow_size.set((*arrow_size - 5).max(10));
+                    }
+                    _ => {}
                 }
-                "s" => {
-                    arrow_size.set((*arrow_size - 5).max(10));
-                }
-                _ => {}
-            }
-        })
+            })
+        } else {
+            Callback::noop()
+        }
     };
 
     html! {
         <div class={props.class.clone()}
             tabindex="1"
-            onkeydown={if props.is_interactive { handle_keydown } else { None }}
+            onkeydown={if props.is_interactive { Some(on_key_down) } else { None }}
         >
 
             // Conditionally render top arrow if `show_top_arrow` is true
