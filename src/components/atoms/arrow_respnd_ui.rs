@@ -8,16 +8,18 @@ pub struct ArrowProps {
     pub class: Classes,
     #[prop_or(false)]
     pub is_up: bool,
+    pub respond: bool,
 }
 
 #[function_component(ArrowIcon)]
 pub fn arrow(props: &ArrowProps) -> Html {
     let rotation = if props.is_up { "transform: rotate(180deg)" } else { "" };
+    let respond_style = if props.respond { "transform: scale(1.5);" } else { "" };
     
     html! {
         <svg 
             class={props.class.clone()}
-            style={rotation}
+            style={format!("{} {}", rotation, respond_style)}
             xmlns="http://www.w3.org/2000/svg" 
             width="24" 
             height="24" 

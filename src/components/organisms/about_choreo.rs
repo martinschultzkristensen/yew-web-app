@@ -46,7 +46,7 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
 
     html! {
         <ScrollableDiv onkeydown={event_key} tabindex="1" class="about-choreo-container">
-                    <ArrowIcon class={classes!("svg-arrow-in-about-top")} is_up={true} />
+                    <ArrowIcon class={classes!("svg-arrow-in-about-top")} is_up={true} respond={false}/>
             // Title section
             <div class="arcadefont">
                 <h2>{ &choreo_data.title }</h2> 
@@ -71,7 +71,7 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
                     }).collect::<Html>()
                     }
                 </div>
-                    <ArrowIcon class={classes!("svg-arrow-in-about-bottom")} is_up={false} />
+                    <ArrowIcon class={classes!("svg-arrow-in-about-bottom")} is_up={false} respond={false}/>
         </ScrollableDiv>
     }
 }
