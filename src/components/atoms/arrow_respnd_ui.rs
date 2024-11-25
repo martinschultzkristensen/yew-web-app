@@ -13,13 +13,18 @@ pub struct ArrowProps {
 
 #[function_component(ArrowIcon)]
 pub fn arrow(props: &ArrowProps) -> Html {
-    let rotation = if props.is_up { "transform: rotate(180deg)" } else { "" };
-    let respond_style = if props.respond { "transform: scale(1.5);" } else { "" };
+    // Determine the rotation transform
+    let rotation = if props.is_up { "rotate(180deg)" } else { "" };
+    // Determine the scale transform
+    let respond_style = if props.respond { "scale(1.5)" } else { "" };
     
+    // Combine both transforms into a single `transform` property
+    let combined_transform = format!("transform: {} {}", rotation, respond_style).trim().to_string();
+
     html! {
         <svg 
             class={props.class.clone()}
-            style={format!("{} {}", rotation, respond_style)}
+            style={combined_transform}
             xmlns="http://www.w3.org/2000/svg" 
             width="24" 
             height="24" 
@@ -45,7 +50,6 @@ pub fn arrow_down_icon() -> Html {
 #[function_component(ArrowDownIcon)]
 pub fn arrow_down_icon() -> Html {
     html! {
-        <object type="image/svg+xml" data="static/arrow-down-circle.svg"></object>
     }
 }
 

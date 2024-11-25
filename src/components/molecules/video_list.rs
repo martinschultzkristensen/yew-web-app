@@ -79,17 +79,27 @@ pub fn videos_list(props: &VideosListProps) -> Html {
     };
     // State to track the `respond` property
     let respond = use_state(|| false);
+    let is_up = use_state(|| true);
 
     // Clone `respond` state setter for use in the event handler
     let respond_clone = respond.clone();
-
+    let is_up_clone = is_up.clone();
     // Add a keydown event listener when the component mounts
     use_effect(
         move || {
             let respond = respond_clone.clone();
+            let is_up = is_up_clone.clone();
             let listener = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
-                if event.key() == "w" {
-                    respond.set(!*respond);
+                match event.key().as_str() {
+                    "w" => {
+                        is_up.set(true);
+                        respond.set(!*respond);
+                    },
+                    "s" => {
+                        is_up.set(false);
+                        respond.set(!*respond);
+                    },
+                    _ => (),
                 }
             }) as Box<dyn FnMut(_)>);
 
@@ -113,7 +123,6 @@ pub fn videos_list(props: &VideosListProps) -> Html {
             <div class="main_menu-container">
                 <div class="video-wrapper">
                     <ArrowIcon class={classes!("svg-arrow-in-main")} is_up={true} respond={*respond}/>
-                    <p>{format!("Respond state: {}", *respond)}</p>
                 <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>
                     <video
                         src={format!("{}", video.url)}
@@ -123,7 +132,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                         class={classes!(video_class.clone(), "smallscreenvideo")}
                     />
                     
-                    <ArrowIcon class={classes!("svg-arrow-in-main")} is_up={false} respond={false}/>
+                    <ArrowIcon class={classes!("svg-arrow-in-main")} is_up={false} respond={*respond}/>
 
                     // <object class="svg-arrow-in-main" type="image/svg+xml" data="static/arrow-down-circle.svg"></object>
                 </div>
