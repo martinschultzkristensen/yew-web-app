@@ -80,7 +80,8 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
 .video-wrapper > .svg-arrow-in-main {
   align-items: inherit;
   margin: 5% 0;
-  width: 100%;
+  max-width: 100%;
+  transition: transform 0.3s ease-in-out;
 }
 
 .rotate-180 {
