@@ -4,8 +4,7 @@ use yew::prelude::*;
 use yew_router::history::History;
 use yew_router::prelude::*;
 use crate::components::atoms::dance_o_matic_logo::DanceOMaticLogo;
-use wasm_bindgen::closure::Closure;
-use wasm_bindgen::JsCast;
+
 
 
 #[derive(Clone, PartialEq)]
@@ -77,52 +76,13 @@ pub fn videos_list(props: &VideosListProps) -> Html {
     } else {
         None
     };
-    // State to track the `respond` property
-    let respond = use_state(|| false);
-    let is_up = use_state(|| true);
-
-    // Clone `respond` state setter for use in the event handler
-    let respond_clone = respond.clone();
-    let is_up_clone = is_up.clone();
-    // Add a keydown event listener when the component mounts
-    use_effect(
-        move || {
-            let respond = respond_clone.clone();
-            let is_up = is_up_clone.clone();
-            let listener = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
-                match event.key().as_str() {
-                    "w" => {
-                        is_up.set(true);
-                        respond.set(!*respond);
-                    },
-                    "s" => {
-                        is_up.set(false);
-                        respond.set(!*respond);
-                    },
-                    _ => (),
-                }
-            }) as Box<dyn FnMut(_)>);
-
-            web_sys::window()
-                .unwrap()
-                .add_event_listener_with_callback("keydown", listener.as_ref().unchecked_ref())
-                .unwrap();
-
-            // Cleanup function to remove the event listener
-            move || {
-                web_sys::window()
-                    .unwrap()
-                    .remove_event_listener_with_callback("keydown", listener.as_ref().unchecked_ref())
-                    .unwrap();
-            }
-        }, // Dependencies (empty so this runs once on mount)
-    );
+   
 
     match current_video {
         VideoType::Demo(demo) => html! {
             <div class="main_menu-container">
                 <div class="video-wrapper">
-                    <ArrowIcon class={classes!("svg-arrow-in-main")} is_up={true} respond={*respond}/>
+                    <ArrowUpIcon/>
                 <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>
                     <video
                         src={format!("{}", video.url)}
@@ -132,7 +92,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                         class={classes!(video_class.clone(), "smallscreenvideo")}
                     />
                     
-                    <ArrowIcon class={classes!("svg-arrow-in-main")} is_up={false} respond={*respond}/>
+                    <ArrowDownIcon/>
 
                     // <object class="svg-arrow-in-main" type="image/svg+xml" data="static/arrow-down-circle.svg"></object>
                 </div>
