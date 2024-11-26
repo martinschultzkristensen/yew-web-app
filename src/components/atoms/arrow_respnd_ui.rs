@@ -33,7 +33,7 @@ pub fn arrow(props: &ArrowIconProps) -> Html {
             stroke-linejoin="round"
         >
             <line x1="12" y1="5" x2="12" y2="19"></line>
-            <polyline points="19 12 12 19 5 12"></polyline>
+            <polyline points="5 12 12 19 19 12"></polyline>
         </svg>
     }
 }
@@ -49,6 +49,57 @@ pub struct ArrowUpProps {
 
 #[function_component(ArrowUpIcon)]
 pub fn arrow_up_icon() -> Html {
+    let respond = use_state(|| false);
+    let rotation = use_state(|| "rotate(-90deg)".to_string());
+
+    let respond_clone = respond.clone();
+    let rotation_clone = rotation.clone();
+
+    use_effect(move || {
+        let respond = respond_clone.clone();
+        let rotation = rotation_clone.clone();
+
+        let listener = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
+            if event.key() == "w" {
+                respond.set(true);
+                rotation.set("rotate(-90deg)".to_string());
+                
+                let respond_reset = respond.clone();
+                let rotation_reset = rotation.clone();
+                
+                gloo::timers::callback::Timeout::new(300, move || {
+                    respond_reset.set(false); // Reset after bounce animation
+                    // Optionally, you can keep the rotation or reset it
+                    rotation_reset.set("rotate(180deg)".to_string());
+                })
+                .forget();
+            }
+        }) as Box<dyn FnMut(_)>);
+
+        web_sys::window()
+            .unwrap()
+            .add_event_listener_with_callback("keydown", listener.as_ref().unchecked_ref())
+            .unwrap();
+
+        move || {
+            web_sys::window()
+                .unwrap()
+                .remove_event_listener_with_callback("keydown", listener.as_ref().unchecked_ref())
+                .unwrap();
+        }
+    });
+
+    html! {
+        <ArrowIcon 
+            class={classes!("svg-arrow-in-main")} 
+            transform={(*rotation).clone()}
+            respond={*respond} 
+        />
+    }
+}
+
+#[function_component(ArrowDownIcon)]
+pub fn arrow_down_icon() -> Html {
 
     let respond = use_state(|| false);
 
@@ -58,7 +109,7 @@ pub fn arrow_up_icon() -> Html {
         let respond = respond_clone.clone();
 
         let listener = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
-            if event.key() == "w" {
+            if event.key() == "s" {
                 respond.set(true);
                 let respond_reset = respond.clone();
                 gloo::timers::callback::Timeout::new(300, move || {
@@ -82,45 +133,8 @@ pub fn arrow_up_icon() -> Html {
     });
 
     html! {
-        <ArrowIcon class={classes!("svg-arrow-in-main")} transform="transform: rotate(180deg);"
+        <ArrowIcon class={classes!("svg-arrow-in-main")}
         respond={*respond} />
-    }
-}
-
-#[function_component(ArrowDownIcon)]
-pub fn arrow_down_icon() -> Html {
-    let is_up = false;
-    let respond = use_state(|| false);
-
-    // Clone `respond` state setter for use in the event handler
-    let respond_clone = respond.clone();
-    let rotation = if is_up { "rotate(180deg)" } else { "" };
-    // Add a keydown event listener when the component mounts
-    use_effect(
-        move || {
-            let respond = respond_clone.clone();
-            let listener = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
-               if event.key() == "s" {
-                   respond.set(!*respond);
-               }
-            }) as Box<dyn FnMut(_)>);
-
-            web_sys::window()
-                .unwrap()
-                .add_event_listener_with_callback("keydown", listener.as_ref().unchecked_ref())
-                .unwrap();
-
-            // Cleanup function to remove the event listener
-            move || {
-                web_sys::window()
-                    .unwrap()
-                    .remove_event_listener_with_callback("keydown", listener.as_ref().unchecked_ref())
-                    .unwrap();
-            }
-        }, // Dependencies (empty so this runs once on mount)
-    );
-    html! {
-     <ArrowIcon transform={rotation.to_string()} respond={*respond} />
     }
 }
 
