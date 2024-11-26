@@ -38,44 +38,54 @@ pub fn arrow(props: &ArrowIconProps) -> Html {
     }
 }
 
+
+#[derive(Properties, PartialEq)]
+pub struct ArrowUpProps {
+    #[prop_or_default]
+    pub class: Classes,
+    #[prop_or_default]
+    pub respond: bool,
+}
+
 #[function_component(ArrowUpIcon)]
 pub fn arrow_up_icon() -> Html {
-     // State to track the `respond` property
-     let is_up = true;
-     let respond = use_state(|| false);
- 
-     // Clone `respond` state setter for use in the event handler
-     let respond_clone = respond.clone();
-     let rotation = if is_up { "rotate(180deg)" } else { "" };
-     //let combined_transform = format!("transform: {} {}", rotation, respond_style).trim().to_string();
-     // Add a keydown event listener when the component mounts
-     use_effect(
-         move || {
-             let respond = respond_clone.clone();
-             let listener = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
-                if event.key() == "w" {
-                    respond.set(!*respond);
-                }
-             }) as Box<dyn FnMut(_)>);
- 
-             web_sys::window()
-                 .unwrap()
-                 .add_event_listener_with_callback("keydown", listener.as_ref().unchecked_ref())
-                 .unwrap();
- 
-             // Cleanup function to remove the event listener
-             move || {
-                 web_sys::window()
-                     .unwrap()
-                     .remove_event_listener_with_callback("keydown", listener.as_ref().unchecked_ref())
-                     .unwrap();
-             }
-         }, // Dependencies (empty so this runs once on mount)
-     );
-    html! {
-         <ArrowIcon class={classes!("svg-arrow-in-main")} transform={rotation.to_string()} respond={*respond} />
+
+    let respond = use_state(|| false);
+
+    let respond_clone = respond.clone();
+
+    use_effect(move || {
+        let respond = respond_clone.clone();
+
+        let listener = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
+            if event.key() == "w" {
+                respond.set(true);
+                let respond_reset = respond.clone();
+                gloo::timers::callback::Timeout::new(300, move || {
+                    respond_reset.set(false); // Reset after bounce animation
+                })
+                .forget();
+            }
+        }) as Box<dyn FnMut(_)>);
+
+        web_sys::window()
+            .unwrap()
+            .add_event_listener_with_callback("keydown", listener.as_ref().unchecked_ref())
+            .unwrap();
+
+        move || {
+            web_sys::window()
+                .unwrap()
+                .remove_event_listener_with_callback("keydown", listener.as_ref().unchecked_ref())
+                .unwrap();
         }
+    });
+
+    html! {
+        <ArrowIcon class={classes!("svg-arrow-in-main")} transform="transform: rotate(180deg);"
+        respond={*respond} />
     }
+}
 
 #[function_component(ArrowDownIcon)]
 pub fn arrow_down_icon() -> Html {
