@@ -14,7 +14,7 @@ pub struct ArrowIconProps {
 }
 
 #[function_component(ArrowIcon)]
-pub fn arrow(props: &ArrowProps) -> Html {
+pub fn arrow(props: &ArrowIconProps) -> Html {
     
     let bounce_class = if props.respond { "bounce" } else { "" };
 
@@ -23,8 +23,8 @@ pub fn arrow(props: &ArrowProps) -> Html {
             class={classes!(props.class.clone(), bounce_class)}
             style={format!("transform: {}", props.transform)}
             xmlns="http://www.w3.org/2000/svg" 
-            width={props.size.to_string()}
-            height={props.size.to_string()}
+            width="24"
+            height="24"
             viewBox="0 0 24 24" 
             fill="white" 
             stroke="white" 
@@ -115,12 +115,3 @@ pub fn arrow_down_icon() -> Html {
 }
 
 
-#[function_component(ArrowRespondUi)]
-pub fn arrow_respond_ui() -> Html {
-    
-
-
-    html! {
-   
-}}
-          
