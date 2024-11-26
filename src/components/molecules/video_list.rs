@@ -4,6 +4,8 @@ use yew::prelude::*;
 use yew_router::history::History;
 use yew_router::prelude::*;
 use crate::components::atoms::dance_o_matic_logo::DanceOMaticLogo;
+use wasm_bindgen::closure::Closure;
+use wasm_bindgen::JsCast;
 
 
 
@@ -78,6 +80,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         None
     };
    
+    
 
     match current_video {
 
