@@ -87,7 +87,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         VideoType::Demo(demo) => html! {
         <div class="main_menu-container">
                 <div class="video-wrapper">
-                    <ArrowUpIcon/>
+                    <ArrowUpIcon />
                 <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>
                     <video
                         src={format!("{}", video.url)}
