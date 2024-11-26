@@ -39,7 +39,7 @@ pub fn arrow(props: &ArrowIconProps) -> Html {
 }
 
 #[function_component(ArrowUpIcon)]
-pub fn arrow_down_icon() -> Html {
+pub fn arrow_up_icon() -> Html {
      // State to track the `respond` property
      let is_up = true;
      let respond = use_state(|| false);
