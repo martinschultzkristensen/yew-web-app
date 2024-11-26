@@ -1,11 +1,10 @@
-//src/components/atoms/arrow_respond_ui.rs
 use yew::prelude::*;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
 
 
 #[derive(Properties, PartialEq)]
-pub struct ArrowProps {
+pub struct ArrowIconProps {
     #[prop_or_default]
     pub class: Classes,
     #[prop_or_default]
@@ -24,8 +23,8 @@ pub fn arrow(props: &ArrowProps) -> Html {
             class={classes!(props.class.clone(), bounce_class)}
             style={format!("transform: {}", props.transform)}
             xmlns="http://www.w3.org/2000/svg" 
-            width="24" 
-            height="24" 
+            width={props.size.to_string()}
+            height={props.size.to_string()}
             viewBox="0 0 24 24" 
             fill="white" 
             stroke="white" 

@@ -66,8 +66,8 @@ pub fn main_menu() -> Html {
         }
         index
     }
-
-    let handle_keydown_toggle = get_toggle_key(&demo_videos, current_video_index.clone());
+    let arrow_size = use_state(|| 24);
+    let handle_keydown_toggle = get_toggle_key(&demo_videos, current_video_index.clone(), arrow_size.clone());
     let stop_music = ctx.stop_music.clone();
     let current_video_index_clone = current_video_index.clone();
     let press_r_for_about = Callback::from(move |event: KeyboardEvent| {
