@@ -58,6 +58,7 @@ pub struct VideosListProps {
 
 #[function_component(VideosList)]
 pub fn videos_list(props: &VideosListProps) -> Html {
+    
     let VideosListProps {
         videos,
         current_index,
@@ -79,8 +80,9 @@ pub fn videos_list(props: &VideosListProps) -> Html {
    
 
     match current_video {
+
         VideoType::Demo(demo) => html! {
-            <div class="main_menu-container">
+        <div class="main_menu-container">
                 <div class="video-wrapper">
                     <ArrowUpIcon/>
                 <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>
