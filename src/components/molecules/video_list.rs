@@ -91,8 +91,9 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                         onended={onended_attr}
                         class={classes!(video_class.clone(), "smallscreenvideo")}
                     />
-                    
+                    <div class="svg-arrow-in-main">
                     <ArrowDownIcon/>
+                    </div>
 
                     // <object class="svg-arrow-in-main" type="image/svg+xml" data="static/arrow-down-circle.svg"></object>
                 </div>
