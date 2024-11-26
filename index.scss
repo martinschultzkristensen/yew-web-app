@@ -84,6 +84,22 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
   transition: transform 0.3s ease-in-out;
 }
 
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.bounce {
+  animation: bounce 0.6s ease-in-out;
+}
+
 .rotate-180 {
   transform: rotate(180deg);
 }
