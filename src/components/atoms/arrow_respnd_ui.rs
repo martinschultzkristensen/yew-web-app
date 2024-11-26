@@ -8,22 +8,21 @@ use wasm_bindgen::JsCast;
 pub struct ArrowProps {
     #[prop_or_default]
     pub class: Classes,
-    #[prop_or(false)]
-    pub is_up: bool,
+    #[prop_or_default]
+    pub transform: String,
     #[prop_or_default]
     pub respond: bool,
 }
 
 #[function_component(ArrowIcon)]
 pub fn arrow(props: &ArrowProps) -> Html {
-    let rotation = if props.is_up { "rotate(180deg)" } else { "" };
-    let respond_style = if props.respond { "scale(1.5)" } else { "" };
-    let combined_transform = format!("transform: {} {}", rotation, respond_style).trim().to_string();
+    
+    let bounce_class = if props.respond { "bounce" } else { "" };
 
     html! {
         <svg 
-            class={props.class.clone()}
-            style={combined_transform}
+            class={classes!(props.class.clone(), bounce_class)}
+            style={format!("transform: {}", props.transform)}
             xmlns="http://www.w3.org/2000/svg" 
             width="24" 
             height="24" 
@@ -48,6 +47,8 @@ pub fn arrow_down_icon() -> Html {
  
      // Clone `respond` state setter for use in the event handler
      let respond_clone = respond.clone();
+     let rotation = if is_up { "rotate(180deg)" } else { "" };
+     //let combined_transform = format!("transform: {} {}", rotation, respond_style).trim().to_string();
      // Add a keydown event listener when the component mounts
      use_effect(
          move || {
@@ -73,9 +74,9 @@ pub fn arrow_down_icon() -> Html {
          }, // Dependencies (empty so this runs once on mount)
      );
     html! {
-         <ArrowIcon is_up={is_up} respond={*respond} />
+         <ArrowIcon class={classes!("svg-arrow-in-main")} transform={rotation.to_string()} respond={*respond} />
+        }
     }
-}
 
 #[function_component(ArrowDownIcon)]
 pub fn arrow_down_icon() -> Html {
@@ -84,6 +85,7 @@ pub fn arrow_down_icon() -> Html {
 
     // Clone `respond` state setter for use in the event handler
     let respond_clone = respond.clone();
+    let rotation = if is_up { "rotate(180deg)" } else { "" };
     // Add a keydown event listener when the component mounts
     use_effect(
         move || {
@@ -109,7 +111,7 @@ pub fn arrow_down_icon() -> Html {
         }, // Dependencies (empty so this runs once on mount)
     );
     html! {
-     <ArrowIcon is_up={is_up} respond={*respond} />
+     <ArrowIcon transform={rotation.to_string()} respond={*respond} />
     }
 }
 
