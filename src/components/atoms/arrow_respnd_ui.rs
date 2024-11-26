@@ -73,7 +73,7 @@ pub fn arrow_down_icon() -> Html {
          }, // Dependencies (empty so this runs once on mount)
      );
     html! {
-         <ArrowIcon class={classes!("svg-arrow-in-main")} is_up={is_up} respond={*respond} />
+         <ArrowIcon is_up={is_up} respond={*respond} />
     }
 }
 
@@ -109,7 +109,7 @@ pub fn arrow_down_icon() -> Html {
         }, // Dependencies (empty so this runs once on mount)
     );
     html! {
-     <ArrowIcon class={classes!("svg-arrow-in-main")} is_up={is_up} respond={*respond} />
+     <ArrowIcon is_up={is_up} respond={*respond} />
     }
 }
 
