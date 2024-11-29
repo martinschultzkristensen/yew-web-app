@@ -45,7 +45,7 @@ pub fn arrow_up_icon(props: &ArrowIconProps) -> Html {
         }
     });
 
-    let bounce_class = if *respond { "bounce" } else { "" };
+    let bounce_class = if *respond { "arrow-small" } else { "" };
 
     html! {
         <svg 

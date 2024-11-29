@@ -102,11 +102,25 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
     transform: translateY(-5px);
   }
 }
+//testing different arrow up animation
+@keyframes arrow-small {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 
 .bounce {
   animation: bounce 0.6s ease-in-out;
 }
-
+.arrow-small {
+  animation: arrow-small 0.3s ;
+}
 
 .smallscreenvideo {
   max-width: 100%;
