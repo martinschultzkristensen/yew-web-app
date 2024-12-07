@@ -68,15 +68,25 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
   flex: 0 0 50%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  
-  
-}
-.svg-arrow-in-main {
-  margin: 10px 0; // Add space around arrows if needed
-  align-items: center;
+  align-items: center; 
 }
 
+
+.arrow-stack {
+  display: flex; /* Allows arrows to be placed on top of each other */
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Optional, for proper context */
+}
+.base-arrow {
+  z-index: 1; /* Ensure this arrow is on the bottom */
+}
+
+.arrow-stack object {
+  position: absolute; /* Stack arrows on top of each other */
+  top: inherit;
+  left: inherit;
+}
 
 .title-center {
   text-align: center;
@@ -84,12 +94,12 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
   width: 100%;
 }
 
-.video-wrapper > .svg-arrow-in-main {
+.svg-arrow-in-main {
+  margin: 5% 0; // Add space around arrows if needed
+  width: 10%;
   align-items: inherit;
-  margin: 5% 0;
-  max-width: 100%;
-  transition: transform 0.3s ease-in-out;
 }
+
 
 @keyframes bounce {
   0%, 20%, 50%, 80%, 100% {
@@ -104,11 +114,14 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
 }
 //testing different arrow up animation
 @keyframes arrow-small {
-  0% {
+  0%, 20%, 50%, 80%, 100%
+  {
     transform: scale(1);
   }
+  40% {
+    transform: translateY(-10px);}
   50% {
-    transform: scale(0.5);
+    transform: scale(0.5) translateY(-5px);
   }
   100% {
     transform: scale(1);
@@ -119,25 +132,26 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
   animation: bounce 0.6s ease-in-out;
 }
 .arrow-small {
-  position: absolute;
-  animation: arrow-small 0.3s ;
+  animation: arrow-small 0.3s;
+  transform-origin: center;
 }
 
 /* Outlined Duplicate Animation */
 .arrow-outline {
 
-  animation: outline-expand 1.2s ease-out infinite;
-  opacity: 0.7;
+  animation: outline-expand 300ms ease-out;
+
+  transform-origin: center;
 }
 
 @keyframes outline-expand {
   0% {
     transform: scale(1);
-    opacity: 0.7;
+    opacity: 0.0;
   }
   100% {
-    transform: scale(3);
-    opacity: 0;
+    transform: scale(2);
+    opacity: 0.15;
   }
 }
 
