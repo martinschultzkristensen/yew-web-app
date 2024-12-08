@@ -34,10 +34,7 @@ pub fn scrollable_div(props: &ScrollableDivProps) -> Html {
     // Keydown handler for "W" and "S" keys to scroll
     let onkeydown = {
         let div_ref = div_ref.clone();
-        let audio = web_sys::HtmlAudioElement::new_with_src("/static/button-124476.mp3").unwrap();
         Callback::from(move |event: KeyboardEvent| {
-
-                audio.set_current_time(0.0);
             if let Some(div) = div_ref.cast::<HtmlElement>() {
                 match event.key().as_str() {
                     "w" => {
