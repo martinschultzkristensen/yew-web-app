@@ -39,6 +39,9 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
         "e" => {
             stop_music.emit(());
             navigator.push_with_state(&Route::ChoreoVideo, video_index);
+            let soundeffect =
+                web_sys::HtmlAudioElement::new_with_src("/static/buttonSelect.mp3").unwrap();
+            let _ = soundeffect.play();
         }
         _ => (),
         }
