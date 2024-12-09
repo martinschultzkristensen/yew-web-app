@@ -6,3 +6,4 @@ pub mod intro_screen;
 pub mod load_screen;
 pub mod main_menu;
 pub mod music;
+pub mod admin_panel;
