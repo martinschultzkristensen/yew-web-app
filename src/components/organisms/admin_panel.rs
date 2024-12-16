@@ -13,6 +13,7 @@ pub fn admin_panel() -> Html {
             navigator.push(&Route::IntroScreen1);
         }
     });
+    
     html! {
         <div ref={div_ref} tabindex="0" onkeydown={restart_app}>
             <h1>{ "Admin Panel" }</h1>

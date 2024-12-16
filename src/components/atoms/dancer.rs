@@ -3,6 +3,7 @@
 use yew::prelude::*;
 #[derive(Clone)]
 pub struct Dancer {
+    pub id: usize,
     pub image: String,
     pub name: String,
     pub strength: u8,
@@ -10,13 +11,110 @@ pub struct Dancer {
 }
 
 impl Dancer {
-    fn new(image: String, name: String, strength: u8, flexibility: u8) -> Self {
+    fn new(id: usize, image: String, name: String, strength: u8, flexibility: u8) -> Self {
         Self {
+            id,
             image,
             name,
             strength,
             flexibility,
         }
+    }
+      // Method to validate dancer attributes
+      pub fn validate(&self) -> Result<(), String> {
+        if self.name.is_empty() {
+            return Err("Dancer name cannot be empty".to_string());
+        }
+        if self.strength > 100 || self.flexibility > 100 {
+            return Err("Strength and flexibility must be between 0 and 100".to_string());
+        }
+        Ok(())
+    }
+}
+// Dancer Management Struct
+pub struct DancerManager {
+    dancers: Vec<Dancer>,
+    next_id: usize,
+}
+
+impl DancerManager {
+    pub fn new() -> Self {
+        Self {
+            dancers: Vec::new(),
+            next_id: 1,
+        }
+    }
+
+    pub fn add_dancer(&mut self, image: String, name: String, strength: u8, flexibility: u8) -> Result<usize, String> {
+        let dancer = Dancer::new(self.next_id, image, name, strength, flexibility);
+        
+        // Validate the dancer before adding
+        dancer.validate()?;
+        
+        self.dancers.push(dancer);
+        let added_id = self.next_id;
+        self.next_id += 1;
+        
+        Ok(added_id)
+    }
+
+    pub fn remove_dancer(&mut self, id: usize) -> Option<Dancer> {
+        if let Some(index) = self.dancers.iter().position(|d| d.id == id) {
+            Some(self.dancers.remove(index))
+        } else {
+            None
+        }
+    }
+
+    pub fn get_dancers(&self) -> &Vec<Dancer> {
+        &self.dancers
+    }
+
+    pub fn update_dancer(&mut self, id: usize, image: Option<String>, name: Option<String>, strength: Option<u8>, flexibility: Option<u8>) -> Result<(), String> {
+        if let Some(dancer) = self.dancers.iter_mut().find(|d| d.id == id) {
+            if let Some(new_image) = image {
+                dancer.image = new_image;
+            }
+            if let Some(new_name) = name {
+                dancer.name = new_name;
+            }
+            if let Some(new_strength) = strength {
+                dancer.strength = new_strength;
+            }
+            if let Some(new_flexibility) = flexibility {
+                dancer.flexibility = new_flexibility;
+            }
+
+            // Re-validate the updated dancer
+            dancer.validate()?;
+            
+            Ok(())
+        } else {
+            Err("Dancer not found".to_string())
+        }
+    }
+}
+
+// Default implementation for initializing with some dancers
+impl Default for DancerManager {
+    fn default() -> Self {
+        let mut manager = Self::new();
+        
+        // Add some initial dancers
+        let _ = manager.add_dancer(
+            "path/to/default/image1.jpg".to_string(), 
+            "John Dancer".to_string(), 
+            85, 
+            75
+        );
+        let _ = manager.add_dancer(
+            "path/to/default/image2.jpg".to_string(), 
+            "Emma Performer".to_string(), 
+            90, 
+            90
+        );
+        
+        manager
     }
 }
 

@@ -11,8 +11,11 @@ pub struct ChoreographyData {
     pub description: String,  // Optional: if you want to add descriptions
 }
 
+
+
 // Function to get choreography data
 pub fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
+    let mut dancer_manager = DancerManager::new();
     let martin = Dancer {
         image: "/static/img/Martinus.png".to_string(),
         name: "Martin".to_string(),
