@@ -223,7 +223,7 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
 
 @import "btn_explainer_graphics";
 
-//Styling for about_choreo pages
+//Styling for about_choreo pages (and admin_panel)
 .about-choreo-container {
   display: flex;
   flex-direction: column;
@@ -343,3 +343,34 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
   text-align: right;
   font-size: 0.875rem;
 }
+
+//style for admin panel. Top parent style from about-choreo-container 
+.management-container {
+  display: flex;
+  flex-direction: column; //Stack inputs vertically
+  gap: 10px;              //Adds 10px spacing between children
+  width: 50%;
+}
+
+.input-group {
+  display: flex;             // Align label and input horizontally
+  align-items: center;       // Vertically align content
+  width: 100%;                 // Ensure the group takes full parent width
+  max-width: 100%;             // Limit the maximum width to 100%
+
+  label {
+    width: 55%;            // Fixed width for labels
+    text-align: left;        // Align label text to the left
+  }
+}
+
+input {
+  flex: 1;                   // Input takes up the remaining space
+  box-sizing: border-box; // Ensures padding doesn't exceed the width
+  padding: 8px;         // Optional: Internal padding for consistency
+}
+
+button {
+  width: 50%;          // Buttons can retain their natural width
+  padding: 8px 12px;
+}   

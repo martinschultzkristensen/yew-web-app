@@ -1,7 +1,9 @@
 //components/atoms/dancer.rs
 //Purpose of code: Create a dancer struct which can be used in src/components/data/choreography_data.rs
 use yew::prelude::*;
-#[derive(Clone)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct Dancer {
     pub id: usize,
     pub image: String,
@@ -103,8 +105,8 @@ impl Default for DancerManager {
         
         // Add some initial dancers
         let _ = manager.add_dancer(
-            "path/to/default/image1.jpg".to_string(), 
-            "John Dancer".to_string(), 
+            "/static/img/Jon.png".to_string(), 
+            "Jon Stage".to_string(), 
             8, 
             7
         );

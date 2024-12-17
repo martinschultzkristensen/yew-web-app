@@ -49,8 +49,8 @@ pub fn admin_panel() -> Html {
                     
                     // Reset input fields after successful addition
                     new_dancer_name.set(String::new());
-                    new_dancer_strength.set(50);
-                    new_dancer_flexibility.set(50);
+                    new_dancer_strength.set(5);
+                    new_dancer_flexibility.set(5);
                     new_dancer_image.set(String::new());
                 },
                 Err(e) => {
@@ -59,7 +59,21 @@ pub fn admin_panel() -> Html {
                 }
             }
         })
+
     };
+
+    let remove_dancer = {
+        let dancers_manager = dancers_manager.clone();
+        
+        Callback::from(move |dancer_id: usize| {
+            let mut updated_manager = (*dancers_manager).clone();
+            
+            if updated_manager.remove_dancer(dancer_id).is_some() {
+                dancers_manager.set(updated_manager);
+            }
+        })
+    };
+    
     
     html! {
         <div class="about-choreo-container" ref={div_ref} tabindex="0" onkeydown={restart_app}>
@@ -70,7 +84,7 @@ pub fn admin_panel() -> Html {
                 <h2>{ "Dancer Management" }</h2>
                 
                 // Dancer Creation Form
-                <div>
+                <div class="management-container">
                     <input 
                         type="text" 
                         placeholder="Dancer Name" 
@@ -81,6 +95,8 @@ pub fn admin_panel() -> Html {
                         })}
                     />
                     
+                    <div class="input-group">
+                        <label for="strength">{"Strength:"}</label>
                     <input 
                         type="number" 
                         placeholder="Strength (0-10)" 
@@ -94,20 +110,26 @@ pub fn admin_panel() -> Html {
                             }
                         })}
                     />
+                
+                </div>
                     
-                    <input 
-                        type="number" 
-                        placeholder="Flexibility (0-10)" 
-                        min="0" 
-                        max="10" 
-                        value={new_dancer_flexibility.to_string()}
-                        oninput={Callback::from(move |e: InputEvent| {
-                            let input: HtmlInputElement = e.target_unchecked_into();
-                            if let Ok(val) = input.value().parse() {
-                                new_dancer_flexibility.set(val);
-                            }
-                        })}
-                    />
+                <div class="input-group">
+        <label for="flexibility">{"Flexibility:"}</label>
+        <input 
+            id="flexibility"
+            type="number" 
+            placeholder="Flexibility (0-10)" 
+            min="0" 
+            max="10" 
+            value={new_dancer_flexibility.to_string()}
+            oninput={Callback::from(move |e: InputEvent| {
+                let input: HtmlInputElement = e.target_unchecked_into();
+                if let Ok(val) = input.value().parse() {
+                    new_dancer_flexibility.set(val);
+                }
+            })}
+        />
+    </div>
                     
                     <input 
                         type="text" 
@@ -121,6 +143,24 @@ pub fn admin_panel() -> Html {
                     
                     <button onclick={add_dancer}>{ "Add Dancer" }</button>
                 </div>
+
+                { for dancers_manager.get_dancers().iter().map(|dancer| {
+        let on_remove = {
+            let remove_dancer = remove_dancer.clone();
+            let dancer_id = dancer.id;
+            Callback::from(move |_: MouseEvent| {
+                remove_dancer.emit(dancer_id);
+            })
+        };
+        
+        html! {
+            <li>
+                { format!("ID: {}, Name: {}", dancer.id, dancer.name) }
+                <button onclick={on_remove}>{format!("Remove {}", dancer.name)}</button>
+            </li>
+        }
+    })}
+
                 
                 // Dancer List
                 <div>
