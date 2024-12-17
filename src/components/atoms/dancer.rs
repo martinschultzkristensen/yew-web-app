@@ -32,6 +32,7 @@ impl Dancer {
     }
 }
 // Dancer Management Struct
+#[derive(Clone)]
 pub struct DancerManager {
     dancers: Vec<Dancer>,
     next_id: usize,
@@ -104,16 +105,16 @@ impl Default for DancerManager {
         let _ = manager.add_dancer(
             "path/to/default/image1.jpg".to_string(), 
             "John Dancer".to_string(), 
-            85, 
-            75
+            8, 
+            7
         );
         let _ = manager.add_dancer(
             "path/to/default/image2.jpg".to_string(), 
             "Emma Performer".to_string(), 
-            90, 
-            90
+            6, 
+            9
         );
-        
+         
         manager
     }
 }

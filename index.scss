@@ -24,12 +24,14 @@ body {
   margin: 0;
   padding: 0;
   background-color: rgb(24 24 27);
+  color: $shade-1; //<-- default color of all text
   font-family: "PressStart2P-vaV7";
   height: 100%;
   overflow: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {@include gradient-text;}
+
 
 .page {
   min-height: 100vh;
