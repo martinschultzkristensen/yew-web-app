@@ -5,6 +5,7 @@ use crate::components::atoms::arrow_respnd_ui::*;
 use crate::components::data::choreography_data::get_choreography_data;
 use crate::components::molecules::scollable_div::ScrollableDiv;
 use crate::components::molecules::music_context::*;
+use crate::components::molecules::btn_explainer_graphics::BtnExplainerGraphics;
 use crate::Route;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
@@ -45,6 +46,8 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
     });
 
     html! {
+    <div>
+        <BtnExplainerGraphics/>
         <ScrollableDiv onkeydown={event_key} tabindex="1" class="about-choreo-container">
             <div class="svg-arrow-in-about-top">
             <ArrowUpIcon/>
@@ -77,6 +80,7 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
                 <ArrowDownIcon/>
                 </div>
         </ScrollableDiv>
+    </div>
     }
 }
 
