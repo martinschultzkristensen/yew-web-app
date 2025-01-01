@@ -18,6 +18,7 @@ pub fn scrollable_div(props: &ScrollableDivProps) -> Html {
     // Clone props.onkeydown to avoid lifetime issues in the Callback closure
     let parent_onkeydown = props.onkeydown.clone();
 
+    
     // Focus the div when the component mounts
     use_effect(move || {
         if let Some(div) = div_ref_clone.cast::<HtmlElement>() {
@@ -25,7 +26,11 @@ pub fn scrollable_div(props: &ScrollableDivProps) -> Html {
         }
         || ()
     });
+    
+  
+  
 
+    
     // Keydown handler for "W" and "S" keys to scroll
     let onkeydown = {
         let div_ref = div_ref.clone();
@@ -33,10 +38,12 @@ pub fn scrollable_div(props: &ScrollableDivProps) -> Html {
             if let Some(div) = div_ref.cast::<HtmlElement>() {
                 match event.key().as_str() {
                     "w" => {
+
                         // Scroll up by 50px when "W" is pressed
                         div.scroll_by_with_x_and_y(0.0, -50.0);
                     }
                     "s" => {
+  
                         // Scroll down by 50px when "S" is pressed
                         div.scroll_by_with_x_and_y(0.0, 50.0);
                     }
@@ -44,8 +51,10 @@ pub fn scrollable_div(props: &ScrollableDivProps) -> Html {
                 }
             }
             // Emit the event to the parent handler
+            
             parent_onkeydown.emit(event);
-        })
+
+    })
     };
 
     html! {

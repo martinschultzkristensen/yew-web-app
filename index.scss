@@ -159,7 +159,7 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
   }
   
   .smallscreenvideo {
-    max-width: 100%;
+    max-width: 95%;
     max-height: 60vh;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -170,8 +170,9 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
 //placeholder insures smallscreenvideo doesn't flicker upon toggleing between index
 .video-placeholder {
     width: 100%;
-    min-height: 41vh;
+    min-height: 47vh;
     display: flex; 
+    // background-color: #EB66A2;
     align-items: center; 
     justify-content: center; 
     border-radius: 8px; 
