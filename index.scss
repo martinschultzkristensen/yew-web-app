@@ -221,6 +221,12 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
 
 @import "btn_explainer_graphics";
 
+.btn-explainer-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 //Styling for about_choreo pages
 .about-choreo-container {
   display: flex;

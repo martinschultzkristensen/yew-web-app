@@ -47,7 +47,7 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
 
     html! {
     <div>
-        <BtnExplainerGraphics/>
+        
         <ScrollableDiv onkeydown={event_key} tabindex="1" class="about-choreo-container">
             <div class="svg-arrow-in-about-top">
             <ArrowUpIcon/>
@@ -80,6 +80,7 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
                 <ArrowDownIcon/>
                 </div>
         </ScrollableDiv>
+                <BtnExplainerGraphics/>
     </div>
     }
 }
