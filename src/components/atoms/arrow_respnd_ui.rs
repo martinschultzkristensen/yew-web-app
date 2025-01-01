@@ -21,9 +21,10 @@ pub fn arrow_up_icon(props: &ArrowIconProps) -> Html {
 
     use_effect(move || {
         let respond = respond_clone.clone();
-
+        let audio = web_sys::HtmlAudioElement::new_with_src("/static/button-124476.mp3").unwrap();
         let listener = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
             if event.key() == "w" {
+                let _ = audio.play();
                 respond.set(true);
                 let respond_reset = respond.clone();
                 gloo::timers::callback::Timeout::new(300, move || {
@@ -62,14 +63,14 @@ pub fn arrow_up_icon(props: &ArrowIconProps) -> Html {
 #[function_component(ArrowDownIcon)]
 pub fn arrow_down_icon(props: &ArrowIconProps) -> Html {
     let respond = use_state(|| false);
-
     let respond_clone = respond.clone();
-
+    
     use_effect(move || {
         let respond = respond_clone.clone();
-
+        let audio = web_sys::HtmlAudioElement::new_with_src("/static/button-124476.mp3").unwrap();
         let listener = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
             if event.key() == "s" {
+                let _ = audio.play();
                 respond.set(true);
                 let respond_reset = respond.clone();
                 gloo::timers::callback::Timeout::new(300, move || {
