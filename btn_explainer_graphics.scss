@@ -1,15 +1,27 @@
 //green and yellow button (btn) + finger animation grafics... button function explainer grafics
 
 .green-btn {
-  position: absolute;
-  bottom: 3%;
-  right: 30%;
-  width: clamp(60px, 7%, 110px); /* Responsive with min/max bounds */
+  position: relative;
+  right: 39%;
+  transform-origin: center;
+  bottom: 100%;
+  width: clamp(90px, 200%, 110px); /* Responsive with min/max bounds */
   height: auto;
   z-index: 1;
 
 }
 
+/* Text positioning */
+.txt_start_position {
+  position: relative;
+  transform-origin: center;
+  bottom: 10%;
+  right: 29%;
+  width: auto;
+  height: clamp(30px, 10%, 90px);
+  z-index: 0;
+
+}
 .yellow-btn {
   position: absolute;
   bottom: 8%;
@@ -21,15 +33,6 @@
 // Button Animations handeled direcly in static/yellow_btn.svg & static/greenBtn.svg
 
 
-/* Text positioning */
-.txt_start_position {
-  position: absolute;
-  bottom: 13%;
-  right: 29%;
-  width: auto;
-  height: clamp(30px, 10%, 90px);
-  z-index: 0;
-}
 
 .txt_info_position {
   position: absolute;
