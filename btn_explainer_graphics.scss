@@ -1,47 +1,79 @@
+//btn_explainer_graphics.scss
 //green and yellow button (btn) + finger animation grafics... button function explainer grafics
 
-.green-btn {
+// Variables for common values
+$btn-min-width: 6%;
+$btn-max-width: 8%;
+$min-text-height: 30px;
+$max-text-height: 90px;
+
+// Position variables
+$green-btn-bottom: 3%;
+$yellow-btn-bottom: 9%;
+$green-btn-right: 8%;
+$yellow-btn-right: 0%;
+$btn-text-offset: 11%;
+
+
+// Base container class
+.btn-container {
   position: relative;
-  right: 39%;
-  transform-origin: center;
-  bottom: 100%;
-  width: clamp(90px, 200%, 110px); /* Responsive with min/max bounds */
-  height: auto;
-  z-index: 1;
+  width: 100%;
+  height: 100%;
+  
+  // Common object styles
+  object {
+    position: absolute;
+    height: auto;
+  }
 
+  // Button styles with consistent sizing
+  .green-btn, .yellow-btn {
+    width: clamp($btn-min-width, 7%, $btn-max-width);
+    z-index: 1;
+  }
+
+  .green-btn {
+    right: $green-btn-right;
+    bottom: $green-btn-bottom;
+  }
+
+  .yellow-btn {
+    right: $yellow-btn-right;
+    bottom: $yellow-btn-bottom;
+  }
+  //Button Animations handeled direcly in static/yellow_btn.svg & static/greenBtn.svg
+ 
+  .txt_start_position {
+    height: clamp($min-text-height, 10%, $max-text-height);
+    right: $green-btn-right;
+    bottom: calc($green-btn-bottom + $btn-text-offset);
+    z-index: 0;
+  }
+  
+  .txt_info_position {
+    height: clamp($min-text-height, 10%, $max-text-height);
+    bottom: calc($yellow-btn-bottom + $btn-text-offset);
+    right: calc($yellow-btn-right - 3%);
+    z-index: 0;
+  }
+
+  .point-finger {
+    width: 12%;
+    bottom: calc($green-btn-bottom - 12%);
+    right: calc($green-btn-right + 2%);
+    z-index: 2;
+    transform: translateY(140%);
+
+    &.point-finger-animate {
+      animation: 
+        pointFingerMove1 var(--finger-animation-duration) ease-in-out forwards,
+        pointFingerBounce1 var(--finger-bounce-duration) ease-in-out calc(var(--finger-animation-duration)),
+        pauseAnimation 1s calc(var(--finger-animation-duration) + var(--finger-bounce-duration)),
+        pointFingerMove2 var(--finger-animation-duration) calc(var(--finger-animation-duration) + var(--finger-bounce-duration) + 1s) ease-in-out forwards,
+        pointFingerBounce2 var(--finger-bounce-duration) ease-in-out calc(var(--finger-animation-duration) * 2 + var(--finger-bounce-duration) + 1s);
+    }
 }
-
-/* Text positioning */
-.txt_start_position {
-  position: relative;
-  transform-origin: center;
-  bottom: 10%;
-  right: 29%;
-  width: auto;
-  height: clamp(30px, 10%, 90px);
-  z-index: 0;
-
-}
-.yellow-btn {
-  position: absolute;
-  bottom: 8%;
-  right: 21%;
-  width: clamp(60px, 7%, 110px);
-  height: auto;
-  z-index: 1;
-}
-// Button Animations handeled direcly in static/yellow_btn.svg & static/greenBtn.svg
-
-
-
-.txt_info_position {
-  position: absolute;
-  bottom: 18%;
-  right: 18%;
-  width: auto;
-  height: clamp(30px, 10%, 70px);
-  z-index: 0;
-  transform-origin: bottom right 60px;
 }
 
 
@@ -71,51 +103,26 @@
 }
 
 
-// Styling and animation of finger movement
-.point-finger {
-  position: absolute;
-  bottom: -8%;
-  right: 32%;
-  width: clamp(60px, 12%, 170px);
-  height: auto;
-  z-index: 2;
-  transform: translateY(190px);
-}
-
-
-.point-finger-animate {
-  animation: 
-    // First sequence
-    pointFingerMove1 var(--finger-animation-duration) ease-in-out forwards,
-    pointFingerBounce1 var(--finger-bounce-duration) ease-in-out calc(var(--finger-animation-duration)),
-    // 1 second delay before second sequence (using a dummy animation)
-    pauseAnimation 1s calc(var(--finger-animation-duration) + var(--finger-bounce-duration)),
-    // Second sequence
-    pointFingerMove2 var(--finger-animation-duration) calc(var(--finger-animation-duration) + var(--finger-bounce-duration) + 1s) ease-in-out forwards,
-    pointFingerBounce2 var(--finger-bounce-duration) ease-in-out calc(var(--finger-animation-duration) * 2 + var(--finger-bounce-duration) + 1s);
-}
 
 @keyframes pointFingerMove1 {
-  0% { transform: translateY(190px); }
-  50% { transform: translateY(20px); }
-  100% { transform: translateY(0); }
+  0% { transform: translateY(140%); }
+  100% { transform: translateY($green-btn-bottom); }
 }
 
 @keyframes pointFingerMove2 {
-  0% { transform: translateY(0); }
-  50% { transform: translate(120px, -5px); }
-  100% { transform: translate(135px, -30px); }
+  0% { transform: translateY($green-btn-bottom); }
+  100% { transform: translate(calc($yellow-btn-right + 60%), -20%); }
 }
 
-// Bounce animation remains the same
+//Bounce animation remains the same
 @keyframes pointFingerBounce1 {
-  0% { transform: translateY(0); }
+  0% { transform: translateY(pointFingerMove1); }
   50% { transform: translateY(20px); }
-  100% { transform: translateY(0); }
+  100% { transform: translateY(pointFingerMove1); }
 }
 
 @keyframes pointFingerBounce2 {
-  0% { transform: translate(pointFingerMove2); }
-  50% { transform: translate(135px, -10px); }
-  100% { transform: translate(pointFingerMove2); }
+  0% { transform: translate(calc($yellow-btn-right + 60%), -20%); }
+  50% { transform: translate(calc($yellow-btn-right + 60%), -15%); }
+  100% { transform: translate(calc($yellow-btn-right + 60%), -20%); }
 }
