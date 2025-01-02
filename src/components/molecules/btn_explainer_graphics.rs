@@ -9,6 +9,8 @@ use wasm_bindgen::JsCast;
 pub struct BtnExplainerProps {
   #[prop_or_default]
   pub class: String,
+  #[prop_or("/static/info.svg".to_string())] // Default SVG file
+  pub data: String,
 }
 
 
@@ -134,7 +136,7 @@ pub fn btn_explainer_graphics(props: &BtnExplainerProps) -> Html {
         <object ref={green_btn_ref} type="image/svg+xml" data="/static/greenBtn.svg" class="green-btn"></object>
             <object type="image/svg+xml" data="/static/yellow_btn.svg" class="yellow-btn"></object>
             <object type="image/svg+xml" data="/static/start.svg" class={start_class}></object>
-            <object type="image/svg+xml" data="/static/info.svg" class={info_class}></object>
+            <object type="image/svg+xml" data={props.data.clone()} class={info_class}></object>
             <object type="image/svg+xml" data="/static/pointFinger.svg" class={finger_class}></object>
         </div>
     </>

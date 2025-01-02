@@ -80,7 +80,7 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
                 <ArrowDownIcon/>
                 </div>
         </ScrollableDiv>
-                <BtnExplainerGraphics class="btn-container-about-choreo"/>
+                <BtnExplainerGraphics class="btn-container-about-choreo" data="/static/goBack.svg"/>
     </div>
     }
 }

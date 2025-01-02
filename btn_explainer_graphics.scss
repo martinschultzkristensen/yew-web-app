@@ -52,7 +52,7 @@ $btn-text-offset: 11%;
   }
   
   .txt_info_position {
-    height: clamp($min-text-height, 10%, $max-text-height);
+    height: clamp($min-text-height, 8%, $max-text-height);
     bottom: calc($yellow-btn-bottom + $btn-text-offset);
     right: calc($yellow-btn-right - 3%);
     z-index: 0;
