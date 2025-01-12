@@ -1,8 +1,8 @@
 //src/components/data/choreography_data.rs
-use crate::components::molecules::video_list::VideoType;
-use crate::components::data::video_data::get_demo_videos;
-use crate::components::atoms::dancer::*;
-use crate::components::data::config::Config;
+// use crate::components::molecules::video_list::VideoType;
+// use crate::components::data::video_data::get_demo_videos;
+// use crate::components::atoms::dancer::*;
+use crate::components::data::config::{Config, get_config_path, Dancer};
 
 #[derive(Clone)]
 pub struct ChoreographyData {
@@ -12,16 +12,16 @@ pub struct ChoreographyData {
     pub description: String,  // Optional: if you want to add descriptions
 }
 
-pub fn get_choreography_data(choreo_number: usize, config_path: &str) -> ChoreographyData {
-    let config = Config::from_file(config_path);
-    let dancers = config.load_dancers(); // Load dancers from config
+pub fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
+    let config_path = get_config_path();
+    let config = Config::from_file(&config_path);
+    let dancers = config.load_dancers(); // Produces Vec<config::Dancer>
     
-    // Filter dancers dynamically or select specific ones for each choreography
     match choreo_number {
         1 => ChoreographyData {
             title: "Choreo 1".to_string(),
             choreo_image: "/static/img/AI&Boy.png".to_string(),
-            dancers: dancers.clone().into_iter().take(2).collect(), // Example: first 2 dancers
+            dancers: dancers.clone().into_iter().take(2).collect(), // Use directly
             description: "Description for Choreography 1".to_string(),
         },
         2 => ChoreographyData {
