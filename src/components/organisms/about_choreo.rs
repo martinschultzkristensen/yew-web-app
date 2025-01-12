@@ -8,6 +8,7 @@ use crate::components::molecules::music_context::*;
 use crate::Route;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
+use crate::components::data::config::{Config, get_config_path};
 
 
 #[derive(Properties, PartialEq)]
@@ -22,9 +23,10 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
     let video_index = video_index; // Clone for closure
     let ctx = use_context::<MusicContext>().expect("No music context provider");    
     let stop_music = ctx.stop_music.clone();
+    let config_path = get_config_path();
       
     // Get all data for this choreography
-    let choreo_data = get_choreography_data(props.choreo_number);
+    let choreo_data = get_choreography_data(props.choreo_number, &config_path);
 
     let event_key = Callback::from(move |event: KeyboardEvent|{ 
         match event.key().as_str() {
