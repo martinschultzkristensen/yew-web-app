@@ -1,8 +1,50 @@
 
 use serde::Deserialize;
-use std::{fs, path::Path};
+use std::{fs, path::PathBuf};
 use std::time::Duration;
 use tokio::time;
+use crate::components::atoms::dancer::Dancer as DancerCardDancer;
+use dirs_next;
+
+/// Name of the configuration file.
+pub const CONFIG_FILE_NAME: &str = "config.toml";
+
+/// Function to find the config directory dynamically using the `dirs_next` crate.
+/// Appends the `config.toml` filename to the path.
+pub fn config_dir() -> PathBuf {
+    dirs_next::config_dir()
+        .expect("Expected a valid config directory")
+        .join(CONFIG_FILE_NAME)
+}
+
+/// Function to find the data directory dynamically using the `dirs_next` crate.
+pub fn data_dir() -> PathBuf {
+    dirs_next::data_dir()
+        .expect("Expected a valid data directory")
+        .join("halloy")
+}
+
+impl Config {
+    pub fn load_dancers(&self) -> Vec<DancerCardDancer> {
+        self.dancers.list.iter().map(|dancer| {
+            DancerCardDancer {
+                image: dancer.image.clone(),
+                name: dancer.name.clone(),
+                strength: dancer.strength,
+                flexibility: dancer.flexibility,
+            }
+        }).collect()
+    }
+}
+
+pub fn get_config_path() -> String {
+    let config_dir = dirs_next::config_dir().expect("Failed to get config directory");
+    let config_path = config_dir.join("config.toml");
+    config_path
+        .to_str()
+        .expect("Failed to convert config path to string")
+        .to_string()
+}
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Dancer {
