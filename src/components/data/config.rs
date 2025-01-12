@@ -1,9 +1,9 @@
-
+//src/components/data/config.rs
 use serde::Deserialize;
 use std::{fs, path::PathBuf};
 use std::time::Duration;
 use tokio::time;
-use crate::components::atoms::dancer::Dancer as DancerCardDancer;
+use crate::components::atoms::dancer::DancerData as Dancer;   
 use dirs_next;
 
 /// Name of the configuration file.
@@ -25,9 +25,9 @@ pub fn data_dir() -> PathBuf {
 }
 
 impl Config {
-    pub fn load_dancers(&self) -> Vec<DancerCardDancer> {
+    pub fn load_dancers(&self) -> Vec<Dancer> {
         self.dancers.list.iter().map(|dancer| {
-            DancerCardDancer {
+            Dancer {
                 image: dancer.image.clone(),
                 name: dancer.name.clone(),
                 strength: dancer.strength,
@@ -47,7 +47,7 @@ pub fn get_config_path() -> String {
 }
 
 #[derive(Debug, Deserialize, Clone)]
-pub struct Dancer {
+pub struct ConfigDancer {
     pub name: String,
     pub image: String,
     pub strength: u8,
@@ -62,8 +62,9 @@ pub struct Config {
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Dancers {
-    pub list: Vec<Dancer>,
+    pub list: Vec<ConfigDancer>,
 }
+
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Songs {

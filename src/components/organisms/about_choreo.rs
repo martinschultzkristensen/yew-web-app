@@ -26,7 +26,7 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
     let config_path = get_config_path();
       
     // Get all data for this choreography
-    let choreo_data = get_choreography_data(props.choreo_number, &config_path);
+    let choreo_data = get_choreography_data(props.choreo_number);
 
     let event_key = Callback::from(move |event: KeyboardEvent|{ 
         match event.key().as_str() {
@@ -65,12 +65,7 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
                 {
                     choreo_data.dancers.iter().map(|dancer| {
                         html! {
-                            <DancerCard
-                            image={dancer.image.clone()}
-                            name={dancer.name.clone()}
-                            strength={dancer.strength}
-                            flexibility={dancer.flexibility}
-                        />
+                            <DancerCard dancer={dancer.clone()}/>
                         }
                     }).collect::<Html>()
                     }

@@ -1,21 +1,21 @@
 //src/components/data/choreography_data.rs
 // use crate::components::molecules::video_list::VideoType;
 // use crate::components::data::video_data::get_demo_videos;
-// use crate::components::atoms::dancer::*;
-use crate::components::data::config::{Config, get_config_path, Dancer};
+use crate::components::atoms::dancer::DancerData;
+use crate::components::data::config::{Config, get_config_path};
 
 #[derive(Clone)]
 pub struct ChoreographyData {
     pub title: String,
     pub choreo_image: String,
-    pub dancers: Vec<Dancer>,
+    pub dancers: Vec<DancerData>,
     pub description: String,  // Optional: if you want to add descriptions
 }
 
 pub fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
     let config_path = get_config_path();
     let config = Config::from_file(&config_path);
-    let dancers = config.load_dancers(); // Produces Vec<config::Dancer>
+    let dancers = config.load_dancers();
     
     match choreo_number {
         1 => ChoreographyData {
