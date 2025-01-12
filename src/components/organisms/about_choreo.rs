@@ -8,7 +8,7 @@ use crate::components::molecules::music_context::*;
 use crate::Route;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
-use crate::components::data::config::{Config, get_config_path};
+use crate::components::data::config::get_config_path;
 
 
 #[derive(Properties, PartialEq)]
