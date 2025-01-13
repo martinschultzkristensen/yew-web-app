@@ -9,6 +9,9 @@ use dirs_next;
 /// Name of the configuration file.
 pub const CONFIG_FILE_NAME: &str = "config.toml";
 
+//static Config = Config::from_file("/Users/martinsk/projects/yew-app/config.toml");
+
+
 /// Function to find the config directory dynamically using the `dirs_next` crate.
 /// Appends the `config.toml` filename to the path.
 pub fn config_dir() -> PathBuf {
@@ -17,12 +20,6 @@ pub fn config_dir() -> PathBuf {
         .join(CONFIG_FILE_NAME)
 }
 
-/// Function to find the data directory dynamically using the `dirs_next` crate.
-pub fn data_dir() -> PathBuf {
-    dirs_next::data_dir()
-        .expect("Expected a valid data directory")
-        .join("halloy")
-}
 
 impl Config {
     pub fn load_dancers(&self) -> Vec<Dancer> {
