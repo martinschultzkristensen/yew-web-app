@@ -1,16 +1,16 @@
 //src/components/data/config.rs
-use serde::Deserialize;
-use std::{fs, path::PathBuf};
-use std::time::Duration;
-use tokio::time;
-use crate::components::atoms::dancer::DancerData as Dancer;   
+use crate::components::atoms::dancer::DancerData as Dancer;
 use dirs_next;
+use futures::stream::StreamExt;
+use gloo::timers::future::IntervalStream;
+use serde::Deserialize;
+use std::fs;
+use std::path::PathBuf;
 
 /// Name of the configuration file.
 pub const CONFIG_FILE_NAME: &str = "config.toml";
 
 //static Config = Config::from_file("/Users/martinsk/projects/yew-app/config.toml");
-
 
 /// Function to find the config directory dynamically using the `dirs_next` crate.
 /// Appends the `config.toml` filename to the path.
@@ -20,17 +20,18 @@ pub fn config_dir() -> PathBuf {
         .join(CONFIG_FILE_NAME)
 }
 
-
 impl Config {
     pub fn load_dancers(&self) -> Vec<Dancer> {
-        self.dancers.list.iter().map(|dancer| {
-            Dancer {
+        self.dancers
+            .list
+            .iter()
+            .map(|dancer| Dancer {
                 image: dancer.image.clone(),
                 name: dancer.name.clone(),
                 strength: dancer.strength,
                 flexibility: dancer.flexibility,
-            }
-        }).collect()
+            })
+            .collect()
     }
 }
 
@@ -62,7 +63,6 @@ pub struct Dancers {
     pub list: Vec<ConfigDancer>,
 }
 
-
 #[derive(Debug, Deserialize, Clone)]
 pub struct Songs {
     pub available: Vec<String>,
@@ -70,16 +70,19 @@ pub struct Songs {
 
 impl Config {
     pub fn from_file(path: &str) -> Self {
-        let content = fs::read_to_string(path)
-            .unwrap_or_else(|_| panic!("Failed to read config file: {}", path));
+        let Ok(content) = fs::read_to_string(path) else {
+            panic!("Failed to read config file...");
+        };
+
         toml::from_str(&content).expect("Failed to parse config file")
     }
 }
 
 pub async fn refresh_songs(config_path: &str) {
-    let mut interval = time::interval(Duration::from_secs(60)); // Check every 60 seconds
-    loop {
-        interval.tick().await;
+    let mut interval = IntervalStream::new(60_000);
+
+    while (interval.next().await).is_some() {
+        // Simulate reading config from file (replace with actual async logic if needed)
         let config = Config::from_file(config_path);
 
         // Simulate checking for new songs
