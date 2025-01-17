@@ -106,7 +106,7 @@ pub fn main_menu() -> Html {
             <div ref={div_ref} onkeydown={handle_keydown_toggle} tabindex="0"> 
                 <VideosList videos={demo_videos} current_index={*current_video_index} on_ended={Some(handle_video_ended)} video_class="smallscreenvideo"/> 
                 <DanceOMaticLogo class="top-right-logo"/>
-                <BtnExplainerGraphics class="btn-container-main-menu" data="/static/info.svg" />
+                <BtnExplainerGraphics class="btn-container-main-menu"/>
             </div>
         </div>
     }
