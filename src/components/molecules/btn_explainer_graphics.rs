@@ -9,7 +9,7 @@ use wasm_bindgen::JsCast;
 pub struct BtnExplainerProps {
   #[prop_or_default]
   pub class: String,
-  #[prop_or("/static/info.svg".to_string())] // Default SVG file
+  #[prop_or("/static/2info.svg".to_string())] // Default SVG file
   pub data: String,
 }
 
