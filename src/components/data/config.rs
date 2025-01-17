@@ -6,6 +6,8 @@ use gloo::timers::future::IntervalStream;
 use serde::Deserialize;
 use std::fs;
 use std::path::PathBuf;
+use gloo_file::File;
+use web_sys::window;
 
 /// Name of the configuration file.
 pub const CONFIG_FILE_NAME: &str = "config.toml";
@@ -35,13 +37,16 @@ impl Config {
     }
 }
 
+// pub fn get_config_path() -> String {
+//     let config_dir = dirs_next::config_dir().expect("Failed to get config directory");
+//     let config_path = config_dir.join("config.toml");
+//     config_path
+//         .to_str()
+//         .expect("Failed to convert config path to string")
+//         .to_string()
+// }
 pub fn get_config_path() -> String {
-    let config_dir = dirs_next::config_dir().expect("Failed to get config directory");
-    let config_path = config_dir.join("config.toml");
-    config_path
-        .to_str()
-        .expect("Failed to convert config path to string")
-        .to_string()
+    "/config.toml".to_string()
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -55,7 +60,7 @@ pub struct ConfigDancer {
 #[derive(Debug, Deserialize, Clone)]
 pub struct Config {
     pub dancers: Dancers,
-    pub songs: Songs,
+    // pub songs: Songs,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -63,32 +68,38 @@ pub struct Dancers {
     pub list: Vec<ConfigDancer>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
-pub struct Songs {
-    pub available: Vec<String>,
-}
+// #[derive(Debug, Deserialize, Clone)]
+// pub struct Songs {
+//     pub available: Vec<String>,
+// }
 
 impl Config {
-    pub fn from_file(path: &str) -> Self {
-        let Ok(content) = fs::read_to_string(path) else {
-            panic!("Failed to read config file...");
-        };
+    pub fn from_file(path: &str) -> Result<Self, Box<dyn std::error::Error>> {
+        // Use fetch to get file content
+        let window = window().unwrap();
+        let document = window.document().unwrap();
+        let response = window
+            .fetch_with_str(path)
+            .ok()
+            .and_then(|r| r.text().ok())
+            .ok_or("Failed to fetch config")?;
 
-        toml::from_str(&content).expect("Failed to parse config file")
+        toml::from_str(&response)
+            .map_err(|e| format!("Failed to parse config: {}", e).into())
     }
 }
 
-pub async fn refresh_songs(config_path: &str) {
-    let mut interval = IntervalStream::new(60_000);
+// pub async fn refresh_songs(config_path: &str) {
+//     let mut interval = IntervalStream::new(60_000);
 
-    while (interval.next().await).is_some() {
-        // Simulate reading config from file (replace with actual async logic if needed)
-        let config = Config::from_file(config_path);
+//     while (interval.next().await).is_some() {
+//         // Simulate reading config from file (replace with actual async logic if needed)
+//         let config = Config::from_file(config_path);
 
-        // Simulate checking for new songs
-        println!("Refreshing songs...");
-        for song in &config.songs.available {
-            println!("Available song: {}", song);
-        }
-    }
-}
+//         // Simulate checking for new songs
+//         println!("Refreshing songs...");
+//         for song in &config.unwrap().songs.available {
+//             println!("Available song: {}", song);
+//         }
+//     }
+// }

@@ -14,7 +14,23 @@ pub struct ChoreographyData {
 
 pub fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
     let config_path = get_config_path();
-    let config = Config::from_file(&config_path);
+    log::debug!("Config path: {}", config_path);
+    let config = match Config::from_file(&config_path) {
+        Ok(cfg) => cfg,
+        Err(e) => {
+            log::error!("Failed to load config: {}", e);
+            // Return default data or handle error appropriately
+            return ChoreographyData {
+                title: "Error".to_string(),
+                choreo_image: "/static/img/default.png".to_string(),
+                dancers: vec![],
+                description: "Failed to load choreography data".to_string(),
+            };
+        }
+    };
+
+    log::debug!("Number of dancers loaded: {}", config.dancers.list.len());
+
     let dancers = config.load_dancers();
     
     match choreo_number {

@@ -9,6 +9,8 @@ use crate::components::molecules::scollable_div::ScrollableDiv;
 use crate::Route;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
+use wasm_bindgen_futures::spawn_local;
+use gloo::console::log;
 
 #[derive(Properties, PartialEq)]
 pub struct AboutChoreoProps {
@@ -17,15 +19,16 @@ pub struct AboutChoreoProps {
 
 #[function_component(AboutChoreo)]
 pub fn about_choreo(props: &AboutChoreoProps) -> Html {
+    log!("About Choreo Props:", props.choreo_number);
     let navigator = use_navigator().unwrap();
     let video_index = props.choreo_number - 1;
     // let video_index = video_index; // Clone for closure
     let ctx = use_context::<MusicContext>().expect("No music context provider");
     let stop_music = ctx.stop_music.clone();
-    let config_path = get_config_path();
 
     // Get all data for this choreography
     let choreo_data = get_choreography_data(props.choreo_number);
+    log!("Loaded dancers:", choreo_data.dancers.len()); 
 
     let event_key = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
         "q" => {
