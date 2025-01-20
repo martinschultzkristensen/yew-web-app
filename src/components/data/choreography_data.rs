@@ -45,7 +45,13 @@ pub async fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
         },
         2 => ChoreographyData {
             title: "Choreo 2".to_string(),
-            choreo_image: "static/choreo2_image.jpg".to_string(),
+            choreo_image: "/static/img/siblings.png".to_string(),
+            dancers: dancers.clone().into_iter().skip(1).take(2).collect(), // Example: dancers 2-3
+            description: "Description for Choreography 2".to_string(),
+        },
+        3 => ChoreographyData {
+            title: "Choreo 3".to_string(),
+            choreo_image: "/static/img/culture4fun.png".to_string(),
             dancers: dancers.clone().into_iter().skip(1).take(2).collect(), // Example: dancers 2-3
             description: "Description for Choreography 2".to_string(),
         },
