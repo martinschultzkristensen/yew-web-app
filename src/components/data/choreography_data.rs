@@ -12,14 +12,17 @@ pub struct ChoreographyData {
     pub description: String,  // Optional: if you want to add descriptions
 }
 
-pub fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
+pub async fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
     let config_path = get_config_path();
     log::debug!("Config path: {}", config_path);
-    let config = match Config::from_file(&config_path) {
-        Ok(cfg) => cfg,
+    
+    let config = match Config::from_file(&config_path).await {
+        Ok(cfg) => {
+            log::debug!("Config loaded successfully");
+            cfg
+        },
         Err(e) => {
             log::error!("Failed to load config: {}", e);
-            // Return default data or handle error appropriately
             return ChoreographyData {
                 title: "Error".to_string(),
                 choreo_image: "/static/img/default.png".to_string(),
