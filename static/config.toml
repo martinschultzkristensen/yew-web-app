@@ -8,7 +8,7 @@ strength = 10
 flexibility = 5
 
 [[dancers.list]]
-name = "Alex"
+name = "Jon"
 image = "/static/img/Jon.png"
 strength = 8
 flexibility = 7
