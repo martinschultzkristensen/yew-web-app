@@ -3,6 +3,7 @@ use crate::components::atoms::dancer::DancerCard;
 use crate::components::data::choreography_data::{get_choreography_data, ChoreographyData};
 use crate::components::molecules::music_context::*;
 use crate::components::molecules::scollable_div::ScrollableDiv;
+use crate::components::molecules::btn_explainer_graphics::BtnExplainerGraphics;
 use crate::Route;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
@@ -86,12 +87,44 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
                                 <DancerCard dancer={dancer.clone()}/>
                             }
                         }).collect::<Html>()
+    html! {
+    <div>
+        
+        <ScrollableDiv onkeydown={event_key} tabindex="1" class="about-choreo-container">
+            <div class="svg-arrow-in-about-top">
+            <ArrowUpIcon/>
+            </div>
+            // Title section
+            <div class="arcadefont">
+                <h2>{ &choreo_data.title }</h2> 
+                // Main choreography image
+                <div class="info-section-container">
+                    <img src={choreo_data.choreo_image} alt={format!("Choreography {}", props.choreo_number)} />
+                    // Description section
+                    <p class="description">{ &choreo_data.description }</p>
+                </div>
+            // Dancers section
+                <h2>{"Dancers"}</h2>
+                {
+                    choreo_data.dancers.iter().map(|dancer| {
+                        html! {
+                            <DancerCard
+                            image={dancer.image.clone()}
+                            name={dancer.name.clone()}
+                            strength={dancer.strength}
+                            flexibility={dancer.flexibility}
+                        />
+                        }
+                    }).collect::<Html>()
                     }
                 </div>
                 <div class="svg-arrow-in-about-bottom">
                     <ArrowDownIcon/>
                 </div>
-            </ScrollableDiv>
-        }
+        </ScrollableDiv>
+                <BtnExplainerGraphics class="btn-container-about-choreo" data="/static/goBack.svg"/>
+    </div>
     }
 }
+
+

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 247.15 81.86">
+<defs>
+<style>.a,.d{fill:#fce837;}.b{font-size:72px;fill:#eb66a2;stroke:#ffe415;stroke-width:2px;font-family:BadaBoomBB, BadaBoom BB;}.b,.d{stroke-miterlimit:10;}.c{letter-spacing:-0.02em;}.d{stroke:#fce837;}</style>
+</defs>
+<title>goBack</title>
+<path class="a" d="M1018.5,492.5H825c-7.72,0-7.73,12,0,12h193.5c7.72,0,7.73-12,0-12Z" transform="translate(-797.72 -435.57)"/>
+<text class="b" transform="translate(11.16 62.96)">Go Back<tspan class="c" x="202.85" y="0">! </tspan></text>
+<path class="d" d="M825,481.5v35l-27-18" transform="translate(-797.72 -435.57)"/></svg>

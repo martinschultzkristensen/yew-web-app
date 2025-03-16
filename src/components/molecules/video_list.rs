@@ -105,7 +105,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                     <ArrowDownIcon/>
                     </div>
 
-                    // <object class="svg-arrow-in-main" type="image/svg+xml" data="static/arrow-down-circle.svg"></object>
+                    
                 </div>
                 <div class="right-column">
                 <div class="video-info arcadefont">
