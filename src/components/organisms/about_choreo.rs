@@ -69,62 +69,31 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
                 <p>{"Loading..."}</p>
             </div>
         },
-        Some(data) => html! {
-            <ScrollableDiv onkeydown={event_key} tabindex="1" class="about-choreo-container">
-                <div class="svg-arrow-in-about-top">
-                    <ArrowUpIcon/>
-                </div>
-                <div class="arcadefont">
-                    <h2>{ &data.title }</h2>
-                    <div class="info-section-container">
-                        <img src={data.choreo_image.clone()} alt={format!("Choreography {}", props.choreo_number)} />
-                        <p class="description">{ &data.description }</p>
-                    </div>
-                    <h2>{"Dancers"}</h2>
-                    {
-                        data.dancers.iter().map(|dancer| {
-                            html! {
-                                <DancerCard dancer={dancer.clone()}/>
-                            }
-                        }).collect::<Html>()
-    html! {
-    <div>
-        
-        <ScrollableDiv onkeydown={event_key} tabindex="1" class="about-choreo-container">
-            <div class="svg-arrow-in-about-top">
+Some(data) => html! {
+    <ScrollableDiv onkeydown={event_key} tabindex="1" class="about-choreo-container">
+        <div class="svg-arrow-in-about-top">
             <ArrowUpIcon/>
+        </div>
+        <div class="arcadefont">
+            <h2>{ &data.title }</h2>
+            <div class="info-section-container">
+                <img src={data.choreo_image.clone()} alt={format!("Choreography {}", props.choreo_number)} />
+                <p class="description">{ &data.description }</p>
             </div>
-            // Title section
-            <div class="arcadefont">
-                <h2>{ &choreo_data.title }</h2> 
-                // Main choreography image
-                <div class="info-section-container">
-                    <img src={choreo_data.choreo_image} alt={format!("Choreography {}", props.choreo_number)} />
-                    // Description section
-                    <p class="description">{ &choreo_data.description }</p>
-                </div>
-            // Dancers section
-                <h2>{"Dancers"}</h2>
-                {
-                    choreo_data.dancers.iter().map(|dancer| {
-                        html! {
-                            <DancerCard
-                            image={dancer.image.clone()}
-                            name={dancer.name.clone()}
-                            strength={dancer.strength}
-                            flexibility={dancer.flexibility}
-                        />
-                        }
-                    }).collect::<Html>()
+            <h2>{"Dancers"}</h2>
+            {
+                data.dancers.iter().map(|dancer| {
+                    html! {
+                        <DancerCard dancer={dancer.clone()}/>
                     }
-                </div>
-                <div class="svg-arrow-in-about-bottom">
-                    <ArrowDownIcon/>
-                </div>
-        </ScrollableDiv>
-                <BtnExplainerGraphics class="btn-container-about-choreo" data="/static/goBack.svg"/>
-    </div>
-    }
+                }).collect::<Html>()
+            }
+        </div>
+        <div class="svg-arrow-in-about-bottom">
+            <ArrowDownIcon/>
+        </div>
+    </ScrollableDiv>
+    <BtnExplainerGraphics class="btn-container-about-choreo" data="/static/goBack.svg"/>
 }
-
-
+}
+}
