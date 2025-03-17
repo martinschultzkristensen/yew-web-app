@@ -11,7 +11,7 @@ use wasm_bindgen::JsCast;
 
 #[derive(Clone, PartialEq)]
 pub struct Video {
-    pub id: usize,
+    pub id: u32,
     pub url: String,
     pub loop_video: bool, // boolean field indicates if the video should loop
 }
@@ -21,7 +21,6 @@ pub struct DemoVideo {
     pub video: Video,
     pub title: String,
     pub duration: String,
-
 }
 
 #[derive(Clone, PartialEq)]

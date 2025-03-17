@@ -38,25 +38,31 @@ pub async fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
     
     match choreo_number {
         1 => ChoreographyData {
-            title: "Choreo 1".to_string(),
+            title: "Let's Duet".to_string(),
             choreo_image: "/static/img/AI&Boy.png".to_string(),
             dancers: dancers.clone().into_iter().take(2).collect(), // Use directly
             description: "Description for Choreography 1".to_string(),
         },
         2 => ChoreographyData {
-            title: "Choreo 2".to_string(),
+            title: "Siblings".to_string(),
             choreo_image: "static/choreo2_image.jpg".to_string(),
             dancers: dancers.clone().into_iter().take(3).collect(), // Example: dancers 1-2-3
             description: "Description for Choreography 2".to_string(),
         },
         3 => ChoreographyData {
-            title: "Choreo 3".to_string(),
+            title: "Hej-Nihao".to_string(),
             choreo_image: "static/choreo2_image.jpg".to_string(),
             dancers: dancers.clone().into_iter().skip(1).take(2).collect(), // Example: dancers 2-3
             description: "Description for Choreography 3".to_string(),
         },
         4 => ChoreographyData {
-            title: "Choreo 4".to_string(),
+            title: "Cultur4Fun".to_string(),
+            choreo_image: "static/choreo2_image.jpg".to_string(),
+            dancers: dancers.clone().into_iter().skip(2).take(2).collect(), // Example: dancers 3-4
+            description: "Description for Choreography 3".to_string(),
+        },
+        5 => ChoreographyData {
+            title: "3 Kokke".to_string(),
             choreo_image: "static/choreo2_image.jpg".to_string(),
             dancers: dancers.clone().into_iter().skip(2).take(2).collect(), // Example: dancers 3-4
             description: "Description for Choreography 3".to_string(),

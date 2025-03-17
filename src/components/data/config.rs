@@ -1,4 +1,8 @@
+//src/components/data/config.rs
 use crate::components::atoms::dancer::DancerData as Dancer;
+use crate::components::molecules::video_list::DemoVideo;
+use crate::components::molecules::video_list::VideoType;
+use crate::components::molecules::video_list::Video;
 use serde::Deserialize;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
@@ -31,6 +35,21 @@ pub struct ConfigDancer {
 #[derive(Debug, Deserialize, Clone)]
 pub struct Config {
     pub dancers: Dancers,
+    pub demo_videos: DemoVideos,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct DemoVideos {
+    pub list: Vec<DemoVideoConfig>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct DemoVideoConfig {
+    pub id: u32,
+    pub url: String,
+    pub loop_video: bool,
+    pub title: String,
+    pub duration: String,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -51,6 +70,21 @@ impl Config {
             })
             .collect()
     }
+
+    pub fn get_demo_videos(&self) -> Vec<VideoType> {
+        self.demo_videos.list.iter().map(|video_config| {
+            VideoType::Demo(DemoVideo {
+                video: Video {
+                    id: video_config.id,
+                    url: video_config.url.clone(),
+                    loop_video: video_config.loop_video,
+                },
+                title: video_config.title.clone(),
+                duration: video_config.duration.clone(),
+            })
+        }).collect()
+    }
+
     pub async fn from_file(path: &str) -> Result<Self, ConfigError> {
         log::debug!("Attempting to load config from path: {}", path);
 

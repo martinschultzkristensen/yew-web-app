@@ -2,7 +2,7 @@
 
 [dancers]
 [[dancers.list]]
-name = "Martin"
+name = "Mr danceOmatic"
 image = "/static/img/Martinus.png"
 strength = 10
 flexibility = 5
@@ -31,5 +31,34 @@ available = [
     "song2.mp3",
     "song3.mp3"
 ]
+
+[demo_videos]
+[[demo_videos.list]]
+id = 1
+url = "static/Flash_AI&Boy.mp4"
+loop_video = true
+title = "Title to dancevideo nr.1"
+duration = "30"
+
+[[demo_videos.list]]
+id = 2
+url = "static/Flash_Siblings.mp4"
+loop_video = true
+title = "Title to dancevideo nr.2"
+duration = "25"
+
+[[demo_videos.list]]
+id = 3
+url = "static/Flash_Culture4Fun.mp4"
+loop_video = true
+title = "Title to dancevideo nr.3"
+duration = "125"
+
+[[demo_videos.list]]
+id = 4
+url = "static/Flash_Hej-Nihao.mp4"
+loop_video = true
+title = "Title to dancevideo nr.4"
+duration = "1"
 
 # Add more configuration sections as needed

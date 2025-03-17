@@ -92,8 +92,8 @@ Some(data) => html! {
         <div class="svg-arrow-in-about-bottom">
             <ArrowDownIcon/>
         </div>
-    </ScrollableDiv>
     <BtnExplainerGraphics class="btn-container-about-choreo" data="/static/goBack.svg"/>
+    </ScrollableDiv>
 }
 }
 }
