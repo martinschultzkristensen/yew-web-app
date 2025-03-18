@@ -37,14 +37,14 @@ available = [
 id = 1
 url = "static/Flash_AI&Boy.mp4"
 loop_video = true
-title = "Title to dancevideo nr.1"
+title = "From config dancevideo nr.1"
 duration = "30"
 
 [[demo_videos.list]]
 id = 2
 url = "static/Flash_Siblings.mp4"
 loop_video = true
-title = "Title to dancevideo nr.2"
+title = "From config dancevideo nr.2"
 duration = "25"
 
 [[demo_videos.list]]
