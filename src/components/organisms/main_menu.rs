@@ -138,14 +138,14 @@ let restart_app = {
     })
 };
 
-    let handle_video_ended = {
-        let navigator = navigator.clone();
-        Callback::from(move |_| {
-            if let Some(nav) = navigator.clone() {
-                nav.push(&Route::IntroScreen1);
-            }
-        })
-    };
+let handle_video_ended = {
+    let navigator = Rc::clone(&navigator);
+    Callback::from(move |_| {
+        if let Some(nav) = navigator.as_ref() {
+            nav.push(&Route::IntroScreen1);
+        }
+    })
+};
 
     html! {
         //styling of page mainly found in molecules::video_list
