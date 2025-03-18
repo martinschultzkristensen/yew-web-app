@@ -29,6 +29,7 @@ pub fn main_menu() -> Html {
             }
         });
     
+    
 
     let demo_videos = get_demo_videos();
     // State to track the index of the currently displayed demo video
