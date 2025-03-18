@@ -1,3 +1,4 @@
+//src/components/molecules/video_list.rs
 use crate::Route;
 use crate::components::atoms::arrow_respnd_ui::*;
 use yew::prelude::*;
@@ -6,6 +7,7 @@ use yew_router::prelude::*;
 use crate::components::atoms::dance_o_matic_logo::DanceOMaticLogo;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
+use crate::components::data::config::Config;
 
 
 
