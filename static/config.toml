@@ -51,7 +51,7 @@ duration = "25"
 id = 3
 url = "static/Flash_Culture4Fun.mp4"
 loop_video = true
-title = "Title to dancevideo nr.3"
+title = "culture4Fun nr.3"
 duration = "125"
 
 [[demo_videos.list]]
