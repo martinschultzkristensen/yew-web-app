@@ -39,7 +39,6 @@ pub fn main_menu() -> Html {
 
     let current_video_index = use_state(|| initial_index);
 
-    // Load videos from config when component mounts
 
     // Load videos from config when component mounts
     use_effect_with((), {
