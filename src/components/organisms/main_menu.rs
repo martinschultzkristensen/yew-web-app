@@ -5,7 +5,6 @@ use crate::components::data::config::get_config_path;
 use crate::components::data::config::Config;
 use crate::components::molecules::btn_explainer_graphics::BtnExplainerGraphics;
 use crate::components::molecules::music_context::*;
-use crate::get_demo_videos;
 use crate::get_toggle_key;
 use crate::use_location;
 use crate::Route;

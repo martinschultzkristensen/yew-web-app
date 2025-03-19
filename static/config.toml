@@ -20,7 +20,7 @@ name = "Meng-Ting"
 image = "/static/img/Mengting.png"
 strength = 5
 flexibility = 10
-inChoreographyNr = [1, 5]
+inChoreographyNr = [1, 2, 5]
 
 [[dancers.list]]
 name = "Meng-Yuan"
@@ -65,5 +65,26 @@ url = "static/Flash_Hej-Nihao.mp4"
 loop_video = true
 title = "Title to dancevideo nr.4"
 duration = "1"
+
+[choreo_videos]
+[[choreo_videos.list]]
+id = 1
+url = "static/AI&Boy.mp4"
+loop_video = false
+
+[[choreo_videos.list]]
+id = 2
+url = "static/Siblings.mp4"
+loop_video = false
+
+[[choreo_videos.list]]
+id = 3
+url = "static/Culture4Fun.mp4"
+loop_video = false
+
+[[choreo_videos.list]]
+id = 4
+url = "static/fodbold_tiny.mp4"
+loop_video = false
 
 # Add more configuration sections as needed

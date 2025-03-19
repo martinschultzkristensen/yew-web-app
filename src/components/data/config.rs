@@ -53,9 +53,22 @@ pub struct DemoVideos {
 }
 
 #[derive(Debug, Deserialize, Clone)]
+pub struct ChoreoVideoConfig {
+    pub id: usize,
+    pub url: String,
+    pub loop_video: bool,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct ChoreoVideos {
+    pub list: Vec<ChoreoVideoConfig>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
 pub struct Config {
     pub dancers: Dancers,
     pub demo_videos: DemoVideos,
+    pub choreo_videos: ChoreoVideos,
 }
 
 impl Config {
@@ -91,6 +104,16 @@ impl Config {
                 },
                 title: video_config.title.clone(),
                 duration: video_config.duration.clone(),
+            })
+        }).collect()
+    }
+
+    pub fn load_choreo_videos(&self) -> Vec<VideoType> {
+        self.choreo_videos.list.iter().map(|video_config| {
+            VideoType::Regular(Video {
+                id: video_config.id,
+                url: video_config.url.clone(),
+                loop_video: video_config.loop_video,
             })
         }).collect()
     }
