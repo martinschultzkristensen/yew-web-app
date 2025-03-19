@@ -29,6 +29,7 @@ pub fn main_menu() -> Html {
         }
     });
 
+    let div_ref = use_focus_div(); // Hook sets focus on the div (in this case demo video) when the component mounts.
     let demo_videos = use_state(|| Vec::new());
     let loading = use_state(|| true);
 
@@ -69,7 +70,7 @@ pub fn main_menu() -> Html {
 
     let navigator = use_navigator();
 let navigator = Rc::new(navigator); // Wrap navigator in Rc for shared ownership
-let div_ref = use_focus_div(); // Hook sets focus on the div (in this case demo video) when the component mounts.
+
 
 pub fn navigate_to_about(index: usize, navigator: &Option<Navigator>) -> usize {
     if let Some(navigator) = navigator {
@@ -149,22 +150,22 @@ let handle_video_ended = {
     html! {
         //styling of page mainly found in molecules::video_list
         <div onkeydown={restart_app} onkeydown={press_r_for_about} tabindex="0">
+            <div ref={div_ref} onkeydown={handle_keydown_toggle} tabindex="0">
             if *loading {
                 <div>{"Loading videos..."}</div>
             } else if demo_videos.len() > 0 {
-                <div ref={div_ref} onkeydown={handle_keydown_toggle} tabindex="0"> 
                     <VideosList 
-                        videos={(*demo_videos).clone()} 
-                        current_index={*current_video_index} 
-                        on_ended={Some(handle_video_ended)} 
-                        video_class="smallscreenvideo"
+                    videos={(*demo_videos).clone()} 
+                    current_index={*current_video_index} 
+                    on_ended={Some(handle_video_ended)} 
+                    video_class="smallscreenvideo"
                     /> 
                     <DanceOMaticLogo class="top-right-logo"/>
                     <BtnExplainerGraphics class="btn-container-main-menu"/>
-                </div>
             } else {
                 <div>{"No videos available"}</div>
             }
+        </div>
         </div>
     }
 }
