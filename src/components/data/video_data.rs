@@ -1,50 +1,5 @@
 //src/components/data/video_data.rs
-use crate::components::molecules::video_list::{DemoVideo, Video, VideoType};
-
-
-pub fn get_demo_videos() -> Vec<VideoType> {
-    vec![
-        VideoType::Demo(DemoVideo {
-            video: Video {
-                id: 1,
-                url: "static/Flash_AI&Boy.mp4".to_string(),
-                loop_video: true,
-            },
-            title: "Title to dancevideo nr.1".to_string(),
-            duration: "30".to_string(), // Add appropriate duration
-        }),
-        VideoType::Demo(DemoVideo {
-            video: Video {
-                id: 2,
-                url: "static/Flash_Siblings.mp4".to_string(),
-                loop_video: true,
-            },
-            title: "Title to dancevideo nr.2".to_string(),
-            duration: "25".to_string(), // Add appropriate duration
-
-        }),
-        VideoType::Demo(DemoVideo {
-            video: Video {
-                id: 3,
-                url: "static/Flash_Culture4Fun.mp4".to_string(),
-                loop_video: true,
-            },
-            title: "Title to dancevideo nr.3".to_string(),
-            duration: "125".to_string(), // Add appropriate duration
-
-        }),
-        VideoType::Demo(DemoVideo {
-            video: Video {
-                id: 4,
-                url: "static/Flash_Hej-Nihao.mp4".to_string(),
-                loop_video: true,
-            },
-            title: "Title to dancevideo nr.4".to_string(),
-            duration: "1".to_string(), // Add appropriate duration
-
-        }),
-    ]
-}
+use crate::components::molecules::video_list::{Video, VideoType};
 
 pub fn get_intro_video() -> Vec<VideoType> {
     vec![
