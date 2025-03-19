@@ -55,6 +55,7 @@ pub fn main_menu() -> Html {
                         let videos = config.get_demo_videos();
                         demo_videos_clone.set(videos);
                         loading_clone.set(false);
+                        log!("Loading videos...");
                     }
                     Err(e) => {
                         log::error!("Failed to load config: {:?}", e);
@@ -152,7 +153,7 @@ let handle_video_ended = {
         <div onkeydown={restart_app} onkeydown={press_r_for_about} tabindex="0">
             <div ref={div_ref} onkeydown={handle_keydown_toggle} tabindex="0">
             if *loading {
-                <div>{"Loading videos..."}</div>
+                <div></div>
             } else if demo_videos.len() > 0 {
                     <VideosList 
                     videos={(*demo_videos).clone()} 
