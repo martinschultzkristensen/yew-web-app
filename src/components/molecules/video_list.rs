@@ -13,7 +13,7 @@ use crate::components::data::config::Config;
 
 #[derive(Clone, PartialEq)]
 pub struct Video {
-    pub id: u32,
+    pub id: usize,
     pub url: String,
     pub loop_video: bool, // boolean field indicates if the video should loop
 }
