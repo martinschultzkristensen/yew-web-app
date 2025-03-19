@@ -30,6 +30,12 @@ pub struct ConfigDancer {
     pub image: String,
     pub strength: u8,
     pub flexibility: u8,
+    pub inChoreographyNr: Vec<usize>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct Dancers {
+    pub list: Vec<ConfigDancer>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -52,23 +58,25 @@ pub struct DemoVideoConfig {
     pub duration: String,
 }
 
-#[derive(Debug, Deserialize, Clone)]
-pub struct Dancers {
-    pub list: Vec<ConfigDancer>,
-}
 
 impl Config {
-    pub fn load_dancers(&self) -> Vec<Dancer> {
-        self.dancers
-            .list
-            .iter()
-            .map(|dancer| Dancer {
-                image: dancer.image.clone(),
-                name: dancer.name.clone(),
-                strength: dancer.strength,
-                flexibility: dancer.flexibility,
-            })
-            .collect()
+    pub fn load_dancers(&self) -> std::collections::HashMap<usize, Vec<Dancer>> {
+        let mut choreography_map = std::collections::HashMap::new();
+
+        for dancer_config in &self.dancers.list {
+            let dancer = Dancer {
+                image: dancer_config.image.clone(),
+                name: dancer_config.name.clone(),
+                strength: dancer_config.strength,
+                flexibility: dancer_config.flexibility,
+            };
+
+            for &choreo_number in &dancer_config.inChoreographyNr {
+                choreography_map.entry(choreo_number).or_insert_with(Vec::new).push(dancer.clone());
+            }
+        }
+
+        choreography_map
     }
 
     pub fn get_demo_videos(&self) -> Vec<VideoType> {
