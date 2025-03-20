@@ -11,9 +11,9 @@ pub fn get_intro_video() -> Vec<VideoType> {
     })]
 }
 
-pub async fn choreo_videos(config: &Config) -> Vec<VideoType> {
-    config.load_choreo_videos()
-}
+// pub async fn choreo_videos(config: &Config) -> Vec<VideoType> {
+//     config.load_choreo_videos()
+// }
 // pub fn choreo_videos() -> Vec<VideoType> {
 //     vec![
 //         VideoType::Regular(Video {
