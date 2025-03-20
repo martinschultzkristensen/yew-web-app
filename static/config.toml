@@ -69,7 +69,7 @@ duration = "1"
 [choreo_videos]
 [[choreo_videos.list]]
 id = 1
-url = "/static/Intro-Movie_2015Horsens.mp4"
+url = "static/Culture4Fun.mp4"
 loop_video = false
 
 [[choreo_videos.list]]

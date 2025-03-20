@@ -48,13 +48,7 @@ pub fn choreographic_videos() -> Html {
     });
 
     let choreo_video_index = use_state(|| 0);
-    let handle_video_ended = {
-        let choreo_video_index = choreo_video_index.clone();
-        Callback::from(move |_: usize| {
-            let new_index = *choreo_video_index + 1;
-            choreo_video_index.set(new_index);
-        })
-    };
+
 
     // Callback for handling the ended event of the video element
     let handle_video_ended = {

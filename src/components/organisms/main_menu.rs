@@ -86,6 +86,7 @@ pub fn execute_showdown_video(
     index: usize,
     navigator: &Option<Navigator>,
     stop_music: &Callback<()>,
+    
 ) -> usize {
     if let Some(navigator) = navigator {
         stop_music.emit(());
