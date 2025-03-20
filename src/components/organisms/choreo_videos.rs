@@ -47,7 +47,10 @@ pub fn choreographic_videos() -> Html {
         }
     });
 
-    let choreo_video_index = use_state(|| 0);
+    let choreo_video_index: usize = use_location()
+        .and_then(|l| l.state::<usize>().map(|i| *i))
+        .unwrap_or(0);
+    let choreo_video_index: UseStateHandle<usize> = use_state(|| choreo_video_index);
 
 
     // Callback for handling the ended event of the video element
