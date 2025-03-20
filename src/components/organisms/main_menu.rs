@@ -82,11 +82,13 @@ pub fn navigate_to_about(index: usize, navigator: &Option<Navigator>) -> usize {
     index
 }
 
+let stop_music = ctx.stop_music.clone();
+
 pub fn execute_showdown_video(
     index: usize,
     navigator: &Option<Navigator>,
     stop_music: &Callback<()>,
-    
+
 ) -> usize {
     if let Some(navigator) = navigator {
         stop_music.emit(());
@@ -104,7 +106,6 @@ pub fn execute_showdown_video(
 }
 
 let handle_keydown_toggle = get_toggle_key(&demo_videos, current_video_index.clone());
-let stop_music = ctx.stop_music.clone();
 let current_video_index_clone = current_video_index.clone();
 
 let press_r_for_about = {
