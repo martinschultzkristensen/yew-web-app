@@ -63,6 +63,7 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
         }
         "e" => {
             stop_music.emit(());
+            play_sound.emit("buttonSelect".to_string());
             navigator.push_with_state(&Route::ChoreoVideo, video_index);
         }
         _ => (),
