@@ -33,10 +33,9 @@ impl Component for SoundEffectsProvider {
             link.send_message(SoundEffectsAction::PlaySound(effect_name))
         });
 
-        let effects = HashMap::from([
-            ("uiToAboutChoreo".to_string(), NodeRef::default()),
-            ("buttonSelect".to_string(), NodeRef::default()),
-        ]);
+        let mut effects = HashMap::new();
+        effects.insert("uiToAboutChoreo".to_string(), NodeRef::default());
+        effects.insert("buttonSelect".to_string(), NodeRef::default());
 
         let sound_effects_context = SoundEffectsContext {
             effects,
@@ -47,21 +46,26 @@ impl Component for SoundEffectsProvider {
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
-        if let SoundEffectsAction::PlaySound(effect_name) = msg {
-            if let Some(audio_ref) = self.sound_effects_context.effects.get(&effect_name) {
-                if let Some(audio) = audio_ref.cast::<HtmlAudioElement>() {
-                    let _ = audio.play();
-                }
-            }
+    let SoundEffectsAction::PlaySound(effect_name) = msg;
+
+    if let Some(audio_ref) = self.sound_effects_context.effects.get(&effect_name) {
+        if let Some(audio) = audio_ref.cast::<HtmlAudioElement>() {
+            let _ = audio.load();
+            let _ = audio.play();
         }
-        true
     }
+    false // false Prevents unnecessary re-renders, but I think it has no effect true or false!
+}
+
 
     fn view(&self, ctx: &Context<Self>) -> Html {
+        let ui_to_about_choreo = self.sound_effects_context.effects.get("uiToAboutChoreo").unwrap();
+        let button_select = self.sound_effects_context.effects.get("buttonSelect").unwrap();
+
         html! {
             <ContextProvider<SoundEffectsContext> context={self.sound_effects_context.clone()}>
-                <audio ref={self.sound_effects_context.effects.get("uiToAboutChoreo").unwrap().clone()} src="/static/uiToAboutChoreo.mp3" />
-                <audio ref={self.sound_effects_context.effects.get("buttonSelect").unwrap().clone()} src="/static/buttonSelect.mp3" />
+                <audio ref={ui_to_about_choreo.clone()} src="/static/uiToAboutChoreo.mp3" />
+                <audio ref={button_select.clone()} src="/static/buttonSelect.mp3" />
                 { for ctx.props().children.iter() }
             </ContextProvider<SoundEffectsContext>>
         }
