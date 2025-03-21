@@ -36,6 +36,8 @@ impl Component for SoundEffectsProvider {
         let mut effects = HashMap::new();
         effects.insert("uiToAboutChoreo".to_string(), NodeRef::default());
         effects.insert("buttonSelect".to_string(), NodeRef::default());
+        effects.insert("toggleUpDown".to_string(), NodeRef::default());
+
 
         let sound_effects_context = SoundEffectsContext {
             effects,
@@ -61,11 +63,13 @@ impl Component for SoundEffectsProvider {
     fn view(&self, ctx: &Context<Self>) -> Html {
         let ui_to_about_choreo = self.sound_effects_context.effects.get("uiToAboutChoreo").unwrap();
         let button_select = self.sound_effects_context.effects.get("buttonSelect").unwrap();
+        let toggle_up_down = self.sound_effects_context.effects.get("toggleUpDown").unwrap();
 
         html! {
             <ContextProvider<SoundEffectsContext> context={self.sound_effects_context.clone()}>
                 <audio ref={ui_to_about_choreo.clone()} src="/static/uiToAboutChoreo.mp3" />
-                <audio ref={button_select.clone()} src="/static/buttonSelect.mp3" />
+                <audio ref={button_select.clone()} src="/static/BtnStart.mp3" />
+                <audio ref={toggle_up_down.clone()} src="/static/button-124476.mp3" />
                 { for ctx.props().children.iter() }
             </ContextProvider<SoundEffectsContext>>
         }

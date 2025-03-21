@@ -112,7 +112,7 @@ pub fn execute_choreo_video(
     index
 }
 
-let handle_keydown_toggle = get_toggle_key(&demo_videos, current_video_index.clone());
+let handle_keydown_toggle = get_toggle_key(&demo_videos, current_video_index.clone(), sound_context);
 let current_video_index_clone = current_video_index.clone();
 
 let press_r_for_about = {
@@ -124,9 +124,6 @@ let press_r_for_about = {
         } else if event.key() == "e" {
             play_sound.emit("buttonSelect".to_string());
             execute_choreo_video(*current_video_index_clone, &navigator, &ctx.stop_music);
-            // let soundeffect =
-            //     web_sys::HtmlAudioElement::new_with_src("/static/buttonSelect.mp3").unwrap();
-            // let _ = soundeffect.play();
         }
     })
 };
