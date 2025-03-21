@@ -3,6 +3,7 @@ use yew::prelude::*;
 use web_sys::HtmlAudioElement;
 
 
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct MusicContext {
     pub audio_ref: NodeRef,
@@ -60,6 +61,7 @@ impl Component for MusicContextProvider {
         }
         true
     }
+    
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
