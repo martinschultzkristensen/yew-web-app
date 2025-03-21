@@ -22,6 +22,7 @@ pub fn main_menu() -> Html {
    
     let sound_context = use_context::<SoundEffectsContext>().expect("SoundEffectsContext not found");
     let play_sound = sound_context.play_sound.clone();
+    
 
 
     use_effect_with((), {
