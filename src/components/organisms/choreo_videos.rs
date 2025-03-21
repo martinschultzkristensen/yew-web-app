@@ -3,8 +3,9 @@ use crate::use_location;
 use crate::Route;
 use crate::VideosList;
 use yew::prelude::*;
-use yew_router::prelude::{use_navigator, Navigator};
+use yew_router::prelude::use_navigator;
 use crate::components::atoms::use_focus_div::use_focus_div;
+use std::collections::HashMap;
 
 use crate::components::data::choreography_data::get_choreography_data;
 
@@ -17,6 +18,10 @@ pub fn choreographic_videos() -> Html {
     let navigator = use_navigator().unwrap();
     let div_ref = use_focus_div();
 
+    let choreo_number: usize = use_location()
+        .and_then(|l| l.query::<HashMap<String, String>>().ok())
+        .and_then(|q| q.get("choreo").and_then(|v| v.parse().ok()))
+        .unwrap_or(1);
     // Load choreography data from config when component mounts
     use_effect_with((), {
         let choreo_data_state_clone = choreo_data_state.clone();
@@ -24,8 +29,6 @@ pub fn choreographic_videos() -> Html {
 
         move |_| {
             wasm_bindgen_futures::spawn_local(async move {
-                // Assuming you want to load data for choreography number 1
-                let choreo_number = 2; //<-- what does this change?c
                 let choreo_data = get_choreography_data(choreo_number).await;
                 choreo_data_state_clone.set(Some(choreo_data));
                 loading_clone.set(false);

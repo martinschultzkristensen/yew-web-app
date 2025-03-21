@@ -5,4 +5,4 @@ pub mod btn_explainer_graphics;
 pub mod keydown_logic;
 pub mod scollable_div;
 pub mod music_context;
-//pub mod async_await_choreo_video;
+pub mod sound_effects;

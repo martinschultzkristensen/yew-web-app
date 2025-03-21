@@ -2,6 +2,7 @@ use crate::components::atoms::arrow_respnd_ui::*;
 use crate::components::atoms::dancer::DancerCard;
 use crate::components::data::choreography_data::{get_choreography_data, ChoreographyData};
 use crate::components::molecules::music_context::*;
+use crate::components::molecules::sound_effects::SoundEffectsContext;
 use crate::components::molecules::scollable_div::ScrollableDiv;
 use crate::components::molecules::btn_explainer_graphics::BtnExplainerGraphics;
 use crate::Route;
@@ -22,6 +23,12 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
     let video_index = props.choreo_number - 1;
     let ctx = use_context::<MusicContext>().expect("No music context provider");
     let stop_music = ctx.stop_music.clone();
+
+    let sound_context = use_context::<SoundEffectsContext>().expect("SoundEffectsContext not found");
+
+    // Clone the play_sound callback to use within the component
+    let play_sound = sound_context.play_sound.clone();
+    
 
     // State to hold choreography data
     let choreo_data = use_state(|| None::<ChoreographyData>);
@@ -51,9 +58,7 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
             navigator.push(&Route::IntroScreen1)
         }
         "r" => {
-            let soundeffect =
-                web_sys::HtmlAudioElement::new_with_src("/static/uiToAboutChoreo.mp3").unwrap();
-            let _ = soundeffect.play();
+            play_sound.emit("uiToAboutChoreo".to_string());
             navigator.push_with_state(&Route::MainMenu, video_index)
         }
         "e" => {

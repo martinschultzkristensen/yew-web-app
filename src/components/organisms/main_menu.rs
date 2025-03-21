@@ -5,6 +5,7 @@ use crate::components::data::config::get_config_path;
 use crate::components::data::config::Config;
 use crate::components::molecules::btn_explainer_graphics::BtnExplainerGraphics;
 use crate::components::molecules::music_context::*;
+use crate::components::molecules::sound_effects::*;
 use crate::get_toggle_key;
 use crate::use_location;
 use crate::Route;
@@ -18,6 +19,10 @@ use yew_router::prelude::{use_navigator, Navigator};
 #[function_component(MainMenu)]
 pub fn main_menu() -> Html {
     let ctx = use_context::<MusicContext>().expect("No music context provider");
+   
+    let sound_context = use_context::<SoundEffectsContext>().expect("SoundEffectsContext not found");
+    let play_sound = sound_context.play_sound.clone();
+
 
     use_effect_with((), {
         let start_music = ctx.start_music.clone();
@@ -28,6 +33,7 @@ pub fn main_menu() -> Html {
         }
     });
 
+    
     let div_ref = use_focus_div(); // Hook sets focus on the div (in this case demo video) when the component mounts.
     let demo_videos = use_state(|| Vec::new());
     let loading = use_state(|| true);
@@ -84,7 +90,7 @@ pub fn navigate_to_about(index: usize, navigator: &Option<Navigator>) -> usize {
 
 let stop_music = ctx.stop_music.clone();
 
-pub fn execute_showdown_video(
+pub fn execute_choreo_video(
     index: usize,
     navigator: &Option<Navigator>,
     stop_music: &Callback<()>,
@@ -112,16 +118,14 @@ let press_r_for_about = {
     let navigator = Rc::clone(&navigator);
     Callback::from(move |event: KeyboardEvent| {
         if event.key() == "r" {
+            play_sound.emit("uiToAboutChoreo".to_string());
             navigate_to_about(*current_video_index_clone, &navigator);
-
-            let soundeffect =
-                web_sys::HtmlAudioElement::new_with_src("/static/uiToAboutChoreo.mp3").unwrap();
-            let _ = soundeffect.play();
         } else if event.key() == "e" {
-            execute_showdown_video(*current_video_index_clone, &navigator, &ctx.stop_music);
-            let soundeffect =
-                web_sys::HtmlAudioElement::new_with_src("/static/buttonSelect.mp3").unwrap();
-            let _ = soundeffect.play();
+            play_sound.emit("buttonSelect".to_string());
+            execute_choreo_video(*current_video_index_clone, &navigator, &ctx.stop_music);
+            // let soundeffect =
+            //     web_sys::HtmlAudioElement::new_with_src("/static/buttonSelect.mp3").unwrap();
+            // let _ = soundeffect.play();
         }
     })
 };
