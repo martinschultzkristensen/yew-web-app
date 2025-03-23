@@ -1,6 +1,6 @@
 //src/components/data/video_data.rs
 use crate::components::molecules::video_list::{Video, VideoType};
-use crate::components::data::config::Config;
+
 
 pub fn get_intro_video() -> Vec<VideoType> {
     vec![

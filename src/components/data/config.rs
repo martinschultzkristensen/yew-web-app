@@ -8,6 +8,9 @@ use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, RequestInit, Response};
 
+
+
+
 pub struct ConfigError(String);
 
 impl std::fmt::Debug for ConfigError {
@@ -30,7 +33,7 @@ pub struct ConfigDancer {
     pub image: String,
     pub strength: u8,
     pub flexibility: u8,
-    pub inChoreographyNr: Vec<usize>,
+    pub inChroeographyNr: Vec<usize>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -83,7 +86,7 @@ impl Config {
                 flexibility: dancer_config.flexibility,
             };
 
-            for &choreo_number in &dancer_config.inChoreographyNr {
+            for &choreo_number in &dancer_config.inChroeographyNr {
                 choreography_map
                     .entry(choreo_number)
                     .or_insert_with(Vec::new)
@@ -120,6 +123,7 @@ impl Config {
 
     pub async fn from_file(path: &str) -> Result<Self, ConfigError> {
         log::debug!("Attempting to load config from path: {}", path);
+
 
         // Create request options
         let opts = RequestInit::new();
