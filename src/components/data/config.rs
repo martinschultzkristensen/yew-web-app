@@ -33,7 +33,7 @@ pub struct ConfigDancer {
     pub image: String,
     pub strength: u8,
     pub flexibility: u8,
-    pub inChroeographyNr: Vec<usize>,
+    pub in_chroeography_nr: Vec<usize>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -86,7 +86,7 @@ impl Config {
                 flexibility: dancer_config.flexibility,
             };
 
-            for &choreo_number in &dancer_config.inChroeographyNr {
+            for &choreo_number in &dancer_config.in_chroeography_nr {
                 choreography_map
                     .entry(choreo_number)
                     .or_insert_with(Vec::new)
