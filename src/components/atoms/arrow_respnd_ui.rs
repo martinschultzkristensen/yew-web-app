@@ -1,7 +1,6 @@
 use yew::prelude::*;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
-use crate::components::molecules::sound_effects::*;
 
 #[derive(Properties, PartialEq)]
 pub struct ArrowIconProps {
