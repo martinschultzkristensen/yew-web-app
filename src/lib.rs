@@ -1,12 +1,10 @@
 use components::organisms::about_choreo::*;
 //lib.rs
-//gloo writes stuff to the web console
-//use gloo::console::log; use serde::{Serialize, Deserialize}; //<-- Uncomment to write to the webconsole
 use crate::components::organisms::choreo_videos::ChoreoVideo;
 use crate::components::organisms::intro_screen::IntroScreen;
 use crate::components::organisms::load_screen::LoadScreenVideo;
 use crate::components::organisms::main_menu::MainMenu;
-// use crate::components::organisms::music::Music; <-- is file even necessarry?
+use crate::components::data::config::Config;
 use crate::components::molecules::music_context::MusicContextProvider;
 use crate::components::molecules::sound_effects::*;
 use components::data::video_data::*;
@@ -15,9 +13,11 @@ use components::molecules::keydown_logic::get_toggle_key;
 use yew::functional::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
+use wasm_bindgen_futures::spawn_local;
+use std::rc::Rc;
+
 
 mod components;
-
 #[derive(Clone, Routable, Debug, PartialEq)]
 pub enum Route {
     #[at("/about-choreo/:number")]
@@ -33,28 +33,48 @@ pub enum Route {
 }
 
 #[function_component(DanceOmatic)]
-pub fn app() -> Html {
+pub fn dance_o_matic() -> Html {
+    let config = use_state(|| None);
+    let config_clone = config.clone();
+
+    use_effect(move || {
+        spawn_local(async move {
+            match Config::from_file("/static/config.toml").await {
+                Ok(loaded_config) => config_clone.set(Some(Rc::new(loaded_config))),
+                Err(err) => log::error!("Failed to load config: {:?}", err),
+            }
+        });
+    
+        || () // No cleanup needed
+    });
+    
     html! {
-    <div>
-        <MusicContextProvider>
-        <SoundEffectsProvider>
-        <BrowserRouter>
-            <Switch<Route> render={switch} />
-        </BrowserRouter>
-        </SoundEffectsProvider>
-        </MusicContextProvider>
-    </div>
+        <div>
+            <MusicContextProvider>
+            <SoundEffectsProvider>
+            <BrowserRouter>
+                { if let Some(config) = &*config {
+                    html! { <Switch<Route> render={switch(config.clone())} /> }
+                } else {
+                    html! { <p>{ "Loading config..." }</p> }
+                }}
+            </BrowserRouter>
+            </SoundEffectsProvider>
+            </MusicContextProvider>
+        </div>
     }
 }
 
-fn switch(routes: Route) -> Html {
-    let vnode = match routes {
-        Route::AboutChoreo { number } => html! {
-            <AboutChoreo choreo_number={number} />},
-        Route::MainMenu => html! { <MainMenu /> },
-        Route::IntroScreen1 => html! { <IntroScreen/> },
-        Route::ChoreoVideo => html! { < ChoreoVideo/> },
-        Route::LoadScreenVideo => html! { < LoadScreenVideo/> },
-    };
-    vnode
+fn switch(config: Rc<Config>) -> impl Fn(Route) -> Html {
+    move |routes: Route| {
+        match routes {
+            Route::AboutChoreo { number } => html! {
+                <AboutChoreo choreo_number={number} config={config.clone()} />
+            },
+            Route::MainMenu => html! { <MainMenu config={config.clone()} /> },
+            Route::IntroScreen1 => html! { <IntroScreen config={config.clone()} /> },
+            Route::ChoreoVideo => html! { <ChoreoVideo config={config.clone()} /> },
+            Route::LoadScreenVideo => html! { <LoadScreenVideo config={config.clone()} /> },
+        }
+    }
 }

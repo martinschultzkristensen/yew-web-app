@@ -27,7 +27,7 @@ impl std::fmt::Display for ConfigError {
 
 impl std::error::Error for ConfigError {}
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ConfigDancer {
     pub name: String,
     pub image: String,
@@ -36,12 +36,12 @@ pub struct ConfigDancer {
     pub in_chroeography_nr: Vec<usize>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct Dancers {
     pub list: Vec<ConfigDancer>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct DemoVideoConfig {
     pub id: usize,
     pub url: String,
@@ -50,24 +50,24 @@ pub struct DemoVideoConfig {
     pub duration: String,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct DemoVideos {
     pub list: Vec<DemoVideoConfig>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ChoreoVideoConfig {
     pub id: usize,
     pub url: String,
     pub loop_video: bool,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ChoreoVideos {
     pub list: Vec<ChoreoVideoConfig>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct Config {
     pub dancers: Dancers,
     pub demo_videos: DemoVideos,
