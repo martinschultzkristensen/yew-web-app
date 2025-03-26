@@ -2,7 +2,8 @@
 // use crate::components::molecules::video_list::VideoType;
 // use crate::components::data::video_data::get_demo_videos;
 use crate::components::atoms::dancer::DancerData;
-use crate::components::data::config::{Config, get_config_path};
+use crate::components::data::config::Config;
+use crate::components::molecules::video_list::VideoType;
 
 #[derive(Clone)]
 pub struct ChoreographyData {
