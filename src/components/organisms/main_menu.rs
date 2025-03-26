@@ -1,7 +1,6 @@
 //src/components/organisms/main_menu.rs
 use crate::components::atoms::dance_o_matic_logo::DanceOMaticLogo;
 use crate::components::atoms::use_focus_div::use_focus_div;
-use crate::components::data::config::get_config_path;
 use crate::components::data::config::Config;
 use crate::components::molecules::btn_explainer_graphics::BtnExplainerGraphics;
 use crate::components::molecules::music_context::*;
@@ -12,19 +11,21 @@ use crate::Route;
 use crate::VideosList;
 use std::rc::Rc;
 use gloo::console::log;
-use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 use yew_router::prelude::{use_navigator, Navigator};
 
+#[derive(Properties, PartialEq)]
+pub struct MainMenuProps {
+    pub config: Rc<Config>,
+}
+
 #[function_component(MainMenu)]
-pub fn main_menu() -> Html {
+pub fn main_menu(props: &MainMenuProps) -> Html {
     let ctx = use_context::<MusicContext>().expect("No music context provider");
    
     let sound_context = use_context::<SoundEffectsContext>().expect("SoundEffectsContext not found");
     let play_sound = sound_context.play_sound.clone();
     
-
-
     use_effect_with((), {
         let start_music = ctx.start_music.clone();
         move |_| {
@@ -36,8 +37,8 @@ pub fn main_menu() -> Html {
 
     
     let div_ref = use_focus_div(); // Hook sets focus on the div (in this case demo video) when the component mounts.
-    let demo_videos = use_state(|| Vec::new());
-    let loading = use_state(|| true);
+    let demo_videos = use_state(|| props.config.get_demo_videos());
+
 
     // Get initial index from location if available
     let initial_index: usize = use_location()
@@ -47,35 +48,8 @@ pub fn main_menu() -> Html {
     let current_video_index = use_state(|| initial_index);
 
 
-    // Load videos from config when component mounts
-    use_effect_with((), {
-        let demo_videos_clone = demo_videos.clone();
-        let loading_clone = loading.clone();
 
-        move |_| {
-            spawn_local(async move {
-                let config_path = get_config_path();
-
-                match Config::from_file(&config_path).await {
-                    Ok(config) => {
-                        let videos = config.get_demo_videos();
-                        demo_videos_clone.set(videos);
-                        loading_clone.set(false);
-                        log!("Loading videos...");
-                    }
-                    Err(e) => {
-                        log::error!("Failed to load config: {:?}", e);
-                        loading_clone.set(false);
-                    }
-                }
-            });
-
-            || ()
-        }
-    });
-
-
-    let navigator = use_navigator();
+let navigator = use_navigator();
 let navigator = Rc::new(navigator); // Wrap navigator in Rc for shared ownership
 
 
@@ -95,7 +69,6 @@ pub fn execute_choreo_video(
     index: usize,
     navigator: &Option<Navigator>,
     stop_music: &Callback<()>,
-
 ) -> usize {
     if let Some(navigator) = navigator {
         stop_music.emit(());
@@ -155,9 +128,8 @@ let handle_video_ended = {
         //styling of page mainly found in molecules::video_list
         <div onkeydown={restart_app} onkeydown={press_r_for_about} tabindex="0">
             <div ref={div_ref} onkeydown={handle_keydown_toggle} tabindex="0">
-            if *loading {
-                <div></div>
-            } else if demo_videos.len() > 0 {
+            if !demo_videos.is_empty() {
+                <div>
                     <VideosList 
                     videos={(*demo_videos).clone()} 
                     current_index={*current_video_index} 
@@ -166,6 +138,7 @@ let handle_video_ended = {
                     /> 
                     <DanceOMaticLogo class="top-right-logo"/>
                     <BtnExplainerGraphics class="btn-container-main-menu"/>
+                </div>
             } else {
                 <div>{"No videos available"}</div>
             }

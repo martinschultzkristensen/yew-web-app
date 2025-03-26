@@ -74,7 +74,7 @@ loop_video = false
 
 [[choreo_videos.list]]
 id = 2
-url = "static/fodbold_tiny.mp4"
+url = "static/Siblings.mp4"
 loop_video = false
 
 [[choreo_videos.list]]
