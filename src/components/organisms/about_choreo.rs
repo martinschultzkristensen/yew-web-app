@@ -1,12 +1,11 @@
 use crate::components::atoms::arrow_respnd_ui::*;
 use crate::components::atoms::dancer::DancerCard;
-use crate::components::data::choreography_data::{get_choreography_data, ChoreographyData};
+use crate::components::data::choreography_data::get_choreography_data;
 use crate::components::molecules::music_context::*;
 use crate::components::molecules::scollable_div::ScrollableDiv;
 use crate::Route;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
-use wasm_bindgen_futures::spawn_local;
 use gloo::console::log;
 
 #[derive(Properties, PartialEq)]
