@@ -1,7 +1,7 @@
 //src/components/organisms/about_choreo.rs
 use crate::components::atoms::arrow_respnd_ui::*;
 use crate::components::atoms::dancer::DancerCard;
-use crate::components::data::choreography_data::{get_choreography_data, ChoreographyData};
+use crate::components::data::choreography_data::get_choreography_data;
 use crate::components::molecules::music_context::*;
 use crate::components::molecules::sound_effects::SoundEffectsContext;
 use crate::components::molecules::scollable_div::ScrollableDiv;
@@ -9,7 +9,6 @@ use crate::components::molecules::btn_explainer_graphics::BtnExplainerGraphics;
 use crate::Route;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
-use wasm_bindgen_futures::spawn_local;
 use gloo::console::log;
 use crate::Config;
 use std::rc::Rc;

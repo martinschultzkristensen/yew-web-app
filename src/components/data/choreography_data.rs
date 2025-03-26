@@ -1,6 +1,6 @@
 //src/components/data/choreography_data.rs
 use crate::components::atoms::dancer::DancerData;
-use crate::components::data::config::{Config, get_config_path};
+use crate::components::data::config::Config;
 use crate::components::molecules::video_list::VideoType;
 
 #[derive(Clone)]

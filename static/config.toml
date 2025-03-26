@@ -13,14 +13,14 @@ name = "Jon"
 image = "/static/img/Jon.png"
 strength = 8
 flexibility = 7
-in_chroeography_nr = [1, 2, 4]
+in_chroeography_nr = [2, 4]
 
 [[dancers.list]]
 name = "Meng-Ting"
 image = "/static/img/Mengting.png"
 strength = 5
 flexibility = 10
-in_chroeography_nr = [1, 2, 5]
+in_chroeography_nr = [1, 2, 3]
 
 [[dancers.list]]
 name = "Meng-Yuan"
@@ -43,7 +43,7 @@ id = 1
 url = "static/Flash_AI&Boy.mp4"
 loop_video = true
 title = "From config dancevideo nr.1"
-duration = "30"
+duration = "300"
 
 [[demo_videos.list]]
 id = 2
