@@ -1,5 +1,5 @@
-use components::organisms::about_choreo::*;
 //lib.rs
+use components::organisms::about_choreo::*;
 use crate::components::organisms::choreo_videos::ChoreoVideo;
 use crate::components::organisms::intro_screen::IntroScreen;
 use crate::components::organisms::load_screen::LoadScreenVideo;
@@ -40,7 +40,10 @@ pub fn dance_o_matic() -> Html {
     use_effect(move || {
         spawn_local(async move {
             match Config::from_file("/static/config.toml").await {
-                Ok(loaded_config) => config_clone.set(Some(Rc::new(loaded_config))),
+                Ok(loaded_config) => {
+                log::info!("Config loaded successfully");
+                config_clone.set(Some(Rc::new(loaded_config)));
+            }
                 Err(err) => log::error!("Failed to load config: {:?}", err),
             }
         });

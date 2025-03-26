@@ -13,7 +13,7 @@ name = "Jon"
 image = "/static/img/Jon.png"
 strength = 8
 flexibility = 7
-in_chroeography_nr = [2, 4]
+in_chroeography_nr = [1, 2, 4]
 
 [[dancers.list]]
 name = "Meng-Ting"
