@@ -5,39 +5,24 @@ use crate::VideosList;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
 use crate::components::atoms::use_focus_div::use_focus_div;
-use std::collections::HashMap;
+use std::rc::Rc;
+use crate::Config;
 
-use crate::components::data::choreography_data::get_choreography_data;
 
+
+#[derive(Properties, PartialEq)]
+pub struct ChoreoVideoProps {
+    pub config: Rc<Config>,
+}
 
 #[function_component(ChoreoVideo)]
-pub fn choreographic_videos() -> Html {
+pub fn choreographic_videos(props: &ChoreoVideoProps) -> Html {
     // State to hold the choreography data and loading status
-    let choreo_data_state = use_state(|| None);
-    let loading = use_state(|| true);
+    let choreo_data_state = use_state(|| props.config.load_choreo_videos());
+
     let navigator = use_navigator().unwrap();
     let div_ref = use_focus_div();
 
-    let choreo_number: usize = use_location()
-        .and_then(|l| l.query::<HashMap<String, String>>().ok())
-        .and_then(|q| q.get("choreo").and_then(|v| v.parse().ok()))
-        .unwrap_or(1);
-    // Load choreography data from config when component mounts
-    use_effect_with((), {
-        let choreo_data_state_clone = choreo_data_state.clone();
-        let loading_clone = loading.clone();
-
-        move |_| {
-            wasm_bindgen_futures::spawn_local(async move {
-                let choreo_data = get_choreography_data(choreo_number).await;
-                choreo_data_state_clone.set(Some(choreo_data));
-                loading_clone.set(false);
-                log::info!("Loading choreography data...");
-            });
-
-            || ()
-        }
-    });
 
     let choreo_video_index: usize = use_location()
         .and_then(|l| l.state::<usize>().map(|i| *i))
@@ -60,13 +45,9 @@ pub fn choreographic_videos() -> Html {
 
     html! {
         <div ref={div_ref} onkeydown={restart_app} tabindex="0">
-            if *loading {
-                <div class="about-choreo-container">
-                    <p>{"Loading..."}</p>
-                </div>
-            } else if let Some(choreo_data) = &*choreo_data_state {
+            if !choreo_data_state.is_empty() {
                 <VideosList
-                    videos={choreo_data.videos.clone()}
+                    videos={(*choreo_data_state).clone()}
                     current_index={*choreo_video_index}
                     on_ended={Some(handle_video_ended)}
                     video_class="fullscreenvideo"

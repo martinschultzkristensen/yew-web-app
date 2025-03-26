@@ -74,6 +74,8 @@ pub struct Config {
     pub choreo_videos: ChoreoVideos,
 }
 
+//impl PartialEq for Config and comprare relevant fields
+
 impl Config {
     pub fn load_dancers(&self) -> std::collections::HashMap<usize, Vec<Dancer>> {
         let mut choreography_map = std::collections::HashMap::new();

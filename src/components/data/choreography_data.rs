@@ -1,5 +1,4 @@
 //src/components/data/choreography_data.rs
-
 use crate::components::atoms::dancer::DancerData;
 use crate::components::data::config::{Config, get_config_path};
 use crate::components::molecules::video_list::VideoType;
@@ -13,27 +12,31 @@ pub struct ChoreographyData {
     pub videos: Vec<VideoType>,
 }
 
-pub async fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
-    let config_path = get_config_path();
-    log::debug!("Config path: {}", config_path);
+// pub async fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
+//     let config_path = get_config_path();
+//     log::debug!("Config path: {}", config_path);
 
-    let config = match Config::from_file(&config_path).await {
-        Ok(cfg) => {
-            log::debug!("Config loaded successfully");
-            cfg
-        },
-        Err(e) => {
-            log::error!("Failed to load config: {}", e);
-            return ChoreographyData {
-                title: "Error".to_string(),
-                choreo_image: "/static/img/default.png".to_string(),
-                dancers: vec![],
-                description: "Failed to load choreography data".to_string(),
-                videos: vec![],
-            };
-        }
-    };
 
+
+//     let config = match Config::from_file(&config_path).await {
+//         Ok(cfg) => {
+//             log::debug!("Config loaded successfully");
+//             cfg
+//         },
+//         Err(e) => {
+//             log::error!("Failed to load config: {}", e);
+//             return ChoreographyData {
+//                 title: "Error".to_string(),
+//                 choreo_image: "/static/img/default.png".to_string(),
+//                 dancers: vec![],
+//                 description: "Failed to load choreography data".to_string(),
+//                 videos: vec![],
+//             };
+//         }
+//     };
+
+    
+    pub fn get_choreography_data(config: &Config, choreo_number: usize) -> ChoreographyData {
     let videos = config.load_choreo_videos();
     let dancers_map = config.load_dancers();
     let demo_videos_map: std::collections::HashMap<usize, String> = config
@@ -47,6 +50,7 @@ pub async fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
         demo_videos_map.get(&id).cloned().unwrap_or_else(|| "Default Title".to_string())
     };
 
+    // pub fn get_choreography_data(choreo_number: usize) -> ChoreographyData{
     match choreo_number {
         1 => ChoreographyData {
             title: demo_video_title(1).to_string(),
@@ -93,3 +97,19 @@ pub async fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
     }
 }
 
+// impl ChoreographyData {
+//     pub fn from_config(config: &Config, choreo_number: usize) -> Self {
+//         let videos = config.load_choreo_videos();
+//         let dancers_map = config.load_dancers();
+        
+//         ChoreographyData {
+//             title: config.demo_videos.list.get(choreo_number - 1)
+//                 .map(|v| v.title.clone())
+//                 .unwrap_or_else(|| "Unknown Choreography".to_string()),
+//             choreo_image: format!("/static/img/Choreo{}.png", choreo_number),
+//             dancers: dancers_map.get(&choreo_number).cloned().unwrap_or_default(),
+//             description: format!("Description for Choreography {}", choreo_number),
+//             videos,
+//         }
+//     }
+// }

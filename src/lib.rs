@@ -47,7 +47,7 @@ pub fn dance_o_matic() -> Html {
     
         || () // No cleanup needed
     });
-    
+
     html! {
         <div>
             <MusicContextProvider>
@@ -68,13 +68,11 @@ pub fn dance_o_matic() -> Html {
 fn switch(config: Rc<Config>) -> impl Fn(Route) -> Html {
     move |routes: Route| {
         match routes {
-            Route::AboutChoreo { number } => html! {
-                <AboutChoreo choreo_number={number} config={config.clone()} />
-            },
+            Route::AboutChoreo { number } => html! {<AboutChoreo choreo_number={number} config={config.clone()} />},
             Route::MainMenu => html! { <MainMenu config={config.clone()} /> },
             Route::IntroScreen1 => html! { <IntroScreen config={config.clone()} /> },
-            Route::ChoreoVideo => html! { <ChoreoVideo config={config.clone()} /> },
-            Route::LoadScreenVideo => html! { <LoadScreenVideo config={config.clone()} /> },
+            Route::ChoreoVideo => html! { <ChoreoVideo config={config.clone()}/> },
+            Route::LoadScreenVideo => html! { <LoadScreenVideo/> },
         }
     }
 }
