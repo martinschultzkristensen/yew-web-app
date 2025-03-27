@@ -1,12 +1,12 @@
 [lib]
 name = "app_lib"
-crate-type = ["staticlib", "cdylib", "rlib", "lib"]
+crate-type = ["staticlib", "cdylib", "rlib"]
 
 [package]
 name = "app"
 version = "0.2.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "disktop app where you can toggle between different videos"
+authors = ["Martin Schultz Kristensen"]
 license = ""
 repository = ""
 default-run = "app"

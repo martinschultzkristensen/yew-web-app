@@ -1,5 +1,5 @@
 //src/components/molecules/btn_explainer_graphics.rs
-use yew::{prelude::*, props};
+use yew::prelude::*;
 use gloo_timers::callback::Timeout;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
