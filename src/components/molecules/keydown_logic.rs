@@ -1,40 +1,34 @@
 use crate::components::molecules::video_list::VideoType;
+use crate::SoundEffectsContext;
 use yew::prelude::*;
+
 
 // Handle keydown events to switch demo videos in the main menu
 pub fn get_toggle_key(
     v: &Vec<VideoType>,
     video_index: UseStateHandle<usize>,
+    sound_context: SoundEffectsContext,
 ) -> Callback<KeyboardEvent> {
     
+
     let videos = v.clone();
-    let current_video_index = video_index;
+    let play_sound = sound_context.play_sound;
 
     Callback::from(move |event: KeyboardEvent| {
         if event.key() == "w" || event.key() == "s" {
-            let current_index = current_video_index.clone();
+            play_sound.emit("toggleUpDown".to_string());
+
             let new_index = match event.key().as_str() {
-                "w" => {
-                    let next_index = *current_index + 1;
-                    if next_index >= videos.len() {
-                        0
-                    } else {
-                        next_index
-                    }
-                }
-                "s" => {
-                    let prev_index = *current_index as i32 - 1;
-                    if prev_index < 0 {
-                        (videos.len() - 1) as usize
-                    } else {
-                        prev_index as usize
-                    }
-                }
-                _ => *current_index,
+                "w" => (*video_index + 1) % videos.len(), // Loops back to 0 if at last item
+                "s" => if *video_index == 0 {
+                            videos.len() - 1
+                        } else {
+                            *video_index - 1
+                        },
+                _ => *video_index,
             };
-            //callback.emit(new_index);
-            current_index.set(new_index);
-            
+
+            video_index.set(new_index);
         }
     })
 }
