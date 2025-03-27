@@ -1,5 +1,7 @@
+//src/components/molecules/video_list.rs
 use crate::components::atoms::arrow_respnd_ui::*;
 use yew::prelude::*;
+
 
 
 
@@ -15,7 +17,6 @@ pub struct DemoVideo {
     pub video: Video,
     pub title: String,
     pub duration: String,
-
 }
 
 #[derive(Clone, PartialEq)]

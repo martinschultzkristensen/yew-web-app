@@ -1,85 +1,115 @@
 //src/components/data/choreography_data.rs
+use crate::components::atoms::dancer::DancerData;
+use crate::components::data::config::Config;
 use crate::components::molecules::video_list::VideoType;
-use crate::components::data::video_data::get_demo_videos;
-use crate::components::atoms::dancer::*;
 
 #[derive(Clone)]
 pub struct ChoreographyData {
     pub title: String,
     pub choreo_image: String,
-    pub dancers: Vec<Dancer>,
+    pub dancers: Vec<DancerData>,
     pub description: String,  // Optional: if you want to add descriptions
+    pub videos: Vec<VideoType>,
 }
 
-// Function to get choreography data
-pub fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
-    let martin = Dancer {
-        image: "/static/img/Martinus.png".to_string(),
-        name: "Martin".to_string(),
-        strength: 10,
-        flexibility: 5,
+// pub async fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
+//     let config_path = get_config_path();
+//     log::debug!("Config path: {}", config_path);
+
+
+
+//     let config = match Config::from_file(&config_path).await {
+//         Ok(cfg) => {
+//             log::debug!("Config loaded successfully");
+//             cfg
+//         },
+//         Err(e) => {
+//             log::error!("Failed to load config: {}", e);
+//             return ChoreographyData {
+//                 title: "Error".to_string(),
+//                 choreo_image: "/static/img/default.png".to_string(),
+//                 dancers: vec![],
+//                 description: "Failed to load choreography data".to_string(),
+//                 videos: vec![],
+//             };
+//         }
+//     };
+
+    
+    pub fn get_choreography_data(config: &Config, choreo_number: usize) -> ChoreographyData {
+    let videos = config.load_choreo_videos();
+    let dancers_map = config.load_dancers();
+    let demo_videos_map: std::collections::HashMap<usize, String> = config
+        .demo_videos
+        .list
+        .iter()
+        .map(|video| (video.id as usize, video.title.clone())) // Clone the title
+        .collect();
+
+    let demo_video_title = |id: usize| -> String {
+        demo_videos_map.get(&id).cloned().unwrap_or_else(|| "Default Title".to_string())
     };
-    let alex = Dancer {
-        image: "/static/img/Jon.png".to_string(),
-        name: "Alex".to_string(),
-        strength: 8,
-        flexibility: 7,
-    };
-    let mengting = Dancer {
-        image: "/static/img/Mengting.png".to_string(),
-        name: "Meng-Ting".to_string(),
-        strength: 5,
-        flexibility: 10,
-    };
-    let mengyuan = Dancer {
-        image: "/static/img/Mengyuin.png".to_string(),
-        name: "Meng-Yuan".to_string(),
-        strength: 8,
-        flexibility: 7,
-    };
+
+    // pub fn get_choreography_data(choreo_number: usize) -> ChoreographyData{
     match choreo_number {
         1 => ChoreographyData {
-            title: match &get_demo_videos()[0] {
-                VideoType::Demo(demo) => demo.title.clone(), //is borrow possible? -research
-                _ => "Choreo 1".to_string(),
-            },
+            title: demo_video_title(1).to_string(),
             choreo_image: "/static/img/AI&Boy.png".to_string(),
-            dancers: vec![alex.clone(), martin.clone()],
-            description: "Description for Choreography 1... This is a very good choreography".to_string(),
+            dancers: dancers_map.get(&1).cloned().unwrap_or_default(),
+            description: "Description for Choreography 1".to_string(),
+            videos,
         },
         2 => ChoreographyData {
-            title: match &get_demo_videos()[1] {
-                VideoType::Demo(demo) => demo.title.clone(),
-                _ => "Choreo 2".to_string(),
-            },
-            choreo_image: "static/choreo2_image.jpg".to_string(),
-            dancers: vec![alex.clone(), mengting.clone()],
-            description: "This is a very good choreography this Choreography 2".to_string(),
+            title: demo_video_title(2).to_string(),
+            choreo_image: "/static/img/choreo2.png".to_string(),
+            dancers: dancers_map.get(&2).cloned().unwrap_or_default(),
+            description: "Description for Choreography 2".to_string(),
+            videos,
         },
         3 => ChoreographyData {
-            title: match &get_demo_videos()[2] {
-                VideoType::Demo(demo) => demo.title.clone(),
-                _ => "Choreo 2".to_string(),
-            },
-            choreo_image: "static/choreo2_image.jpg".to_string(),
-            dancers: vec![martin.clone(), mengting.clone(), mengyuan.clone()],
-            description: "Description for 3rd dancepiece. Very long just enjoy".to_string(),
+            title: demo_video_title(3).to_string(),
+            choreo_image: "/static/img/choreo3.png".to_string(),
+            dancers: dancers_map.get(&3).cloned().unwrap_or_default(),
+            description: "Description for Choreography 3".to_string(),
+            videos,
         },
         4 => ChoreographyData {
-            title: match &get_demo_videos()[3] {
-                VideoType::Demo(demo) => demo.title.clone(),
-                _ => "Choreo 2".to_string(),
-            },
-            choreo_image: "static/choreo2_image.jpg".to_string(),
-            dancers: vec![martin.clone(), mengting.clone(), mengyuan.clone()],
-            description: "Very long Description for Choreography 4".to_string(),
+            title: demo_video_title(4).to_string(),
+            choreo_image: "/static/img/choreo4.png".to_string(),
+            dancers: dancers_map.get(&4).cloned().unwrap_or_default(),
+            description: "Description for Choreography 4".to_string(),
+            videos,
         },
-        // Add cases 3-5 following the same pattern...
+        5 => ChoreographyData {
+            title: demo_video_title(5).to_string(),
+            choreo_image: "/static/img/choreo5.png".to_string(),
+            dancers: dancers_map.get(&5).cloned().unwrap_or_default(),
+            description: "Description for Choreography 5".to_string(),
+            videos,
+        },
         _ => ChoreographyData {
-            title: format!("Choreo{}", choreo_number),
-            choreo_image: "static/default_choreo.jpg".to_string(),
+            title: "Unknown Choreography".to_string(),
+            choreo_image: "/static/img/default.png".to_string(),
             dancers: vec![],
-            description: "".to_string(),
-        }
+            description: "Description for unknown choreography".to_string(),
+            videos: vec![],
+        },
     }
 }
+
+// impl ChoreographyData {
+//     pub fn from_config(config: &Config, choreo_number: usize) -> Self {
+//         let videos = config.load_choreo_videos();
+//         let dancers_map = config.load_dancers();
+        
+//         ChoreographyData {
+//             title: config.demo_videos.list.get(choreo_number - 1)
+//                 .map(|v| v.title.clone())
+//                 .unwrap_or_else(|| "Unknown Choreography".to_string()),
+//             choreo_image: format!("/static/img/Choreo{}.png", choreo_number),
+//             dancers: dancers_map.get(&choreo_number).cloned().unwrap_or_default(),
+//             description: format!("Description for Choreography {}", choreo_number),
+//             videos,
+//         }
+//     }
+// }

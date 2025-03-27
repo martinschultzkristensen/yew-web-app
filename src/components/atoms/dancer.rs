@@ -1,15 +1,15 @@
 //components/atoms/dancer.rs
 //Purpose of code: Create a dancer struct which can be used in src/components/data/choreography_data.rs
 use yew::prelude::*;
-#[derive(Clone)]
-pub struct Dancer {
+#[derive(Clone, PartialEq, Properties)]
+pub struct DancerData {
     pub image: String,
     pub name: String,
     pub strength: u8,
     pub flexibility: u8,
 }
 
-impl Dancer {
+impl DancerData {
     fn new(image: String, name: String, strength: u8, flexibility: u8) -> Self {
         Self {
             image,
@@ -44,21 +44,19 @@ fn stat_bar(props: &StatBarProps) -> Html {
 
 #[derive(Properties, PartialEq)]
 pub struct DancerCardProps {
-    pub image: String,
-    pub name: String,
-    pub strength: u8,
-    pub flexibility: u8,
+    pub dancer: DancerData,
 }
 
 #[function_component(DancerCard)]
 pub fn dancer_card(props: &DancerCardProps) -> Html {
+    let dancer = &props.dancer;
     html! {
         <div class="info-section-container">
-            <img src={props.image.clone()} alt={format!("Image of {}", props.name)} />
+            <img src={dancer.image.clone()} alt={format!("Image of {}", dancer.name)} />
             <div class="name-and-stats-container">
-            <p>{&props.name}</p>
-                <StatBar value={props.strength} label="strength" />
-                <StatBar value={props.flexibility} label="flexibility" />
+            <p>{&dancer.name}</p>
+                <StatBar value={dancer.strength} label="strength" />
+                <StatBar value={dancer.flexibility} label="flexibility" />
             </div>
         </div>
     }

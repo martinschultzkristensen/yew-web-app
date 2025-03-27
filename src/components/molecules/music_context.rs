@@ -3,6 +3,7 @@ use yew::prelude::*;
 use web_sys::HtmlAudioElement;
 
 
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct MusicContext {
     pub audio_ref: NodeRef,
@@ -60,13 +61,14 @@ impl Component for MusicContextProvider {
         }
         true
     }
+    
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
             <ContextProvider<MusicContext> context={self.music_context.clone()}>
                 <audio 
                     ref={self.music_context.audio_ref.clone()} 
-                    src="/static/8bit-menusong-short-ed.aif" 
+                    src="/static/8bit-menusong-short-ed.mp3" 
                     loop=true 
                 />
                 { for ctx.props().children.iter() }
