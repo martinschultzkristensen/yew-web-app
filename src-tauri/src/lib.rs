@@ -1,8 +1,8 @@
 //src-tauri/src/lib.rs
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 // Copy the exact structs from your frontend config.rs
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct ConfigDancer {
     pub name: String,
     pub image: String,
@@ -11,12 +11,12 @@ pub struct ConfigDancer {
     pub in_chroeography_nr: Vec<usize>,
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct Dancers {
     pub list: Vec<ConfigDancer>,
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct DemoVideoConfig {
     pub id: usize,
     pub url: String,
@@ -25,24 +25,24 @@ pub struct DemoVideoConfig {
     pub duration: String,
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct DemoVideos {
     pub list: Vec<DemoVideoConfig>,
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct ChoreoVideoConfig {
     pub id: usize,
     pub url: String,
     pub loop_video: bool,
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct ChoreoVideos {
     pub list: Vec<ChoreoVideoConfig>,
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct Config {
     pub dancers: Dancers,
     pub demo_videos: DemoVideos,
@@ -79,7 +79,7 @@ pub fn run() {
                 Ok(config) => {
                     println!("Config loaded successfully");
                     // Optional: store config in app state if needed
-                    // app.handle().manage(config);
+                    app.handle().manage(config);
                 }
                 Err(e) => {
                     eprintln!("Failed to load config: {}", e);

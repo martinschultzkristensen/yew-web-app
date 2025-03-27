@@ -7,6 +7,7 @@ use serde::Deserialize;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, RequestInit, Response};
+use serde::Serialize;
 
 
 
@@ -27,7 +28,7 @@ impl std::fmt::Display for ConfigError {
 
 impl std::error::Error for ConfigError {}
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct ConfigDancer {
     pub name: String,
     pub image: String,
@@ -36,12 +37,12 @@ pub struct ConfigDancer {
     pub in_chroeography_nr: Vec<usize>,
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct Dancers {
     pub list: Vec<ConfigDancer>,
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct DemoVideoConfig {
     pub id: usize,
     pub url: String,
@@ -50,24 +51,24 @@ pub struct DemoVideoConfig {
     pub duration: String,
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct DemoVideos {
     pub list: Vec<DemoVideoConfig>,
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct ChoreoVideoConfig {
     pub id: usize,
     pub url: String,
     pub loop_video: bool,
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct ChoreoVideos {
     pub list: Vec<ChoreoVideoConfig>,
 }
 
-#[derive(Debug, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
 pub struct Config {
     pub dancers: Dancers,
     pub demo_videos: DemoVideos,
@@ -123,6 +124,7 @@ impl Config {
         }).collect()
     }
 
+    
     pub async fn from_file(path: &str) -> Result<Self, ConfigError> {
         // Provide a fallback or error method
         Err(ConfigError("Config should be loaded via Tauri".to_string()))

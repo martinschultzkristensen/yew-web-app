@@ -15,6 +15,8 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 use wasm_bindgen_futures::spawn_local;
 use std::rc::Rc;
+use wasm_bindgen::prelude::wasm_bindgen;
+use wasm_bindgen::JsValue;
 
 
 mod components;
@@ -30,6 +32,13 @@ pub enum Route {
     ChoreoVideo,
     #[at("/loadscreen_video")]
     LoadScreenVideo,
+}
+
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__"])]
+    async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 }
 
 #[function_component(DanceOmatic)]
