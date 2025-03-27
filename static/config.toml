@@ -13,7 +13,7 @@ name = "Jon"
 image = "/static/img/Jon.png"
 strength = 8
 flexibility = 7
-in_chroeography_nr = [2, 4]
+in_chroeography_nr = [1, 2, 4]
 
 [[dancers.list]]
 name = "Meng-Ting"
@@ -50,14 +50,14 @@ id = 3
 url = "static/Flash_Culture4Fun.mp4"
 loop_video = true
 title = "culture4Fun nr.3"
-duration = "125"
+duration = "12"
 
 [[demo_videos.list]]
 id = 4
 url = "static/Flash_Hej-Nihao.mp4"
 loop_video = true
 title = "Hej-Nihao from config"
-duration = "1"
+duration = "103"
 
 [choreo_videos]
 [[choreo_videos.list]]

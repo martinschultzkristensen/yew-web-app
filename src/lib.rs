@@ -15,6 +15,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 use wasm_bindgen_futures::spawn_local;
 use std::rc::Rc;
+use crate::components::data::config::get_config_path;
 
 
 mod components;
@@ -36,10 +37,11 @@ pub enum Route {
 pub fn dance_o_matic() -> Html {
     let config = use_state(|| None);
     let config_clone = config.clone();
+    let config_path = get_config_path();
 
     use_effect(move || {
         spawn_local(async move {
-            match Config::from_file("/static/config.toml").await {
+            match Config::from_file(&config_path).await {
                 Ok(loaded_config) => {
                 log::info!("Config loaded successfully");
                 config_clone.set(Some(Rc::new(loaded_config)));
