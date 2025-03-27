@@ -30,13 +30,6 @@ flexibility = 7
 in_chroeography_nr = [3, 4, 2]
 
 
-[songs]
-available = [
-    "song1.mp3",
-    "song2.mp3",
-    "song3.mp3"
-]
-
 [demo_videos]
 [[demo_videos.list]]
 id = 1
@@ -63,7 +56,7 @@ duration = "125"
 id = 4
 url = "static/Flash_Hej-Nihao.mp4"
 loop_video = true
-title = "Title to dancevideo nr.4"
+title = "Hej-Nihao from config"
 duration = "1"
 
 [choreo_videos]
