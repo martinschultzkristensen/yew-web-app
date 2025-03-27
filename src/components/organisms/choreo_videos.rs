@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-use crate::choreo_videos;
-=======
 //src/components/organisms/choreo_videos.rs
->>>>>>> feature/config_v2
 use crate::use_location;
 use crate::Route;
 use crate::VideosList;
