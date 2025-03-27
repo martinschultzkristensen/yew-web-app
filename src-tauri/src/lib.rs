@@ -52,30 +52,40 @@ pub struct Config {
 use std::fs;
 use std::path::PathBuf;
 use tauri::{AppHandle, Manager};
+use tauri::State;
 
-pub fn load_config(app_handle: &AppHandle) -> Result<Config, String> {
-    // Get the resource directory
-    let resource_path = app_handle
-        .path()
-        .resource_dir()
-        .map_or_else(
-            |_| Err("Failed to get resource directory".to_string()),
-            |path| Ok(path.join("static/config.toml"))
-        )?;
-
-    let config_text = fs::read_to_string(&resource_path)
-        .map_err(|e| format!("Failed to read config file at {:?}: {}", resource_path, e))?;
-
-    toml::from_str(&config_text)
-        .map_err(|e| format!("Failed to parse config: {}", e))
+#[tauri::command]
+fn load_config(app_handle: State<Config>) -> Result<Config, String> {
+    // Simply return the config from the app state
+    Ok(app_handle.inner().clone())
 }
+
+
+// pub fn load_config(app_handle: &AppHandle) -> Result<Config, String> {
+//     // Get the resource directory
+//     let resource_path = app_handle
+//         .path()
+//         .resource_dir()
+//         .map_or_else(
+//             |_| Err("Failed to get resource directory".to_string()),
+//             |path| Ok(path.join("static/config.toml"))
+//         )?;
+
+//     let config_text = fs::read_to_string(&resource_path)
+//         .map_err(|e| format!("Failed to read config file at {:?}: {}", resource_path, e))?;
+
+//     toml::from_str(&config_text)
+//         .map_err(|e| format!("Failed to parse config: {}", e))
+// }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+    .invoke_handler(tauri::generate_handler![load_config])
         .setup(|app| {
             let app_handle = app.handle().clone();
-            match load_config(&app_handle) {
+            let config_state: State<Config> = app_handle.state::<Config>();
+            match load_config(config_state) {
                 Ok(config) => {
                     println!("Config loaded successfully");
                     // Optional: store config in app state if needed

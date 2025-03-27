@@ -17,6 +17,8 @@ use wasm_bindgen_futures::spawn_local;
 use std::rc::Rc;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
+use tauri_sys::invoke;
+
 
 
 mod components;
@@ -47,13 +49,14 @@ pub fn dance_o_matic() -> Html {
     let config_clone = config.clone();
 
     use_effect(move || {
-        spawn_local(async move {
-            match Config::from_file("/static/config.toml").await {
+        wasm_bindgen_futures::spawn_local(async move {
+            match load_config().await {
                 Ok(loaded_config) => {
-                log::info!("Config loaded successfully");
-                config_clone.set(Some(Rc::new(loaded_config)));
-            }
-                Err(err) => log::error!("Failed to load config: {:?}", err),
+                    config_clone.set(Some(Rc::new(loaded_config)));
+                }
+                Err(e) => {
+                    log::error!("Failed to load config: {:?}", e);
+                }
             }
         });
     
