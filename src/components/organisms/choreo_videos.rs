@@ -1,11 +1,9 @@
 use crate::choreo_videos;
-use crate::components::molecules::video_list::VideosListProps;
-use crate::loadscreen_video;
 use crate::use_location;
 use crate::Route;
 use crate::VideosList;
 use yew::prelude::*;
-use yew_router::prelude::{use_navigator, Navigator};
+use yew_router::prelude::use_navigator;
 use crate::components::atoms::use_focus_div::use_focus_div;
 
 
