@@ -17,7 +17,7 @@ use wasm_bindgen_futures::spawn_local;
 use std::rc::Rc;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
-use tauri_sys::invoke;
+
 
 
 
@@ -39,30 +39,40 @@ pub enum Route {
 
 #[wasm_bindgen]
 extern "C" {
-    #[wasm_bindgen(js_namespace = ["window", "__TAURI__"])]
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"])]
     async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 }
+
+
 
 #[function_component(DanceOmatic)]
 pub fn dance_o_matic() -> Html {
     let config = use_state(|| None);
     let config_clone = config.clone();
+    
+
 
     use_effect(move || {
         wasm_bindgen_futures::spawn_local(async move {
-            match load_config().await {
+            // Call the invoke function with the command name and arguments
+            match invoke("load_config", JsValue::NULL).await {
                 Ok(loaded_config) => {
-                    config_clone.set(Some(Rc::new(loaded_config)));
+                    // Assuming loaded_config can be deserialized into your Config type
+                    if let Ok(config_value) = loaded_config.into_serde() {
+                        config_clone.set(Some(Rc::new(config_value)));
+                    } else {
+                        log::error!("Failed to deserialize config");
+                    }
                 }
                 Err(e) => {
                     log::error!("Failed to load config: {:?}", e);
                 }
             }
         });
-    
+
         || () // No cleanup needed
     });
-
+    
     html! {
         <div>
             <MusicContextProvider>
