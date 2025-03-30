@@ -1,0 +1,7 @@
+[watch]
+ignore = ["./src-tauri"]
+
+[serve]
+ws_protocol = "ws"
+
+trunk-version = "^0.21.0"
