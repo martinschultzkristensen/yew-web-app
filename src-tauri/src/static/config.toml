@@ -1,0 +1,83 @@
+# config.toml
+
+[dancers]
+[[dancers.list]]
+name = "Mr danceOmatic"
+image = "/static/img/Martinus.png"
+strength = 10
+flexibility = 5
+in_chroeography_nr = [1, 2, 3]
+
+[[dancers.list]]
+name = "Jon"
+image = "/static/img/Jon.png"
+strength = 8
+flexibility = 7
+in_chroeography_nr = [2, 3, 4]
+
+[[dancers.list]]
+name = "Meng-Ting"
+image = "/static/img/Mengting.png"
+strength = 5
+flexibility = 10
+in_chroeography_nr = [1, 2, 3]
+
+[[dancers.list]]
+name = "Meng-Yuan"
+image = "/static/img/Mengyuin.png"
+strength = 8
+flexibility = 7
+in_chroeography_nr = [3, 4, 2]
+
+
+[demo_videos]
+[[demo_videos.list]]
+id = 1
+url = "static/Flash_AI&Boy.mp4"
+loop_video = true
+title = "From tauri-config dancevideo nr.1"
+duration = "300"
+
+[[demo_videos.list]]
+id = 2
+url = "static/Flash_Siblings.mp4"
+loop_video = true
+title = "From config dancevideo nr.2"
+duration = "25"
+
+[[demo_videos.list]]
+id = 3
+url = "static/Flash_Culture4Fun.mp4"
+loop_video = true
+title = "culture4Fun nr.3"
+duration = "125"
+
+[[demo_videos.list]]
+id = 4
+url = "static/Flash_Hej-Nihao.mp4"
+loop_video = true
+title = "Title to dancevideo nr.4"
+duration = "1"
+
+[choreo_videos]
+[[choreo_videos.list]]
+id = 1
+url = "static/LoadScreenTest4s.mp4"
+loop_video = false
+
+[[choreo_videos.list]]
+id = 2
+url = "static/Siblings.mp4"
+loop_video = false
+
+[[choreo_videos.list]]
+id = 3
+url = "static/Culture4Fun.mp4"
+loop_video = false
+
+[[choreo_videos.list]]
+id = 4
+url = "static/Hej-Nihao.mp4"
+loop_video = false
+
+# Add more configuration sections as needed
