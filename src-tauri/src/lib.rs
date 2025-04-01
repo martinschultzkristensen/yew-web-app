@@ -5,7 +5,7 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::fmt;
 
-const CONFIG_PATH: &str = "src-tauri/src/config.toml";
+const CONFIG_PATH: &str = "src/config.toml";
 
 pub struct ConfigError(String);
 
@@ -87,6 +87,11 @@ impl Config {
 
 #[tauri::command]
 fn get_config() -> Result<Config, String> {
+    // Log the current working directory
+    match std::env::current_dir() {
+        Ok(path) => println!("Current directory: {:?}", path),
+        Err(e) => println!("Failed to get current directory: {}", e),
+    }
     Config::from_file(CONFIG_PATH).map_err(|err| err.to_string())
 }
 
