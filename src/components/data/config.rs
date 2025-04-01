@@ -11,21 +11,21 @@ use web_sys::{Request, RequestInit, Response};
 
 
 
-pub struct ConfigError(String);
+// pub struct ConfigError(String);
 
-impl std::fmt::Debug for ConfigError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "ConfigError: {}", self.0)
-    }
-}
+// impl std::fmt::Debug for ConfigError {
+//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//         write!(f, "ConfigError: {}", self.0)
+//     }
+// }
 
-impl std::fmt::Display for ConfigError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
+// impl std::fmt::Display for ConfigError {
+//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//         write!(f, "{}", self.0)
+//     }
+// }
 
-impl std::error::Error for ConfigError {}
+// impl std::error::Error for ConfigError {}
 
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ConfigDancer {

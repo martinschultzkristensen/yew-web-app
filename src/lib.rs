@@ -13,7 +13,6 @@ use components::molecules::keydown_logic::get_toggle_key;
 use yew::functional::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
-use wasm_bindgen_futures::spawn_local;
 use std::rc::Rc;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
@@ -44,27 +43,35 @@ extern "C" {
 
 #[function_component(DanceOmatic)]
 pub fn dance_o_matic() -> Html {
-    let config = use_state(|| None);
-    let config_clone = config.clone();
+    let config = use_state(|| None); //Why not let config = something from #[tauri::command]?
+    let config_clone = config.clone(); 
 
     
 
     use_effect(move || {
-        spawn_local(async move {
+        wasm_bindgen_futures::spawn_local(async move {
             // Create an empty JSON object for the arguments
             let args = serde_json::json!({});
             // Convert to JsValue
             let js_args = to_value(&args).unwrap();
             let result = invoke("get_config", js_args).await;
-            let config_result: Result<Config, String> = serde_wasm_bindgen::from_value(result).unwrap();
-            match config_result {
-                Ok(loaded_config) => {
-                    log::info!("Config loaded successfully");
-                    config_clone.set(Some(Rc::new(loaded_config)));
-                },
-                Err(err) => log::error!("Failed to parse result: {:?}", err),
-            }
-        });
+            // let config_result: Result<Config, String> = serde_wasm_bindgen::from_value(result).unwrap();
+            log::info!("Raw result from invoke: {:?}", result);
+        
+        // Try to convert from JsValue to Result<Config, String>
+        match serde_wasm_bindgen::from_value::<Result<Config, String>>(result) {
+            Ok(config_result) => {
+                match config_result {
+                    Ok(loaded_config) => {
+                        log::info!("Config loaded successfully");
+                        config_clone.set(Some(Rc::new(loaded_config)));
+                    },
+                    Err(err) => log::error!("Backend returned error: {:?}", err),
+                }
+            },
+            Err(err) => log::error!("Failed to deserialize result: {:?}", err),
+        }
+    });
         
         || () // No cleanup needed
     });
