@@ -2,10 +2,10 @@
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 use toml;
 use serde::Deserialize;
-use serde::Serialize; // Import Serialize trait
+use serde::Serialize;
 use std::fmt;
 
-const CONFIG_PATH: &str = "src-tauri/src/static/config.toml";
+const CONFIG_PATH: &str = "src-tauri/src/config.toml";
 
 pub struct ConfigError(String);
 

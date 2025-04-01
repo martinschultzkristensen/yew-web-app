@@ -54,10 +54,10 @@ duration = "125"
 
 [[demo_videos.list]]
 id = 4
-url = "static/Flash_Hej-Nihao.mp4"
+url = "src-tauri/src/Flash_Hej-Nihao.mp4"
 loop_video = true
 title = "Title to dancevideo nr.4"
-duration = "1"
+duration = "1" 
 
 [choreo_videos]
 [[choreo_videos.list]]
