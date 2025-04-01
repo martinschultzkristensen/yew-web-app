@@ -31,7 +31,8 @@ wasm-bindgen = "0.2.90"
 wasm-bindgen-futures = "0.4.40"
 js-sys = "=0.3.77"
 async-std = "1.10"
-toml = "0.8.20"
+toml = { version = "0.8", default-features = false, features = ["parse"] }
+chrono = { version = "0.4", default-features = false, features = ["wasmbind"] }
 dirs-next = "2.0"
 log = "0.4"
 env_logger = "0.10"
