@@ -1,11 +1,7 @@
-use crate::Route;
+//src/components/molecules/video_list.rs
 use crate::components::atoms::arrow_respnd_ui::*;
 use yew::prelude::*;
-use yew_router::history::History;
-use yew_router::prelude::*;
-use crate::components::atoms::dance_o_matic_logo::DanceOMaticLogo;
-use wasm_bindgen::closure::Closure;
-use wasm_bindgen::JsCast;
+
 
 
 
@@ -21,7 +17,6 @@ pub struct DemoVideo {
     pub video: Video,
     pub title: String,
     pub duration: String,
-
 }
 
 #[derive(Clone, PartialEq)]
@@ -105,7 +100,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                     <ArrowDownIcon/>
                     </div>
 
-                    // <object class="svg-arrow-in-main" type="image/svg+xml" data="static/arrow-down-circle.svg"></object>
+                    
                 </div>
                 <div class="right-column">
                 <div class="video-info arcadefont">

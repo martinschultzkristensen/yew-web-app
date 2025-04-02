@@ -6,33 +6,29 @@ name = "Mr danceOmatic"
 image = "/static/img/Martinus.png"
 strength = 10
 flexibility = 5
+in_choreography_nr = [1, 3]
 
 [[dancers.list]]
 name = "Jon"
 image = "/static/img/Jon.png"
 strength = 8
 flexibility = 7
-in_chroeography_nr = [2, 4]
+in_choreography_nr = [1, 2, 4]
 
 [[dancers.list]]
 name = "Meng-Ting"
 image = "/static/img/Mengting.png"
 strength = 5
 flexibility = 10
-in_chroeography_nr = [1, 2, 3]
+in_choreography_nr = [1, 2, 3]
 
 [[dancers.list]]
 name = "Meng-Yuan"
 image = "/static/img/Mengyuin.png"
 strength = 8
 flexibility = 7
+in_choreography_nr = [3, 4, 2]
 
-[songs]
-available = [
-    "song1.mp3",
-    "song2.mp3",
-    "song3.mp3"
-]
 
 [demo_videos]
 [[demo_videos.list]]
@@ -54,14 +50,14 @@ id = 3
 url = "static/Flash_Culture4Fun.mp4"
 loop_video = true
 title = "culture4Fun nr.3"
-duration = "125"
+duration = "12"
 
 [[demo_videos.list]]
 id = 4
 url = "static/Flash_Hej-Nihao.mp4"
 loop_video = true
-title = "Title to dancevideo nr.4"
-duration = "1"
+title = "Hej-Nihao from config"
+duration = "103"
 
 [choreo_videos]
 [[choreo_videos.list]]
