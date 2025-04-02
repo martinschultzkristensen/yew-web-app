@@ -7,6 +7,9 @@ use crate::Route;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
 use gloo::console::log;
+use crate::components::data::choreography_data::ChoreographyData;
+use wasm_bindgen_futures::spawn_local;
+
 
 #[derive(Properties, PartialEq)]
 pub struct AboutChoreoProps {

@@ -6,7 +6,6 @@ use crate::components::organisms::choreo_videos::ChoreoVideo;
 use crate::components::organisms::intro_screen::IntroScreen;
 use crate::components::organisms::load_screen::LoadScreenVideo;
 use crate::components::organisms::main_menu::MainMenu;
-use crate::components::organisms::music::Music;
 use crate::components::molecules::music_context::MusicContextProvider;
 use components::data::video_data::*;
 use components::molecules::video_list::VideosList;
