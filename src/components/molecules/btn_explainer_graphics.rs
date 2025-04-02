@@ -5,11 +5,17 @@ use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
 
 
-
+#[derive(Properties, PartialEq)]
+pub struct BtnExplainerProps {
+  #[prop_or_default]
+  pub class: String,
+  #[prop_or("/static/2info.svg".to_string())] // Default SVG file
+  pub data: String,
+}
 
 
 #[function_component(BtnExplainerGraphics)]
-pub fn btn_explainer_graphics() -> Html {
+pub fn btn_explainer_graphics(props: &BtnExplainerProps) -> Html {
     const FINGER_DELAY: u32 = 3000;  // 3 seconds
     const START_ADDITIONAL_DELAY: u32 = 2200; // 2.2 seconds after finger
     const INFO_ADDITIONAL_DELAY: u32 = 3200; // 3.2 seconds after finger
@@ -126,12 +132,12 @@ pub fn btn_explainer_graphics() -> Html {
     html! {
     <>
     <style>{style}</style>
-       <div>//container is .page in index.scss OR .main_menu-container used in src/components/molecules/video_list.rs
-        <object ref={green_btn_ref} type="image/svg+xml" data="static/greenBtn.svg" class="green-btn"></object>
-            <object type="image/svg+xml" data="static/yellow_btn.svg" class="yellow-btn"></object>
-            <object type="image/svg+xml" data="static/start.svg" class={start_class}></object>
-            <object type="image/svg+xml" data="static/info.svg" class={info_class}></object>
-            <object type="image/svg+xml" data="static/pointFinger.svg" class={finger_class}></object>
+        <div class={classes!(props.class.clone(), "btn-container")}>
+        <object ref={green_btn_ref} type="image/svg+xml" data="/static/greenBtn.svg" class="green-btn"></object>
+            <object type="image/svg+xml" data="/static/yellow_btn.svg" class="yellow-btn"></object>
+            <object type="image/svg+xml" data="/static/start.svg" class={start_class}></object>
+            <object type="image/svg+xml" data={props.data.clone()} class={info_class}></object>
+            <object type="image/svg+xml" data="/static/pointFinger.svg" class={finger_class}></object>
         </div>
     </>
     }

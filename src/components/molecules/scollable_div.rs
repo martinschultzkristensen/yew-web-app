@@ -1,5 +1,6 @@
 use web_sys::HtmlElement;
 use yew::prelude::*;
+use crate::SoundEffectsContext;
 
 
 #[derive(Properties, PartialEq)]
@@ -14,7 +15,8 @@ pub struct ScrollableDivProps {
 pub fn scrollable_div(props: &ScrollableDivProps) -> Html {
     let div_ref = use_node_ref();
     let div_ref_clone = div_ref.clone();
-    
+    let sound_context = use_context::<SoundEffectsContext>().expect("SoundEffectsContext not found");
+        let play_sound = sound_context.play_sound.clone();
     // Clone props.onkeydown to avoid lifetime issues in the Callback closure
     let parent_onkeydown = props.onkeydown.clone();
 
@@ -38,12 +40,12 @@ pub fn scrollable_div(props: &ScrollableDivProps) -> Html {
             if let Some(div) = div_ref.cast::<HtmlElement>() {
                 match event.key().as_str() {
                     "w" => {
-
+                        play_sound.emit("toggleUpDown".to_string());
                         // Scroll up by 50px when "W" is pressed
                         div.scroll_by_with_x_and_y(0.0, -50.0);
                     }
                     "s" => {
-  
+                        play_sound.emit("toggleUpDown".to_string());
                         // Scroll down by 50px when "S" is pressed
                         div.scroll_by_with_x_and_y(0.0, 50.0);
                     }

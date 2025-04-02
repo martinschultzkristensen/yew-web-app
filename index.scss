@@ -222,6 +222,42 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
 
 @import "btn_explainer_graphics";
 
+// .btn-explainer-container {
+//   position: relative;
+//   width: 100%;
+//   height: 100%;
+// }
+
+// Container positioning modifiers
+.btn-container-main-menu {
+  position: absolute;
+  bottom: 0%;
+  right: 20%;
+  width: 100%;
+  height: 100%;
+
+  .btn-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+}
+.btn-container-about-choreo {
+  position: absolute;
+  bottom: 0%;
+  right: 10%;
+  width: 100%;
+  height: 100%;
+
+  .btn-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+}
+
 //Styling for about_choreo pages
 .about-choreo-container {
   display: flex;
