@@ -37,9 +37,9 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
 
 
     // State to hold choreography data
-    let choreo_data = use_state(|| props.config.dancers.clone());
-    let choreo_data = props.config.dancers.list.get(video_index)
-        .expect("Choreography data not found for the given index");
+    // let choreo_data = use_state(|| props.config.dancers.clone());
+    // let choreo_data = props.config.dancers.list.get(video_index+1)
+    //     .expect("Choreography data not found for the given index");
 
 
     // Load choreography data

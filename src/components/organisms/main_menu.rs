@@ -77,6 +77,8 @@ pub fn execute_choreo_video(
             1 => navigator.push_with_state(&Route::ChoreoVideo, 1usize),
             2 => navigator.push_with_state(&Route::ChoreoVideo, 2usize),
             3 => navigator.push_with_state(&Route::ChoreoVideo, 3usize),
+            4 => navigator.push_with_state(&Route::ChoreoVideo, 4usize),
+
             _ => {}
         }
     } else {
