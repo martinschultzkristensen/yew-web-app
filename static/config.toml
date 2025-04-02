@@ -6,28 +6,28 @@ name = "Mr danceOmatic"
 image = "/static/img/Martinus.png"
 strength = 10
 flexibility = 5
-in_chroeography_nr = [1, 3]
+in_choreography_nr = [1, 3]
 
 [[dancers.list]]
 name = "Jon"
 image = "/static/img/Jon.png"
 strength = 8
 flexibility = 7
-in_chroeography_nr = [1, 2, 4]
+in_choreography_nr = [1, 2, 4]
 
 [[dancers.list]]
 name = "Meng-Ting"
 image = "/static/img/Mengting.png"
 strength = 5
 flexibility = 10
-in_chroeography_nr = [1, 2, 3]
+in_choreography_nr = [1, 2, 3]
 
 [[dancers.list]]
 name = "Meng-Yuan"
 image = "/static/img/Mengyuin.png"
 strength = 8
 flexibility = 7
-in_chroeography_nr = [3, 4, 2]
+in_choreography_nr = [3, 4, 2]
 
 
 [demo_videos]
