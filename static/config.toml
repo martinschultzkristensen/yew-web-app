@@ -6,7 +6,7 @@ name = "Mr danceOmatic"
 image = "/static/img/MartinDom2025.jpg"
 strength = 10
 flexibility = 5
-in_choreography_nr = [1, 2, 5]
+in_choreography_nr = [1, 2, 4, 5]
 
 [[dancers.list]]
 name = "Hannah"
