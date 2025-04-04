@@ -15,7 +15,11 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 use wasm_bindgen_futures::spawn_local;
 use std::rc::Rc;
-
+use wasm_bindgen::prelude::wasm_bindgen;
+use wasm_bindgen::JsValue;
+use serde_wasm_bindgen::to_value;
+use serde_json::json;
+use gloo_console::log;
 
 mod components;
 #[derive(Clone, Routable, Debug, PartialEq)]
@@ -32,24 +36,63 @@ pub enum Route {
     LoadScreenVideo,
 }
 
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"], js_name = invoke)]
+    async fn invoke(cmd: &str, args: JsValue) -> JsValue;
+}
+
+fn fetch_config() {
+    spawn_local(async {
+        let args = json!({}); // Create a serde_json::Value
+        let args_js: JsValue = to_value(&args).unwrap(); // Convert directly to JsValue
+
+        let result = invoke("get_config", args_js).await;
+        log!(format!("Config data: {:?}", result));
+    });
+}
+
+fn is_tauri() -> bool {
+    web_sys::window()
+        .unwrap()
+        .get("__TAURI__")
+        .is_some()
+}
+
 #[function_component(DanceOmatic)]
 pub fn dance_o_matic() -> Html {
-    let config = use_state(|| None);
-    let config_clone = config.clone();
+    let config = use_state(|| None); //Why not let config = something from #[tauri::command]?
+    let config_clone = config.clone(); 
+
+    
 
     use_effect(move || {
-        spawn_local(async move {
-            match Config::from_file("/static/config.toml").await {
-                Ok(loaded_config) => {
-                log::info!("Config loaded successfully");
-                config_clone.set(Some(Rc::new(loaded_config)));
-            }
-                Err(err) => log::error!("Failed to load config: {:?}", err),
-            }
-        });
+        if is_tauri() {
+            spawn_local(async move {
+                let args = serde_json::json!({});
+                let js_args = to_value(&args).unwrap();
+                let result = invoke("get_config", js_args).await;
+                log::info!("Raw result from invoke: {:?}", result);
     
-        || () // No cleanup needed
+                match serde_wasm_bindgen::from_value::<Result<Config, String>>(result) {
+                    Ok(config_result) => {
+                        match config_result {
+                            Ok(loaded_config) => {
+                                log::info!("Config loaded successfully");
+                                config_clone.set(Some(Rc::new(loaded_config)));
+                            },
+                            Err(err) => log::error!("Backend returned error: {:?}", err),
+                        }
+                    },
+                    Err(err) => log::error!("Failed to deserialize result: {:?}", err),
+                }
+            });
+        } else {
+            log::warn!("🏁 Not running in Tauri - skipping config fetch.");
+        } 
+        || () 
     });
+
 
     html! {
         <div>
