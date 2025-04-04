@@ -42,15 +42,7 @@ extern "C" {
     async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 }
 
-fn fetch_config() {
-    spawn_local(async {
-        let args = json!({}); // Create a serde_json::Value
-        let args_js: JsValue = to_value(&args).unwrap(); // Convert directly to JsValue
 
-        let result = invoke("get_config", args_js).await;
-        log!(format!("Config data: {:?}", result));
-    });
-}
 
 fn is_tauri() -> bool {
     web_sys::window()
@@ -64,7 +56,6 @@ pub fn dance_o_matic() -> Html {
     let config = use_state(|| None); //Why not let config = something from #[tauri::command]?
     let config_clone = config.clone(); 
 
-    
 
     use_effect(move || {
         if is_tauri() {
@@ -122,3 +113,14 @@ fn switch(config: Rc<Config>) -> impl Fn(Route) -> Html {
         }
     }
 }
+
+
+// fn fetch_config() {
+//     spawn_local(async {
+//         let args = json!({}); // Create a serde_json::Value
+//         let args_js: JsValue = to_value(&args).unwrap(); // Convert directly to JsValue
+
+//         let result = invoke("get_config", args_js).await;
+//         log!(format!("Config data: {:?}", result));
+//     });
+// }
