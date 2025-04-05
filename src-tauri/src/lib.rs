@@ -83,14 +83,15 @@ impl Config {
 #[tauri::command]
 fn get_config() -> Result<Config, String> {
     // Log the current working directory
-    match std::env::current_dir() {
-        Ok(path) => println!("Current directory: {:?}", path),
-        Err(e) => println!("Failed to get current directory: {}", e),
-    }
+    // match std::env::current_dir() {
+    //     Ok(path) => log::info!("Current directory: {:?}", path),
+    //     Err(e) => log::error!("Failed to get current directory: {}", e),
+    // }
     Config::from_file(CONFIG_PATH).map_err(|err| err.to_string())
 }
 
 pub fn run() {
+    // env_logger::init();
   tauri::Builder::default()
     .invoke_handler(tauri::generate_handler![get_config])
     .run(tauri::generate_context!())

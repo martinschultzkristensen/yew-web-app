@@ -66,19 +66,14 @@ pub fn dance_o_matic() -> Html {
                 let args = serde_json::json!({});
                 let js_args = to_value(&args).unwrap();
                 let result = invoke("get_config", js_args).await;
-                log::info!("Raw result from invoke: {:?}", result);
+                // log::info!("Raw result from invoke: {:?}", result);
     
-                match serde_wasm_bindgen::from_value::<Result<Config, String>>(result) {
-                    Ok(config_result) => {
-                        match config_result {
-                            Ok(loaded_config) => {
-                                log::info!("Config loaded successfully");
-                                config_clone.set(Some(Rc::new(loaded_config)));
-                            },
-                            Err(err) => log::error!("Backend returned error: {:?}", err),
-                        }
-                    },
-                    Err(err) => log::error!("Failed to deserialize result: {:?}", err),
+                match serde_wasm_bindgen::from_value::<Config>(result) {
+                    Ok(loaded_config) => {
+                        // log::info!("✅ Config loaded successfully");
+                        config_clone.set(Some(Rc::new(loaded_config)));
+                    }
+                    Err(err) => log::error!("❌ Failed to deserialize Config: {:?}", err),
                 }
             });
         } else {

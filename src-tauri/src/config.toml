@@ -34,7 +34,7 @@ in_chroeography_nr = [3, 4, 2]
 [demo_videos]
 [[demo_videos.list]]
 id = 1
-url = "static/Flash_AI&Boy.mp4"
+url = "static/IntroDemoVid_4sec.mp4"
 loop_video = true
 title = "From config dancevideo nr.1"
 duration = "300"
