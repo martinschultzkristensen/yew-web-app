@@ -56,31 +56,40 @@ fn is_tauri() -> bool {
 
 #[function_component(DanceOmatic)]
 pub fn dance_o_matic() -> Html {
-    let config = use_state(|| None); //Why not let config = something from #[tauri::command]?
-    let config_clone = config.clone(); 
+    let config = use_state(|| None::<Rc<Config>>);
+        let config_fetched = use_state(|| false);
+        let config_clone = config.clone();
+        let config_fetched_clone = config_fetched.clone();
 
 
-    use_effect(move || {
-        if is_tauri() {
-            spawn_local(async move {
-                let args = serde_json::json!({});
-                let js_args = to_value(&args).unwrap();
-                let result = invoke("get_config", js_args).await;
-                // log::info!("Raw result from invoke: {:?}", result);
+        use_effect(move || {
+            // Only fetch if we haven't yet
+            if is_tauri() && !*config_fetched_clone {
+                spawn_local(async move {
+                    let args = serde_json::json!({});
+                    let js_args = to_value(&args).unwrap();
+                    let result = invoke("get_config", js_args).await;
+                    log::info!("Raw result from invoke: {:?}", result);
     
-                match serde_wasm_bindgen::from_value::<Config>(result) {
-                    Ok(loaded_config) => {
-                        // log::info!("✅ Config loaded successfully");
-                        config_clone.set(Some(Rc::new(loaded_config)));
+                    match serde_wasm_bindgen::from_value::<Config>(result) {
+                        Ok(loaded_config) => {
+                            let new_config = Rc::new(loaded_config);
+                            if Some(new_config.clone()) != *config_clone {
+                                log::info!("🔄 Config changed, updating state.");
+                                config_clone.set(Some(new_config));
+                            } else {
+                                log::info!("✅ Config unchanged, skipping update.");
+                            }
+                            config_fetched_clone.set(true);
+                        }
+                        Err(err) => log::error!("Failed to deserialize config: {:?}", err),
                     }
-                    Err(err) => log::error!("❌ Failed to deserialize Config: {:?}", err),
-                }
-            });
-        } else {
-            log::warn!("🏁 Not running in Tauri - skipping config fetch.");
-        } 
-        || () 
-    });
+                    
+                });
+            }
+    
+            || ()
+        });
 
 
     html! {
