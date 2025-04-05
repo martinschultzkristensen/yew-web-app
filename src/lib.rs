@@ -18,11 +18,6 @@ use std::rc::Rc;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 use serde_wasm_bindgen::to_value;
-use serde_json::json;
-use gloo_console::log;
-use serde::{Deserialize, Serialize};
-use serde_wasm_bindgen::from_value;
-
 
 mod components;
 #[derive(Clone, Routable, Debug, PartialEq)]

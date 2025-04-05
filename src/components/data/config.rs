@@ -3,10 +3,9 @@ use crate::components::atoms::dancer::DancerData as Dancer;
 use crate::components::molecules::video_list::DemoVideo;
 use crate::components::molecules::video_list::Video;
 use crate::components::molecules::video_list::VideoType;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_wasm_bindgen::from_value;
 use wasm_bindgen::JsValue;
-use web_sys::{Request, RequestInit, Response};
 
 
 
