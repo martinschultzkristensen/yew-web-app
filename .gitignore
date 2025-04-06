@@ -3,3 +3,4 @@
 /target/.*
 .DS_Store
 src-tauri/backup-icons
+/static_copy
