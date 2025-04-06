@@ -85,7 +85,7 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
             </div>
             <div class="arcadefont">
                 <h2>{ choreography_data.title.clone() }</h2>
-                <p>{ format!("Config has {} demo videos", props.config.load_dancers().len())}</p>
+                // <p>{ format!("Config has {} demo videos", props.config.load_dancers().len())}</p>
                 <div class="info-section-container">
                     <img src={choreography_data.choreo_image.clone()} 
                          alt={format!("Choreography {}", props.choreo_number)} />

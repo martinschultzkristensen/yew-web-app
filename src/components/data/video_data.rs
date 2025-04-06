@@ -6,7 +6,7 @@ pub fn get_intro_video() -> Vec<VideoType> {
     vec![
         VideoType::Regular(Video {
         id: 0,
-        url: "static/introDanceOmatic2025.mp4".to_string(),
+        url: "static/low_introDanceOmatic2025.mp4".to_string(),
         loop_video: true,
     })]
 }

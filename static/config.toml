@@ -36,35 +36,35 @@ id = 1
 url = "static/DEMO_LetsDuet.mp4"
 loop_video = true
 title = "Let's Duet"
-duration = "300"
+duration = "210"
 
 [[demo_videos.list]]
 id = 2
 url = "static/Flash_Siblings.mp4"
 loop_video = true
 title = "Siblings"
-duration = "25"
+duration = "318"
 
 [[demo_videos.list]]
 id = 3
 url = "static/Flash_Hej-Nihao.mp4"
 loop_video = true
 title = "Hej-Nihao"
-duration = "12"
+duration = "258"
 
 [[demo_videos.list]]
 id = 4
 url = "static/Flash_Culture4Fun.mp4"
 loop_video = true
 title = "culture4Fun"
-duration = "103"
+duration = "270"
 
 [[demo_videos.list]]
 id = 5
 url = "static/DEMO_frikadelle.mp4"
 loop_video = true
 title = "Three Chefs"
-duration = "103"
+duration = "210"
 
 [choreo_videos]
 [[choreo_videos.list]]
