@@ -1,19 +1,20 @@
 //src-tauri/src/lib.rs
+// mod commands; <-- add later
 use serde::{Deserialize, Serialize};
-use toml;
 use std::fmt;
+use toml;
 const CONFIG_PATH: &str = "src/config.toml";
 
 pub struct ConfigError(String);
 impl std::fmt::Display for ConfigError {
-fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-write!(f, "ConfigError: {}", self.0)
- }
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "ConfigError: {}", self.0)
+    }
 }
 impl fmt::Debug for ConfigError {
-fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-write!(f, "ConfigError: {}", self.0)
- }
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "ConfigError: {}", self.0)
+    }
 }
 impl std::error::Error for ConfigError {}
 
@@ -70,7 +71,6 @@ pub struct Config {
     pub choreo_videos: ChoreoVideos,
 }
 
-
 impl Config {
     pub fn from_file(path: &str) -> Result<Self, ConfigError> {
         let config_content = std::fs::read_to_string(path).map_err(|err| err.to_string())?;
@@ -78,7 +78,6 @@ impl Config {
         Ok(config)
     }
 }
-
 
 #[tauri::command]
 fn get_config() -> Result<Config, String> {
@@ -92,8 +91,9 @@ fn get_config() -> Result<Config, String> {
 
 pub fn run() {
     // env_logger::init();
-  tauri::Builder::default()
-    .invoke_handler(tauri::generate_handler![get_config])
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+    tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
+        .invoke_handler(tauri::generate_handler![get_config])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }
