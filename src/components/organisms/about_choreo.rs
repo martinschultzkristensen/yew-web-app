@@ -1,86 +1,112 @@
 //src/components/organisms/about_choreo.rs
-// use crate::components::atoms::use_focus_div::use_focus_div;
-use crate::components::atoms::dancer::DancerCard;
 use crate::components::atoms::arrow_respnd_ui::*;
+use crate::components::atoms::dancer::DancerCard;
 use crate::components::data::choreography_data::get_choreography_data;
-use crate::components::molecules::scollable_div::ScrollableDiv;
 use crate::components::molecules::music_context::*;
+use crate::components::molecules::sound_effects::SoundEffectsContext;
+use crate::components::molecules::scollable_div::ScrollableDiv;
+use crate::components::molecules::btn_explainer_graphics::BtnExplainerGraphics;
 use crate::Route;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
-
+use gloo::console::log;
+use crate::Config;
+use std::rc::Rc;
 
 #[derive(Properties, PartialEq)]
 pub struct AboutChoreoProps {
     pub choreo_number: usize,
+    pub config: Rc<Config>,
 }
 
 #[function_component(AboutChoreo)]
 pub fn about_choreo(props: &AboutChoreoProps) -> Html {
+    let ctx = use_context::<MusicContext>().expect("No music context provider");
+    
+    let sound_context = use_context::<SoundEffectsContext>().expect("SoundEffectsContext not found");
+    let play_sound = sound_context.play_sound.clone();
+    
+    let config = &props.config;
+    let choreography_data = get_choreography_data(config, props.choreo_number);
+
+    log!("About Choreo Props:", props.choreo_number);
     let navigator = use_navigator().unwrap();
     let video_index = props.choreo_number - 1;
-    let video_index = video_index; // Clone for closure
-    let ctx = use_context::<MusicContext>().expect("No music context provider");    
     let stop_music = ctx.stop_music.clone();
-      
-    // Get all data for this choreography
-    let choreo_data = get_choreography_data(props.choreo_number);
 
-    let event_key = Callback::from(move |event: KeyboardEvent|{ 
-        match event.key().as_str() {
+
+
+    // State to hold choreography data
+    // let choreo_data = use_state(|| props.config.dancers.clone());
+    // let choreo_data = props.config.dancers.list.get(video_index+1)
+    //     .expect("Choreography data not found for the given index");
+
+
+    // Load choreography data
+    // {
+    //     let choreo_data = choreo_data.clone();
+    //     let choreo_number = props.choreo_number;
+    //     use_effect(
+    //         move || {
+    //             spawn_local(async move {
+    //                 match get_choreography_data(choreo_number).await {
+    //                     data => {
+    //                         log!("Data loaded successfully");
+    //                         choreo_data.set(Some(data));
+    //                     }
+    //                 }
+    //             });
+    //             || ()
+    //         },
+    //     );
+    // }
+
+    let event_key = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
         "q" => {
             stop_music.emit(());
-            navigator.push(&Route::IntroScreen1)},
-        "r" => {let soundeffect =
-            web_sys::HtmlAudioElement::new_with_src("/static/uiToAboutChoreo.mp3").unwrap();
-        let _ = soundeffect.play();
-            navigator.push_with_state(&Route::MainMenu, video_index)},
-
+            navigator.push(&Route::IntroScreen1)
+        }
+        "r" => {
+            play_sound.emit("uiToAboutChoreo".to_string());
+            navigator.push_with_state(&Route::MainMenu, video_index)
+        }
         "e" => {
             stop_music.emit(());
+            play_sound.emit("buttonSelect".to_string());
             navigator.push_with_state(&Route::ChoreoVideo, video_index);
             let soundeffect =
                 web_sys::HtmlAudioElement::new_with_src("/static/buttonSelect.mp3").unwrap();
             let _ = soundeffect.play();
         }
         _ => (),
-        }
     });
 
     html! {
         <ScrollableDiv onkeydown={event_key} tabindex="1" class="about-choreo-container">
             <div class="svg-arrow-in-about-top">
-            <ArrowUpIcon/>
+                <ArrowUpIcon/>
             </div>
-            // Title section
             <div class="arcadefont">
-                <h2>{ &choreo_data.title }</h2> 
-                // Main choreography image
+                <h2>{ choreography_data.title.clone() }</h2>
+                // <p>{ format!("Config has {} demo videos", props.config.load_dancers().len())}</p>
                 <div class="info-section-container">
-                    <img src={choreo_data.choreo_image} alt={format!("Choreography {}", props.choreo_number)} />
-                    // Description section
-                    <p class="description">{ &choreo_data.description }</p>
+                    <img src={choreography_data.choreo_image.clone()} 
+                         alt={format!("Choreography {}", props.choreo_number)} />
+                    <p class="description">{ choreography_data.description.clone() }</p>
                 </div>
-            // Dancers section
                 <h2>{"Dancers"}</h2>
                 {
-                    choreo_data.dancers.iter().map(|dancer| {
+                    choreography_data.dancers.iter().map(|dancer| {
                         html! {
-                            <DancerCard
-                            image={dancer.image.clone()}
-                            name={dancer.name.clone()}
-                            strength={dancer.strength}
-                            flexibility={dancer.flexibility}
-                        />
+                            <DancerCard dancer={dancer.clone()}/>
                         }
                     }).collect::<Html>()
-                    }
-                </div>
-                <div class="svg-arrow-in-about-bottom">
+                }
+            </div>
+            <div class="svg-arrow-in-about-bottom">
                 <ArrowDownIcon/>
-                </div>
+            </div>
+            <BtnExplainerGraphics class="btn-container-about-choreo" data="/static/goBack.svg"/>
         </ScrollableDiv>
     }
 }
-
-
