@@ -45,6 +45,7 @@
   "identifier": "com.artfarm.danceomatic",
   "plugins": {},
   "app": {
+    "withGlobalTauri": true,
     "windows": [
       {
         "fullscreen": true,
