@@ -30,7 +30,7 @@ pub struct ConfigDancer {
     pub image: String,
     pub strength: u8,
     pub flexibility: u8,
-    pub in_chroeography_nr: Vec<usize>,
+    pub in_choreography_nr: Vec<usize>,
 }
 
 #[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
