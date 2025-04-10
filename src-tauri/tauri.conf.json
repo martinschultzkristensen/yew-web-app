@@ -31,7 +31,7 @@
       "providerShortName": null,
       "signingIdentity": null
     },
-    "resources": ["../static/config.toml"],
+    "resources": ["src/config.toml"],
     "shortDescription": "",
     "linux": {
       "deb": {

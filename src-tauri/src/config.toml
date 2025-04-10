@@ -34,7 +34,7 @@ in_choreography_nr = [3, 4, 2]
 [demo_videos]
 [[demo_videos.list]]
 id = 1
-url = "static/DEMO_LetsDuet.mp4"
+url = "resources/DEMO_LetsDuet.mp4"
 loop_video = true
 title = "Let's Duet"
 duration = "300"
