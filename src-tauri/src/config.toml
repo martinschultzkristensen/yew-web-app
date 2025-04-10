@@ -6,14 +6,14 @@ name = "Mr danceOmatic"
 image = "/static/MartinDom2025.jpg"
 strength = 5
 flexibility = 5
-in_choreography_nr = [1, 3]
+in_choreography_nr = [1, 3, 5]
 
 [[dancers.list]]
 name = "Jon"
 image = "/static/img/Jon.png"
 strength = 8
 flexibility = 7
-in_choreography_nr = [2, 4]
+in_choreography_nr = [2, 4, 5]
 
 [[dancers.list]]
 name = "Meng-Ting"
@@ -27,7 +27,7 @@ name = "Meng-Yuan"
 image = "/static/img/Mengyuin.png"
 strength = 8
 flexibility = 7
-in_choreography_nr = [3, 4, 2]
+in_choreography_nr = [3, 4, 2, 5]
 
 
 
@@ -70,27 +70,28 @@ duration = "103"
 [choreo_videos]
 [[choreo_videos.list]]
 id = 1
-url = "static/Choreo1_LetsDuetShort_english.mp4"
+url = "static/LoadScreenTest4s.mp4"
 loop_video = false
 
 [[choreo_videos.list]]
 id = 2
-url = "static/Choreo2_Siblings_english.mp4"
+url = "static/Siblings.mp4"
 loop_video = false
 
 [[choreo_videos.list]]
 id = 3
-url = "static/Choreo3_Hej-Nihao_english.mp4"
+url = "static/Culture4Fun.mp4"
 loop_video = false
 
 [[choreo_videos.list]]
 id = 4
-url = "static/Choreo4_culture4Fun_english.mp4"
+url = "static/Hej-Nihao.mp4"
 loop_video = false
+
 
 [[choreo_videos.list]]
 id = 5
-url = "static/Choreo5_threeChefs_en.mp4"
+url = "static/Hej-Nihao.mp4"
 loop_video = false
 
 # Add more configuration sections as needed
