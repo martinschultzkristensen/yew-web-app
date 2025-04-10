@@ -3,7 +3,7 @@
 [dancers]
 [[dancers.list]]
 name = "Mr danceOmatic"
-image = "/static/img/Martinus.png"
+image = "/static/MartinDom2025.jpg"
 strength = 5
 flexibility = 5
 in_choreography_nr = [1, 3]
@@ -34,7 +34,7 @@ in_choreography_nr = [3, 4, 2]
 [demo_videos]
 [[demo_videos.list]]
 id = 1
-url = "resources/DEMO_LetsDuet.mp4"
+url = "static/DEMO_LetsDuet.mp4"
 loop_video = true
 title = "Let's Duet"
 duration = "300"
