@@ -31,13 +31,14 @@
       "providerShortName": null,
       "signingIdentity": null
     },
-    "resources": ["../static/config.toml"],
+    "resources": ["src/config.toml"],
     "shortDescription": "",
     "linux": {
       "deb": {
         "depends": []
       }
     }
+    
   },
   "productName": "danceOmatic",
   "mainBinaryName": "danceOmatic",
@@ -45,6 +46,7 @@
   "identifier": "com.artfarm.danceomatic",
   "plugins": {},
   "app": {
+    "withGlobalTauri": true,
     "windows": [
       {
         "fullscreen": true,

@@ -1,0 +1,97 @@
+# config.toml
+
+[dancers]
+[[dancers.list]]
+name = "Mr danceOmatic"
+image = "/static/MartinDom2025.jpg"
+strength = 5
+flexibility = 5
+in_choreography_nr = [1, 3, 5]
+
+[[dancers.list]]
+name = "Jon"
+image = "/static/img/Jon.png"
+strength = 8
+flexibility = 7
+in_choreography_nr = [2, 4, 5]
+
+[[dancers.list]]
+name = "Meng-Ting"
+image = "/static/img/Mengting.png"
+strength = 5
+flexibility = 10
+in_choreography_nr = [1, 2, 3]
+
+[[dancers.list]]
+name = "Meng-Yuan"
+image = "/static/img/Mengyuin.png"
+strength = 8
+flexibility = 7
+in_choreography_nr = [3, 4, 2, 5]
+
+
+
+[demo_videos]
+[[demo_videos.list]]
+id = 1
+url = "static/DEMO_LetsDuet.mp4"
+loop_video = true
+title = "Let's Duet"
+duration = "300"
+
+[[demo_videos.list]]
+id = 2
+url = "static/Flash_Siblings.mp4"
+loop_video = true
+title = "Siblings"
+duration = "25"
+
+[[demo_videos.list]]
+id = 3
+url = "static/Flash_Hej-Nihao.mp4"
+loop_video = true
+title = "Hej-Nihao"
+duration = "12"
+
+[[demo_videos.list]]
+id = 4
+url = "static/Flash_Culture4Fun.mp4"
+loop_video = true
+title = "culture4Fun"
+duration = "103"
+
+[[demo_videos.list]]
+id = 5
+url = "static/DEMO_frikadelle.mp4"
+loop_video = true
+title = "Three Chefs"
+duration = "103"
+
+[choreo_videos]
+[[choreo_videos.list]]
+id = 1
+url = "static/LoadScreenTest4s.mp4"
+loop_video = false
+
+[[choreo_videos.list]]
+id = 2
+url = "static/Siblings.mp4"
+loop_video = false
+
+[[choreo_videos.list]]
+id = 3
+url = "static/Culture4Fun.mp4"
+loop_video = false
+
+[[choreo_videos.list]]
+id = 4
+url = "static/Hej-Nihao.mp4"
+loop_video = false
+
+
+[[choreo_videos.list]]
+id = 5
+url = "static/Hej-Nihao.mp4"
+loop_video = false
+
+# Add more configuration sections as needed

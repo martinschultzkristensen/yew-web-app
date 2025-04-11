@@ -1,3 +1,4 @@
+//src/components/molecules/sound_effects.rs
 use yew::prelude::*;
 use web_sys::HtmlAudioElement;
 use std::collections::HashMap;
@@ -52,7 +53,7 @@ impl Component for SoundEffectsProvider {
 
     if let Some(audio_ref) = self.sound_effects_context.effects.get(&effect_name) {
         if let Some(audio) = audio_ref.cast::<HtmlAudioElement>() {
-            let _ = audio.load();
+            let _ = audio.set_current_time(0.0);
             let _ = audio.play();
         }
     }
