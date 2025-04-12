@@ -1000,12 +1000,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "lazy_static"
-version = "1.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
-
-[[package]]
 name = "libc"
 version = "0.2.171"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1889,13 +1883,11 @@ dependencies = [
  "gloo-file 0.3.0",
  "gloo-timers 0.3.0",
  "js-sys",
- "lazy_static",
  "log",
  "plist",
  "serde",
  "serde-wasm-bindgen 0.6.5",
  "serde_json",
- "time",
  "toml",
  "wasm-bindgen",
  "wasm-bindgen-futures",

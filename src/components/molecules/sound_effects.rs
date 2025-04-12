@@ -3,8 +3,6 @@ use yew::prelude::*;
 use web_sys::HtmlAudioElement;
 use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
-use js_sys::Object;
-use serde_wasm_bindgen::to_value;
 
 #[wasm_bindgen]
 extern "C" {
