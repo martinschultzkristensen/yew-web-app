@@ -13,17 +13,21 @@ use rodio::{Decoder, OutputStream, Sink, source::Source};
 pub fn play_sound_backend() {
     println!("✅ Backend sound command received!");
     let (_stream, stream_handle) = OutputStream::try_default().unwrap();
-    let sink = Sink::try_new(&stream_handle).unwrap();
+    //let sink = Sink::try_new(&stream_handle).unwrap();
 
     // The path will be relative to where the binary is run, which is typically the root dir
-    let mut path = PathBuf::from("resources/button-124476.mp3");
+    let file = BufReader::new(File::open("resources/button-124476.mp3").unwrap());
 
-    // Open and decode the audio file
-    let file = BufReader::new(File::open(&path).unwrap());
     let source = Decoder::new(file).unwrap();
-    sink.append(source);
+    // Play the sound directly on the device
+    match stream_handle.play_raw(source.convert_samples()) {
+        Ok(_) => println!("Sound played successfully"),
+        Err(e) => eprintln!("Failed to play sound: {}", e),
+    }
 
-    sink.detach(); // Don't block — let it play asynchronously
+    // The sound plays in a separate audio thread,
+    // so we need to keep the main thread alive while it's playing.
+    std::thread::sleep(std::time::Duration::from_secs(5));
 }
 
 // #[tauri::command]
