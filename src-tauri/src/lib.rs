@@ -1,5 +1,6 @@
 //src-tauri/src/lib.rs
-// mod commands; <-- add later
+mod commands;
+use commands::play_sound_backend;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use toml;
@@ -80,6 +81,11 @@ impl Config {
 }
 
 #[tauri::command]
+fn play_sound_backend2() {
+    println!("✅ Backend sound command received!");
+}
+
+#[tauri::command]
 fn get_config() -> Result<Config, String> {
     // Log the current working directory
     // match std::env::current_dir() {
@@ -89,11 +95,12 @@ fn get_config() -> Result<Config, String> {
     Config::from_file(CONFIG_PATH).map_err(|err| err.to_string())
 }
 
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     // env_logger::init();
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
-        .invoke_handler(tauri::generate_handler![get_config])
+        .invoke_handler(tauri::generate_handler![get_config, play_sound_backend])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

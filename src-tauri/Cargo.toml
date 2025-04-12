@@ -37,8 +37,9 @@ serde = { version = "1.0", features = ["derive"] }
 toml = "0.8"
 #log = "0.4"
 #env_logger = "0.10"
-rodio = "0.20.1"
+rodio = {version = "0.20.1", features = ["mp3", "symphonia-mp3"] }
 tauri-plugin-fs = "2"
+#symphonia = {version = "0.5.4", default-features = false, features = [] }
 
 
 [features]

@@ -2,6 +2,22 @@
 use yew::prelude::*;
 use web_sys::HtmlAudioElement;
 use std::collections::HashMap;
+use wasm_bindgen::prelude::*;
+use js_sys::Object;
+use serde_wasm_bindgen::to_value;
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"], js_name = invoke)]
+    async fn invoke(cmd: &str, args: JsValue) -> JsValue;
+}
+//check if the app is running inside the Tauri shell
+fn is_tauri() -> bool {
+    web_sys::window()
+        .unwrap()
+        .get("__TAURI__")
+        .is_some()
+}
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct SoundEffectsContext {
@@ -49,16 +65,28 @@ impl Component for SoundEffectsProvider {
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
-    let SoundEffectsAction::PlaySound(effect_name) = msg;
-
-    if let Some(audio_ref) = self.sound_effects_context.effects.get(&effect_name) {
-        if let Some(audio) = audio_ref.cast::<HtmlAudioElement>() {
-            let _ = audio.set_current_time(0.0);
-            let _ = audio.play();
+        let SoundEffectsAction::PlaySound(effect_name) = msg;
+    
+        if let Some(audio_ref) = self.sound_effects_context.effects.get(&effect_name) {
+            if let Some(audio) = audio_ref.cast::<HtmlAudioElement>() {
+                let _ = audio.set_current_time(0.0);
+                let _ = audio.play();
+    
+                if effect_name == "toggleUpDown" {
+                    if is_tauri() {
+                        wasm_bindgen_futures::spawn_local(async {
+                            let result = invoke("play_sound_backend", JsValue::NULL).await;
+                            gloo_console::log!(format!("🔊 invoke result: {:?}", result));
+                        });
+                    } else {
+                        gloo_console::log!("🚫 Not running in Tauri");
+                    }
+                }
+            }
         }
+    
+        false
     }
-    false // false Prevents unnecessary re-renders, but I think it has no effect true or false!
-}
 
 
     fn view(&self, ctx: &Context<Self>) -> Html {
@@ -70,7 +98,7 @@ impl Component for SoundEffectsProvider {
             <ContextProvider<SoundEffectsContext> context={self.sound_effects_context.clone()}>
                 <audio ref={ui_to_about_choreo.clone()} src="/static/uiToAboutChoreo.mp3" />
                 <audio ref={button_select.clone()} src="/static/BtnStart.mp3" />
-                <audio ref={toggle_up_down.clone()} src="/static/button-124476.mp3" />
+                <audio ref={toggle_up_down.clone()}/>
                 { for ctx.props().children.iter() }
             </ContextProvider<SoundEffectsContext>>
         }

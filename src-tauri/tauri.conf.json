@@ -31,7 +31,7 @@
       "providerShortName": null,
       "signingIdentity": null
     },
-    "resources": ["src/config.toml"],
+    "resources": ["src/config.toml", "resources/button-124476.mp3"],
     "shortDescription": "",
     "linux": {
       "deb": {
