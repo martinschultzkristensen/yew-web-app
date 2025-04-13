@@ -69,17 +69,6 @@ impl Component for SoundEffectsProvider {
             if let Some(audio) = audio_ref.cast::<HtmlAudioElement>() {
                 let _ = audio.set_current_time(0.0);
                 let _ = audio.play();
-    
-                if effect_name == "toggleUpDown" {
-                    if is_tauri() {
-                        wasm_bindgen_futures::spawn_local(async {
-                            let result = invoke("play_sound_backend", JsValue::NULL).await;
-                            gloo_console::log!(format!("🔊 invoke result: {:?}", result));
-                        });
-                    } else {
-                        gloo_console::log!("🚫 Not running in Tauri");
-                    }
-                }
             }
         }
     
@@ -96,7 +85,7 @@ impl Component for SoundEffectsProvider {
             <ContextProvider<SoundEffectsContext> context={self.sound_effects_context.clone()}>
                 <audio ref={ui_to_about_choreo.clone()} src="/static/uiToAboutChoreo.mp3" />
                 <audio ref={button_select.clone()} src="/static/BtnStart.mp3" />
-                <audio ref={toggle_up_down.clone()}/>
+                <audio ref={toggle_up_down.clone()} src="/static/button-124476.mp3" preload="auto"/>
                 { for ctx.props().children.iter() }
             </ContextProvider<SoundEffectsContext>>
         }
