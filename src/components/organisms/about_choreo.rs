@@ -36,31 +36,6 @@ pub fn about_choreo(props: &AboutChoreoProps) -> Html {
 
 
 
-    // State to hold choreography data
-    let choreo_data = use_state(|| props.config.dancers.clone());
-    let choreo_data = props.config.dancers.list.get(video_index)
-        .expect("Choreography data not found for the given index");
-
-
-    // Load choreography data
-    // {
-    //     let choreo_data = choreo_data.clone();
-    //     let choreo_number = props.choreo_number;
-    //     use_effect(
-    //         move || {
-    //             spawn_local(async move {
-    //                 match get_choreography_data(choreo_number).await {
-    //                     data => {
-    //                         log!("Data loaded successfully");
-    //                         choreo_data.set(Some(data));
-    //                     }
-    //                 }
-    //             });
-    //             || ()
-    //         },
-    //     );
-    // }
-
     let event_key = Callback::from(move |event: KeyboardEvent| match event.key().as_str() {
         "q" => {
             stop_music.emit(());

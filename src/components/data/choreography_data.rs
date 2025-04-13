@@ -12,29 +12,6 @@ pub struct ChoreographyData {
     pub videos: Vec<VideoType>,
 }
 
-// pub async fn get_choreography_data(choreo_number: usize) -> ChoreographyData {
-//     let config_path = get_config_path();
-//     log::debug!("Config path: {}", config_path);
-
-
-
-//     let config = match Config::from_file(&config_path).await {
-//         Ok(cfg) => {
-//             log::debug!("Config loaded successfully");
-//             cfg
-//         },
-//         Err(e) => {
-//             log::error!("Failed to load config: {}", e);
-//             return ChoreographyData {
-//                 title: "Error".to_string(),
-//                 choreo_image: "/static/img/default.png".to_string(),
-//                 dancers: vec![],
-//                 description: "Failed to load choreography data".to_string(),
-//                 videos: vec![],
-//             };
-//         }
-//     };
-
     
     pub fn get_choreography_data(config: &Config, choreo_number: usize) -> ChoreographyData {
     let videos = config.load_choreo_videos();
