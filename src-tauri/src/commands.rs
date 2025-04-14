@@ -17,3 +17,16 @@ fn play_sound_backend(sound_file: String) {
     sink.append(source);
     sink.detach(); // play-and-forget
 }
+
+#[tauri::command]
+fn init_app_data(app_handle: tauri::AppHandle) -> Result<String, String> {
+    let app_dir = app_handle.path_resolver().app_data_dir().expect("Failed to get app data dir");
+    let custom_dir = app_dir.join("customizable");
+    
+    // Create directory if it doesn't exist
+    if !custom_dir.exists() {
+        std::fs::create_dir_all(&custom_dir).map_err(|e| e.to_string())?;
+    }
+    
+    Ok(custom_dir.to_string_lossy().to_string())
+}

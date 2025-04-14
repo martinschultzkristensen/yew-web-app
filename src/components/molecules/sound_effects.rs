@@ -68,7 +68,7 @@ impl Component for SoundEffectsProvider {
 
         html! {
             <ContextProvider<SoundEffectsContext> context={self.sound_effects_context.clone()}>
-                <audio ref={ui_to_about_choreo.clone()} src="/static/uiToAboutChoreo.mp3" />
+                <audio ref={ui_to_about_choreo.clone()} src=" /static/uiToAboutChoreo.mp3" />
                 <audio ref={button_select.clone()} src="/static/BtnStart.mp3" />
                 <audio ref={toggle_up_down.clone()} src="/static/button-124476.mp3" />
                 { for ctx.props().children.iter() }

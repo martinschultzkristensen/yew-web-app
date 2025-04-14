@@ -3,6 +3,7 @@ use crate::components::molecules::video_list::{Video, VideoType};
 
 
 pub fn get_intro_video() -> Vec<VideoType> {
+pub fn get_intro_video() -> Vec<VideoType> {
     vec![
         VideoType::Regular(Video {
         id: 0,
@@ -39,6 +40,7 @@ pub fn get_intro_video() -> Vec<VideoType> {
 //     ]
 // }
 
+pub fn loadscreen_video() -> Vec<VideoType> {
 pub fn loadscreen_video() -> Vec<VideoType> {
     vec![
         VideoType::Regular(Video {

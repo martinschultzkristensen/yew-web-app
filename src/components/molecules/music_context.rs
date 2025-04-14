@@ -68,7 +68,7 @@ impl Component for MusicContextProvider {
             <ContextProvider<MusicContext> context={self.music_context.clone()}>
                 <audio 
                     ref={self.music_context.audio_ref.clone()} 
-                    src="/static/8bit-menusong-short-ed.mp3" 
+                    src="/static/low_8bit-menusong-short-ed.mp3" 
                     loop=true 
                 />
                 { for ctx.props().children.iter() }

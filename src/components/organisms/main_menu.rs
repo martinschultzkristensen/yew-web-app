@@ -77,8 +77,14 @@ pub fn execute_choreo_video(
             1 => navigator.push_with_state(&Route::ChoreoVideo, 1usize),
             2 => navigator.push_with_state(&Route::ChoreoVideo, 2usize),
             3 => navigator.push_with_state(&Route::ChoreoVideo, 3usize),
+<<<<<<< HEAD
             4 => navigator.push_with_state(&Route::ChoreoVideo, 3usize),
             _ => {log!("no Route matching DemoVideo index. Add one in match index in main_menu.rs")}
+=======
+            4 => navigator.push_with_state(&Route::ChoreoVideo, 4usize),
+
+            _ => {}
+>>>>>>> main
         }
     } else {
         log!("Navigator is None");

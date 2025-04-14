@@ -3,7 +3,10 @@
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use toml;
-const CONFIG_PATH: &str = "src/config.toml";
+use tauri::Manager;
+use tauri::path::BaseDirectory;
+const CONFIG_PATH: &str = "resources/config.toml";
+
 
 pub struct ConfigError(String);
 impl std::fmt::Display for ConfigError {
@@ -30,7 +33,7 @@ pub struct ConfigDancer {
     pub image: String,
     pub strength: u8,
     pub flexibility: u8,
-    pub in_chroeography_nr: Vec<usize>,
+    pub in_choreography_nr: Vec<usize>,
 }
 
 #[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
@@ -80,17 +83,20 @@ impl Config {
 }
 
 #[tauri::command]
-fn get_config() -> Result<Config, String> {
-    // Log the current working directory
-    // match std::env::current_dir() {
-    //     Ok(path) => log::info!("Current directory: {:?}", path),
-    //     Err(e) => log::error!("Failed to get current directory: {}", e),
-    // }
-    Config::from_file(CONFIG_PATH).map_err(|err| err.to_string())
+fn get_config(handle: tauri::AppHandle) -> Result<Config, String> {
+    let resource_path = handle.path()
+    .resolve(CONFIG_PATH, BaseDirectory::Resource)
+    .map_err(|err| err.to_string())?;
+
+    Config::from_file(resource_path.to_str().ok_or("Invalid path")?)
+        .map_err(|err| err.to_string())
+    
+
 }
 
+
+
 pub fn run() {
-    // env_logger::init();
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
         .invoke_handler(tauri::generate_handler![get_config])

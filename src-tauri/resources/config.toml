@@ -4,16 +4,16 @@
 [[dancers.list]]
 name = "Mr danceOmatic"
 image = "/static/img/Martinus.png"
-strength = 10
+strength = 5
 flexibility = 5
-in_choreography_nr = [1, 3]
+in_choreography_nr = [1, 3, 5]
 
 [[dancers.list]]
 name = "Jon"
 image = "/static/img/Jon.png"
 strength = 8
 flexibility = 7
-in_choreography_nr = [2, 4]
+in_choreography_nr = [2, 4, 5]
 
 [[dancers.list]]
 name = "Meng-Ting"
@@ -30,61 +30,67 @@ flexibility = 7
 in_choreography_nr = [3, 4, 2]
 
 
-[songs]
-available = [
-    "song1.mp3",
-    "song2.mp3",
-    "song3.mp3"
-]
 
 [demo_videos]
 [[demo_videos.list]]
 id = 1
-url = "static/Flash_AI&Boy.mp4"
+url = "static/devVideo/DEMO_LetsDuet.mp4"
 loop_video = true
-title = "From config dancevideo nr.1"
+title = "Let's Duet"
 duration = "300"
 
 [[demo_videos.list]]
 id = 2
-url = "static/Flash_Siblings.mp4"
+url = "static/devVideo/Flash_Siblings.mp4"
 loop_video = true
-title = "From config dancevideo nr.2"
+title = "Siblings"
 duration = "25"
 
 [[demo_videos.list]]
 id = 3
-url = "static/Flash_Culture4Fun.mp4"
+url = "static/devVideo/Flash_Hej-Nihao.mp4"
 loop_video = true
-title = "culture4Fun nr.3"
-duration = "125"
+title = "Hej-Nihao"
+duration = "12"
 
 [[demo_videos.list]]
 id = 4
-url = "static/Flash_Hej-Nihao.mp4"
+url = "static/devVideo/Flash_Culture4Fun.mp4"
 loop_video = true
-title = "Title to dancevideo nr.4"
-duration = "1"
+title = "culture4Fun"
+duration = "103"
+
+[[demo_videos.list]]
+id = 5
+url = "static/devVideo/DEMO_frikadelle.mp4"
+loop_video = true
+title = "Three Chefs"
+duration = "103"
 
 [choreo_videos]
 [[choreo_videos.list]]
 id = 1
-url = "static/LoadScreenTest4s.mp4"
+url = "static/devVideo/AI&Boy.mp4"
 loop_video = false
 
 [[choreo_videos.list]]
 id = 2
-url = "static/Siblings.mp4"
+url = "static/devVideo/AI&Boy.mp4"
 loop_video = false
 
 [[choreo_videos.list]]
 id = 3
-url = "static/Culture4Fun.mp4"
+url = "static/devVideo/AI&Boy.mp4"
 loop_video = false
 
 [[choreo_videos.list]]
 id = 4
-url = "static/Hej-Nihao.mp4"
+url = "static/devVideo/AI&Boy.mp4"
+loop_video = false
+
+[[choreo_videos.list]]
+id = 5
+url = "static/devVideo/AI&Boy.mp4"
 loop_video = false
 
 # Add more configuration sections as needed

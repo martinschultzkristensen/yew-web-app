@@ -38,3 +38,8 @@ gloo-console = "0.3.0"
 wasm-logger = "0.2.0"
 console_error_panic_hook = "0.1.7"
 cfg-if = "1.0.0"
+<<<<<<< HEAD
+=======
+
+plist = "=1.6.0"
+>>>>>>> main

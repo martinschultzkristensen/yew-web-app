@@ -31,13 +31,14 @@
       "providerShortName": null,
       "signingIdentity": null
     },
-    "resources": [],
+    "resources": ["resources/config.toml"],
     "shortDescription": "",
     "linux": {
       "deb": {
         "depends": []
       }
     }
+    
   },
   "productName": "danceOmatic",
   "mainBinaryName": "danceOmatic",
