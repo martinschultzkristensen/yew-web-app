@@ -401,6 +401,7 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
   min-width: 24px;
   text-align: right;
   font-size: 0.875rem;
+}
 .arcadefont {
   font-family: "PressStart2P-vaV7", sans-serif;
   font-size: 24px;
@@ -732,8 +733,3 @@ h1, h2, h3, h4, h5, h6 {@include gradient-text;}
 }
 
 
-.stat-value {
-  min-width: 24px;
-  text-align: right;
-  font-size: 0.875rem;
-}
