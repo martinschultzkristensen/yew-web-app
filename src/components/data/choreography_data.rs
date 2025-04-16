@@ -49,6 +49,9 @@ pub struct ChoreographyData {
     let demo_video_title = |id: usize| -> String {
         demo_videos_map.get(&id).cloned().unwrap_or_else(|| "Default Title".to_string())
     };
+    let demo_video_description = |id: usize| -> String {
+        demo_videos_map.get(&id).cloned().unwrap_or_else(|| "Default Title".to_string())
+    };
 
     // pub fn get_choreography_data(choreo_number: usize) -> ChoreographyData{
     match choreo_number {

@@ -46,6 +46,7 @@ pub struct DemoVideoConfig {
     pub url: String,
     pub loop_video: bool,
     pub title: String,
+    pub description: String, //<-- new
     pub duration: String,
 }
 
@@ -112,6 +113,7 @@ impl Config {
                     loop_video: video_config.loop_video,
                 },
                 title: video_config.title.clone(),
+                description: video_config.description.clone(),
                 duration: video_config.duration.clone(),
             })
         }).collect()

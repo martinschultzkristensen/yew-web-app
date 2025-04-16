@@ -18,6 +18,7 @@ pub struct DemoVideo {
     pub video: Video,
     pub title: String,
     pub duration: String,
+    pub description: String,
 }
 
 #[derive(Clone, PartialEq)]
