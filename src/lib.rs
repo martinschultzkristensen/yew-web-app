@@ -51,6 +51,7 @@ fn is_tauri() -> bool {
 
 #[function_component(DanceOmatic)]
 pub fn dance_o_matic() -> Html {
+    
     let config = use_state(|| None::<Rc<Config>>);
         let config_fetched = use_state(|| false);
         let config_clone = config.clone();

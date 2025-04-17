@@ -48,6 +48,7 @@ pub struct DemoVideoConfig {
     pub url: String,
     pub loop_video: bool,
     pub title: String,
+    pub description: String, //<-- new
     pub duration: String,
 }
 

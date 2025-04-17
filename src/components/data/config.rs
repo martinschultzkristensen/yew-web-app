@@ -77,6 +77,11 @@ pub struct Config {
 //impl PartialEq for Config and comprare relevant fields
 
 impl Config {
+    pub fn from_toml(toml_str: &str) -> Result<Self, toml::de::Error> {
+        let config: Config = toml::from_str(toml_str)?;
+        println!("{:?}", config); // Debugging statement
+        Ok(config)
+    }
     // Deserialize the `JsValue` into the Rust struct
     pub fn from_jsvalue(js_value: JsValue) -> Result<Config, ConfigError> {
         // Deserialize the JsValue into Config struct using serde_wasm_bindgen
