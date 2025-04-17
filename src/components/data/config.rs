@@ -46,7 +46,7 @@ pub struct DemoVideoConfig {
     pub url: String,
     pub loop_video: bool,
     pub title: String,
-    pub description: String, //<-- new
+    pub description: Option<String>,
     pub duration: String,
 }
 
@@ -77,16 +77,12 @@ pub struct Config {
 //impl PartialEq for Config and comprare relevant fields
 
 impl Config {
-    pub fn from_toml(toml_str: &str) -> Result<Self, toml::de::Error> {
-        let config: Config = toml::from_str(toml_str)?;
-        println!("{:?}", config); // Debugging statement
-        Ok(config)
-    }
     // Deserialize the `JsValue` into the Rust struct
     pub fn from_jsvalue(js_value: JsValue) -> Result<Config, ConfigError> {
         // Deserialize the JsValue into Config struct using serde_wasm_bindgen
         from_value(js_value).map_err(|e| ConfigError(format!("Failed to deserialize JsValue: {:?}", e)))
     }
+    
     pub fn load_dancers(&self) -> std::collections::HashMap<usize, Vec<Dancer>> {
         let mut choreography_map = std::collections::HashMap::new();
 
@@ -118,7 +114,7 @@ impl Config {
                     loop_video: video_config.loop_video,
                 },
                 title: video_config.title.clone(),
-                description: video_config.description.clone(),
+                description: video_config.description.clone().unwrap_or_else(|| "There is not yet a description for this choreography".to_string()),
                 duration: video_config.duration.clone(),
             })
         }).collect()

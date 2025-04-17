@@ -43,49 +43,56 @@ pub fn get_choreography_data(config: &Config, choreo_number: usize) -> Choreogra
         .demo_videos
         .list
         .iter()
-        .map(|video| (video.id as usize, (video.title.clone(), video.description.clone()))) // Clone the title
+        .map(|video| {
+            let description = video.description.clone().unwrap_or_else(|| {
+                "There is not yet a description for this choreography❗".to_string()
+            });
+            (video.id as usize, (video.title.clone(), description))
+        })
         .collect();
 
-    let demo_video_tekst = |id: usize| -> (String, String) {
-        demo_videos_map.get(&id).cloned().unwrap_or_else(|| ("Default Title".to_string(), "There is not yet a description for this choreography".to_string()))
+    let demo_video_text = |id: usize| -> (String, String) {
+        demo_videos_map.get(&id).cloned().unwrap_or_else(|| ("Default Title".to_string(), "There is not yet a description for this choreography❗".to_string()))
     };
+
+
 
     match choreo_number {
         1 => ChoreographyData {
-            title: demo_video_tekst(1).0.to_string(),
-            description: demo_video_tekst(1).1.to_string(),
+            title: demo_video_text(1).0.to_string(),
+            description: demo_video_text(1).1.to_string(),
             choreo_image: "/static/img/LetsDuet.jpg".to_string(),
             dancers: dancers_map.get(&1).cloned().unwrap_or_default(),
             videos,
         },
-        // 2 => ChoreographyData {
-        //     title: demo_video_title(2).to_string(),
-        //     choreo_image: "/static/img/siblings.png".to_string(),
-        //     dancers: dancers_map.get(&2).cloned().unwrap_or_default(),
-        //     description: "Three individuals share a deeply unique relationship with each other during an outing.".to_string(),
-        //     videos,
-        // },
-        // 3 => ChoreographyData {
-        //     title: demo_video_title(3).to_string(),
-        //     choreo_image: "/static/img/Hej-Nihao.png".to_string(),
-        //     dancers: dancers_map.get(&3).cloned().unwrap_or_default(),
-        //     description: "Two people from very different cultures meet and try to make their gestures meaningful to one another.".to_string(),
-        //     videos,
-        // },
-        // 4 => ChoreographyData {
-        //     title: demo_video_title(4).to_string(),
-        //     choreo_image: "/static/img/culture4fun.png".to_string(),
-        //     dancers: dancers_map.get(&4).cloned().unwrap_or_default(),
-        //     description: "A culture mashup, blending traditional Taiwanese dance with breakdance elements. How will they combine?".to_string(),
-        //     videos,
-        // },
-        // 5 => ChoreographyData {
-        //     title: demo_video_title(5).to_string(),
-        //     choreo_image: "/static/img/frikadelle1080x1080.jpg".to_string(),
-        //     dancers: dancers_map.get(&5).cloned().unwrap_or_default(),
-        //     description: "These three chefs come straight from the kitchen, masters of collaboration. This is a small part of Art Farm's piece, Frikadelle.".to_string(),
-        //     videos,
-        // },
+        2 => ChoreographyData {
+            title: demo_video_text(2).0.to_string(),
+            choreo_image: "/static/img/siblings.png".to_string(),
+            dancers: dancers_map.get(&2).cloned().unwrap_or_default(),
+            description: demo_video_text(2).1.to_string(),
+            videos,
+        },
+        3 => ChoreographyData {
+            title: demo_video_text(3).0.to_string(),
+            choreo_image: "/static/img/Hej-Nihao.png".to_string(),
+            dancers: dancers_map.get(&3).cloned().unwrap_or_default(),
+            description: demo_video_text(3).1.to_string(),
+            videos,
+        },
+        4 => ChoreographyData {
+            title: demo_video_text(4).0.to_string(),
+            choreo_image: "/static/img/culture4fun.png".to_string(),
+            dancers: dancers_map.get(&4).cloned().unwrap_or_default(),
+            description: demo_video_text(4).1.to_string(),
+            videos,
+        },
+        5 => ChoreographyData {
+            title: demo_video_text(5).0.to_string(),
+            choreo_image: "/static/img/frikadelle1080x1080.jpg".to_string(),
+            dancers: dancers_map.get(&5).cloned().unwrap_or_default(),
+            description: demo_video_text(5).1.to_string(),
+            videos,
+        },
         _ => ChoreographyData {
             title: "Unknown Choreography".to_string(),
             choreo_image: "/static/img/default.png".to_string(),
