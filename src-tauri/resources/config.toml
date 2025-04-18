@@ -39,6 +39,7 @@ loop_video = true
 title = "Let's Duet"
 description = "Two individuals long to break free and embrace their raw, primal instincts—but they're trapped in a world rigidly governed by systems, rules, and straight lines."
 duration = "300"
+choreo_img = "/static/img/LetsDuet.jpg"
 
 [[demo_videos.list]]
 id = 2
@@ -47,6 +48,7 @@ loop_video = true
 title = "Siblings"
 description = "Three individuals share a deeply unique relationship with each other during an outing."
 duration = "25"
+choreo_img = "/static/img/siblings.png"
 
 [[demo_videos.list]]
 id = 3
@@ -55,6 +57,7 @@ loop_video = true
 title = "Hej-Nihao"
 description = "Two people from very different cultures meet and try to make their gestures meaningful to one another."
 duration = "12"
+choreo_img = "/static/img/Hej-Nihao.png"
 
 [[demo_videos.list]]
 id = 4
@@ -63,6 +66,7 @@ loop_video = true
 title = "culture4Fun"
 description = "A culture mashup, blending traditional Taiwanese dance with breakdance elements. How will they combine?"
 duration = "103"
+choreo_img = "/static/img/culture4fun.png"
 
 [[demo_videos.list]]
 id = 5
@@ -71,6 +75,7 @@ loop_video = true
 title = "Chef"
 description = "These three chefs come straight from the kitchen, masters of collaboration. This is a small part of Art Farm's piece, Frikadelle."
 duration = "103"
+choreo_img = "/static/img/frikadelle1080x1080.jpg"
 
 [choreo_videos]
 [[choreo_videos.list]]

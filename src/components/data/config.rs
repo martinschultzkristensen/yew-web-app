@@ -45,6 +45,7 @@ pub struct DemoVideoConfig {
     pub id: usize,
     pub url: String,
     pub loop_video: bool,
+    pub choreo_img: Option<String>,
     pub title: String,
     pub description: Option<String>,
     pub duration: String,
@@ -116,6 +117,7 @@ impl Config {
                 title: video_config.title.clone(),
                 description: video_config.description.clone().unwrap_or_else(|| "There is not yet a description for this choreography".to_string()),
                 duration: video_config.duration.clone(),
+                choreo_img: video_config.choreo_img.clone().unwrap_or_else(|| "static/img/Ming_Niels.png".to_string()),
             })
         }).collect()
     }

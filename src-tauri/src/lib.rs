@@ -50,6 +50,7 @@ pub struct DemoVideoConfig {
     pub title: String,
     pub description: Option<String>,
     pub duration: String,
+    pub choreo_img: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, PartialEq, Serialize)]
