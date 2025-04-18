@@ -75,6 +75,8 @@ pub struct Config {
     pub dancers: Dancers,
     pub demo_videos: DemoVideos,
     pub choreo_videos: ChoreoVideos,
+    pub intro_video: ChoreoVideoConfig,
+    pub loadscreen_video: ChoreoVideoConfig,
 }
 
 impl Config {

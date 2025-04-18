@@ -73,6 +73,8 @@ pub struct Config {
     pub dancers: Dancers,
     pub demo_videos: DemoVideos,
     pub choreo_videos: ChoreoVideos,
+    pub loadscreen_video: ChoreoVideoConfig,
+    pub intro_video: ChoreoVideoConfig,
 }
 
 //impl PartialEq for Config and comprare relevant fields
@@ -120,6 +122,22 @@ impl Config {
                 choreo_img: video_config.choreo_img.clone().unwrap_or_else(|| "static/img/Ming_Niels.png".to_string()),
             })
         }).collect()
+    }
+
+    pub fn get_loadscreen_video(&self) -> Vec<VideoType> {
+        vec![VideoType::Regular(Video {
+            id: self.loadscreen_video.id,
+            url: self.loadscreen_video.url.clone(),
+            loop_video: self.loadscreen_video.loop_video,
+        })]
+    }
+
+    pub fn get_intro_video(&self) -> Vec<VideoType> {
+        vec![VideoType::Regular(Video {
+            id: self.intro_video.id,
+            url: self.intro_video.url.clone(),
+            loop_video: self.intro_video.loop_video,
+        })]
     }
 
     pub fn load_choreo_videos(&self) -> Vec<VideoType> {

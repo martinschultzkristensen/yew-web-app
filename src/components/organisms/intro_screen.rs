@@ -1,5 +1,4 @@
 
-use crate::get_intro_video;
 use crate::Route;
 use crate::VideosList;
 use yew::prelude::*;
@@ -17,7 +16,7 @@ pub struct IntroScreenProps {
 pub fn intro_screen(props: &IntroScreenProps) -> Html {
     let audio_coin = web_sys::HtmlAudioElement::new_with_src("static/coinSound.mp3").unwrap();
     let navigator = use_navigator().unwrap();
-    let intro_video = get_intro_video();
+    let intro_video = props.config.get_intro_video();
     let current_video_index = use_state(|| 0);
     let div_ref = use_focus_div(); // Hook sets focus on the div when the component mounts.
 

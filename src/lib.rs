@@ -112,7 +112,7 @@ fn switch(config: Rc<Config>) -> impl Fn(Route) -> Html {
             Route::MainMenu => html! { <MainMenu config={config.clone()} /> },
             Route::IntroScreen1 => html! { <IntroScreen config={config.clone()} /> },
             Route::ChoreoVideo => html! { <ChoreoVideo config={config.clone()}/> },
-            Route::LoadScreenVideo => html! { <LoadScreenVideo/> },
+            Route::LoadScreenVideo => html! { <LoadScreenVideo config={config.clone()}/> },
         }
     }
 }

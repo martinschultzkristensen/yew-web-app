@@ -103,4 +103,14 @@ id = 5
 url = "static/devVideo/AI&Boy.mp4"
 loop_video = false
 
+[loadscreen_video]
+id = 1
+url = "static/devVideo/LoadScreenTest4s.mp4"
+loop_video = false
+
+[intro_video]
+id = 0
+url = "static/devVideo/IntroDemoVid_4sec.mp4"
+loop_video = true
+
 # Add more configuration sections as needed
