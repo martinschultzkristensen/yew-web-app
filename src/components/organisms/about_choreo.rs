@@ -10,17 +10,16 @@ use crate::Route;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
 use gloo::console::log;
-use crate::Config;
-use std::rc::Rc;
+use crate::components::atoms::shared_props::AppConfigProps;
 
-#[derive(Properties, PartialEq)]
-pub struct AboutChoreoProps {
-    pub choreo_number: usize,
-    pub config: Rc<Config>,
-}
+// #[derive(Properties, PartialEq)]
+// pub struct AboutChoreoProps {
+//     pub choreo_number: usize,
+//     pub config: Rc<Config>,
+// }
 
 #[function_component(AboutChoreo)]
-pub fn about_choreo(props: &AboutChoreoProps) -> Html {
+pub fn about_choreo(props: &AppConfigProps) -> Html {
     let ctx = use_context::<MusicContext>().expect("No music context provider");
     
     let sound_context = use_context::<SoundEffectsContext>().expect("SoundEffectsContext not found");

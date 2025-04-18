@@ -48,3 +48,4 @@ pub fn get_choreography_data(config: &Config, choreo_number: usize) -> Choreogra
         videos,
     }
 }
+

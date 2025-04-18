@@ -5,18 +5,13 @@ use crate::VideosList;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
 use crate::components::atoms::use_focus_div::use_focus_div;
-use std::rc::Rc;
-use crate::Config;
+use crate::components::atoms::shared_props::AppConfigProps;
 
 
 
-#[derive(Properties, PartialEq)]
-pub struct ChoreoVideoProps {
-    pub config: Rc<Config>,
-}
 
 #[function_component(ChoreoVideo)]
-pub fn choreographic_videos(props: &ChoreoVideoProps) -> Html {
+pub fn choreographic_videos(props: &AppConfigProps) -> Html {
     // State to hold the choreography data and loading status
     let choreo_data_state = use_state(|| props.config.load_choreo_videos());
 

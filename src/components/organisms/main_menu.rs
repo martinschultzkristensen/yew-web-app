@@ -1,7 +1,6 @@
 //src/components/organisms/main_menu.rs
 use crate::components::atoms::dance_o_matic_logo::DanceOMaticLogo;
 use crate::components::atoms::use_focus_div::use_focus_div;
-use crate::components::data::config::Config;
 use crate::components::molecules::btn_explainer_graphics::BtnExplainerGraphics;
 use crate::components::molecules::music_context::*;
 use crate::components::molecules::sound_effects::*;
@@ -13,14 +12,11 @@ use std::rc::Rc;
 use gloo::console::log;
 use yew::prelude::*;
 use yew_router::prelude::{use_navigator, Navigator};
+use crate::components::atoms::shared_props::AppConfigProps;
 
-#[derive(Properties, PartialEq)]
-pub struct MainMenuProps {
-    pub config: Rc<Config>,
-}
 
 #[function_component(MainMenu)]
-pub fn main_menu(props: &MainMenuProps) -> Html {
+pub fn main_menu(props: &AppConfigProps) -> Html {
     let ctx = use_context::<MusicContext>().expect("No music context provider");
    
     let sound_context = use_context::<SoundEffectsContext>().expect("SoundEffectsContext not found");

@@ -4,16 +4,11 @@ use crate::VideosList;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
 use crate::components::atoms::use_focus_div::use_focus_div;
-use crate::Config;
-use std::rc::Rc;
+use crate::components::atoms::shared_props::AppConfigProps;
 
-#[derive(Properties, PartialEq)]
-pub struct IntroScreenProps {
-    pub config: Rc<Config>,
-}
 
 #[function_component(IntroScreen)]
-pub fn intro_screen(props: &IntroScreenProps) -> Html {
+pub fn intro_screen(props: &AppConfigProps) -> Html {
     let audio_coin = web_sys::HtmlAudioElement::new_with_src("static/coinSound.mp3").unwrap();
     let navigator = use_navigator().unwrap();
     let intro_video = props.config.get_intro_video();
