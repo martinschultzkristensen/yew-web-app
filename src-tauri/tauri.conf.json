@@ -31,7 +31,7 @@
       "providerShortName": null,
       "signingIdentity": null
     },
-    "resources": ["resources/config.toml", "../static/devVideo/"],
+    "resources": ["resources/config.toml", "../static/devVideo/", "../static/img/"],
     "shortDescription": "",
     "linux": {
       "deb": {
@@ -54,7 +54,9 @@
         "resizable": true,
         "title": "danceOmatic",
         "width": 800,
-        "useHttpsScheme": true
+        "useHttpsScheme": true,
+        "visible": true,
+        "devtools": true
       }
     ],
     "security": {

@@ -7,6 +7,7 @@ use toml;
 use tauri::Manager;
 use tauri::path::BaseDirectory;
 const CONFIG_PATH: &str = "resources/config.toml";
+use tauri_plugin_log::{Target, TargetKind};
 
 
 pub struct ConfigError(String);
@@ -104,6 +105,13 @@ fn get_config(handle: tauri::AppHandle) -> Result<Config, String> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
+        //new section from here adding error output.
+        .plugin(tauri_plugin_log::Builder::new().targets([
+            Target::new(TargetKind::Stdout), //<-- to terminal
+            Target::new(TargetKind::LogDir { file_name: None }), //<-- to an com.artfarm.danceomatic
+            Target::new(TargetKind::Webview),
+        ]).build())
+        // new section end.
         .invoke_handler(tauri::generate_handler![get_config, get_video_path])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

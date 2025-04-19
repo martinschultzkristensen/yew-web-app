@@ -70,7 +70,7 @@ choreo_img = "/static/img/culture4fun.png"
 
 [[demo_videos.list]]
 id = 5
-url = "static/devVideo/DEMO_frikadelle.mp4"
+url = "static/devVideo/AI&Boy.mp4"
 loop_video = true
 title = "Chef"
 description = "These three chefs come straight from the kitchen, masters of collaboration. This is a small part of Art Farm's piece, Frikadelle."

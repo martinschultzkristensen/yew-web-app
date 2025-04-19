@@ -1,6 +1,6 @@
 use std::fs::File;
 use std::io::BufReader;
-use rodio::{Decoder, OutputStream, Sink};
+//use rodio::{Decoder, OutputStream, Sink}; 
 use tauri::Manager;
 use tauri::path::BaseDirectory;
 
@@ -24,13 +24,17 @@ use tauri::path::BaseDirectory;
 //serve the video files as a blob to the frontend
 #[tauri::command]
 pub fn get_video_path(handle: tauri::AppHandle, video_name: String) -> Result<String, String> {
+    let start = std::time::Instant::now(); //<--logger variable
     let video_path = handle.path()
         .resolve(&format!("static/devVideo/{}", video_name), BaseDirectory::Resource)
         .map_err(|e| e.to_string())?;
 
+        log::info!("my_command from tauri backend took {:?}", start.elapsed()); //<--logger shows in terminal
+
     video_path.to_str()
         .map(|s| s.to_string())
         .ok_or("Failed to convert path to string".to_string())
+        
 }
 
 

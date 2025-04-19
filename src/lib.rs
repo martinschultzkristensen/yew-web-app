@@ -7,7 +7,6 @@ use crate::components::organisms::main_menu::MainMenu;
 use crate::components::data::config::Config;
 use crate::components::molecules::music_context::MusicContextProvider;
 use crate::components::molecules::sound_effects::*;
-use components::data::video_data::*;
 use components::molecules::video_list::VideosList;
 use components::molecules::keydown_logic::get_toggle_key;
 use yew::functional::*;
@@ -18,6 +17,7 @@ use std::rc::Rc;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 use serde_wasm_bindgen::to_value;
+use web_sys::console;
 
 mod components;
 #[derive(Clone, Routable, Debug, PartialEq)]
@@ -51,7 +51,6 @@ fn is_tauri() -> bool {
 
 #[function_component(DanceOmatic)]
 pub fn dance_o_matic() -> Html {
-    
     let config = use_state(|| None::<Rc<Config>>);
         let config_fetched = use_state(|| false);
         let config_clone = config.clone();
