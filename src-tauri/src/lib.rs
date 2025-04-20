@@ -1,14 +1,17 @@
 //src-tauri/src/lib.rs
 mod commands;
-use commands::get_video_path;
+use commands::*;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use toml;
 use tauri::Manager;
 use tauri::path::BaseDirectory;
-const CONFIG_PATH: &str = "resources/config.toml";
 use tauri_plugin_log::{Target, TargetKind};
+use std::path::PathBuf;
+use std::fs;
 
+
+//const CONFIG_PATH: &str = "resources/config.toml";
 
 pub struct ConfigError(String);
 impl std::fmt::Display for ConfigError {
@@ -88,17 +91,18 @@ impl Config {
     }
 }
 
-#[tauri::command]
-fn get_config(handle: tauri::AppHandle) -> Result<Config, String> {
-    let resource_path = handle.path()
-    .resolve(CONFIG_PATH, BaseDirectory::Resource)
-    .map_err(|err| err.to_string())?;
+//now get's config from commands.rs Same code under comment: "Fall back to bundle config"
+// #[tauri::command]
+// fn get_config(handle: tauri::AppHandle) -> Result<Config, String> {
+//     let resource_path = handle.path()
+//     .resolve(CONFIG_PATH, BaseDirectory::Resource)
+//     .map_err(|err| err.to_string())?;
 
-    Config::from_file(resource_path.to_str().ok_or("Invalid path")?)
-        .map_err(|err| err.to_string())
+//     Config::from_file(resource_path.to_str().ok_or("Invalid path")?)
+//         .map_err(|err| err.to_string())
     
 
-}
+// }
 
 
 
@@ -112,7 +116,7 @@ pub fn run() {
             Target::new(TargetKind::Webview),
         ]).build())
         // new section end.
-        .invoke_handler(tauri::generate_handler![get_config, get_video_path])
+        .invoke_handler(tauri::generate_handler![get_config, get_video_path, reset_config_to_default])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
