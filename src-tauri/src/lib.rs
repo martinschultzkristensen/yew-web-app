@@ -109,6 +109,7 @@ impl Config {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_dialog::init())
         //new section from here adding error output.
         .plugin(tauri_plugin_log::Builder::new().targets([
             Target::new(TargetKind::Stdout), //<-- to terminal
@@ -116,7 +117,7 @@ pub fn run() {
             Target::new(TargetKind::Webview),
         ]).build())
         // new section end.
-        .invoke_handler(tauri::generate_handler![get_config, get_video_path, reset_config_to_default])
+        .invoke_handler(tauri::generate_handler![get_config, reset_config_to_default, import_video, get_video_path, select_video_file])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
