@@ -30,6 +30,7 @@ pub fn intro_screen(props: &AppConfigProps) -> Html {
         }
     });
 
+
     html! {
         <div ref={div_ref} onkeydown={press_x_for_main} tabindex="0">
             <VideosList videos={intro_video} current_index={*current_video_index} on_ended={Some(handle_video_ended)} video_class="fullscreenvideo"/>

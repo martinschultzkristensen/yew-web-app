@@ -103,7 +103,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                 let video_name = video_name.clone();
                 async move {
                     console::time_with_label("get_video_path");
-                    let js_args = serde_wasm_bindgen::to_value(&json!({ "videoName": video_name })).unwrap();
+                    let js_args = serde_wasm_bindgen::to_value(&json!({ "relativePath": video_name })).unwrap();
                     let result = invoke("get_video_path", js_args).await;
                     match serde_wasm_bindgen::from_value::<String>(result) {
                         Ok(path) => {

@@ -80,7 +80,7 @@ pub fn resolve_video_path(handle: tauri::AppHandle, path: String) -> Result<Stri
 }
 
 
-//serve the video files as a blob to the frontend
+//serve the video files as a blob to the frontend. (I belive only for the videos build in)
 #[tauri::command]
 pub fn get_video_path(handle: tauri::AppHandle, relative_path: String) -> Result<String, String> {
     resolve_video_path(handle, relative_path)
@@ -110,20 +110,7 @@ pub fn select_video_file(handle: tauri::AppHandle) {
         });
 }
 
-// #[tauri::command]
-// pub fn get_video_path(handle: tauri::AppHandle, video_name: String) -> Result<String, String> {
-//     let start = std::time::Instant::now(); //<--logger variable
-//     let video_path = handle.path()
-//         .resolve(&format!("static/devVideo/{}", video_name), BaseDirectory::Resource)
-//         .map_err(|e| e.to_string())?;
 
-//         log::info!("my_command from tauri backend took {:?}", start.elapsed()); //<--logger shows in terminal
-
-//     video_path.to_str()
-//         .map(|s| s.to_string())
-//         .ok_or("Failed to convert path to string".to_string())
-        
-// }
 
 
 #[tauri::command]
@@ -222,4 +209,19 @@ pub fn reset_config_to_default(handle: tauri::AppHandle) -> Result<Config, Strin
 
 //     sink.append(source);
 //     sink.detach(); // play-and-forget
+// }
+
+// #[tauri::command]
+// pub fn get_video_path(handle: tauri::AppHandle, video_name: String) -> Result<String, String> {
+//     let start = std::time::Instant::now(); //<--logger variable
+//     let video_path = handle.path()
+//         .resolve(&format!("static/devVideo/{}", video_name), BaseDirectory::Resource)
+//         .map_err(|e| e.to_string())?;
+
+//         log::info!("my_command from tauri backend took {:?}", start.elapsed()); //<--logger shows in terminal
+
+//     video_path.to_str()
+//         .map(|s| s.to_string())
+//         .ok_or("Failed to convert path to string".to_string())
+        
 // }

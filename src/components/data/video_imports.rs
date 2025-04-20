@@ -1,4 +1,4 @@
-// In your components directory: src/components/video_import.rs
+//src/components/data/video_import.rs
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
