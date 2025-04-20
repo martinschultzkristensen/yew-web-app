@@ -87,28 +87,29 @@ pub fn get_video_path(handle: tauri::AppHandle, relative_path: String) -> Result
 }
 
 #[tauri::command]
-pub fn select_video_file(handle: tauri::AppHandle) {
-    let dialog = tauri_plugin_dialog::DialogExt::dialog(&handle);
+pub async fn select_video_file(handle: tauri::AppHandle) -> Result<Option<String>, String> { //seem to remember async functions in tuari::command are very experimental, and not reliable.
+    use tauri_plugin_dialog::{DialogExt, FileDialogBuilder};
 
-    dialog.file()
+    let dialog = handle.dialog().clone(); // 👈 clone the Dialog to pass ownership
+
+    let (sender, receiver) = tokio::sync::oneshot::channel();
+
+    FileDialogBuilder::new(dialog)
         .add_filter("Video Files", &["mp4", "webm", "mov"])
         .pick_file(move |file_path| {
-            if let Some(file_path) = file_path {
-                match file_path {
-                    tauri_plugin_dialog::FilePath::Path(path_buf) => {
-                        println!("User selected file: {}", path_buf.display());
-                        let _ = handle.emit("file-selected", path_buf.to_string_lossy().to_string());
-                    }
-                    tauri_plugin_dialog::FilePath::Url(url) => {
-                        println!("User selected URL: {}", url);
-                        let _ = handle.emit("file-selected", url.to_string());
-                    }
+            let result = match file_path {
+                Some(tauri_plugin_dialog::FilePath::Path(path_buf)) => {
+                    Some(path_buf.to_string_lossy().to_string())
                 }
-            } else {
-                println!("No file selected");
-            }
+                Some(tauri_plugin_dialog::FilePath::Url(url)) => Some(url.to_string()),
+                None => None,
+            };
+            let _ = sender.send(result);
         });
+
+    receiver.await.map_err(|err| err.to_string())
 }
+
 
 
 
