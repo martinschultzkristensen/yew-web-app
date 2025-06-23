@@ -4,30 +4,30 @@
 [[dancers.list]]
 name = "Mr danceOmatic"
 image = "/static/img/MartinDom2025.jpg"
-strength = 10
+strength = 9
 flexibility = 5
-in_choreography_nr = [1, 2, 4, 5]
+in_choreography_nr = [1, 4, 5]
 
 [[dancers.list]]
-name = "Hannah"
+name = "Hannah (not montana)"
 image = "/static/img/Hannah.jpg"
-strength = 8
+strength = 5
 flexibility = 7
-in_choreography_nr = [2, 3, 4]
+in_choreography_nr = [2, 4]
 
 [[dancers.list]]
-name = "Frederikke"
-image = "/static/img/Frederikke.jpg"
-strength = 5
-flexibility = 10
+name = "J-squash"
+image = "/static/img/josh.jpg"
+strength = 10
+flexibility = 7
 in_choreography_nr = [1, 2, 3, 4, 5]
 
 [[dancers.list]]
-name = "Jacob"
-image = "/static/img/Jacob.jpg"
+name = "Alina"
+image = "/static/img/alina.jpg"
 strength = 8
-flexibility = 7
-in_choreography_nr = [4, 5]
+flexibility = 8
+in_choreography_nr = [2, 3, 4, 5]
 
 
 [demo_videos]
