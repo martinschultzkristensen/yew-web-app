@@ -171,7 +171,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         },
         VideoType::Regular(_) => html! {
             <video
-                src={format!("/{url}", url = video.url)}
+                src={video_src.as_ref().cloned().unwrap_or_default()}
                 autoplay=true
                 loop={should_loop}
                 onended={onended_attr}
