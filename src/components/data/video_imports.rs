@@ -43,7 +43,7 @@ pub fn video_import(props: &VideoImportProps) -> Html {
 
                         // Import the selected file
                         let args = serde_json::json!({
-                            "source_path": selected_path
+                            "sourcePath": selected_path
                         });
                         let js_args = to_value(&args).unwrap();
 

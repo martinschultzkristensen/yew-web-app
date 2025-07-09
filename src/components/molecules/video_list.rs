@@ -107,15 +107,11 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                 async move {
                     console::time_with_label("get_video_path");
                     let js_args = serde_wasm_bindgen::to_value(&json!({ "path": video_name })).unwrap();
-                    let result = invoke("load_video", js_args).await;
+                    let result = invoke("resolve_media_path", js_args).await;
                     
-                    match serde_wasm_bindgen::from_value::<Vec<u8>>(result) {
-                        Ok(bytes) => {
-                            let array = js_sys::Uint8Array::from(&bytes[..]);
-                            let blob_parts = js_sys::Array::new();
-                            blob_parts.push(&array.buffer());
-                            let blob = web_sys::Blob::new_with_u8_array_sequence(&blob_parts).unwrap();
-                            let url = web_sys::Url::create_object_url_with_blob(&blob).unwrap();
+                     match serde_wasm_bindgen::from_value::<String>(result) {
+                        Ok(path) => {
+                            let url = format!("file://{}", path);
                             log::info!("🎥 Video path resolved: {}", &url);
                             video_src.set(Some(url));
                             console::time_end_with_label("get_video_path");
@@ -134,7 +130,11 @@ pub fn videos_list(props: &VideosListProps) -> Html {
 
     match current_video {
 
-        VideoType::Demo(demo) => html! {
+        VideoType::Demo(demo) => {
+        let src = video_src.as_ref().cloned().unwrap_or_default();
+        log::info!("🎬 Final video_src to render: {}", src);
+        
+        html! {
         <div class="main_menu-container">
                 <div class="video-wrapper">
                     <div class="svg-arrow-in-main">
@@ -168,6 +168,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                 </div>
             </div>
             </div>
+            }
         },
         VideoType::Regular(_) => html! {
             <video

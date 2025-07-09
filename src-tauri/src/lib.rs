@@ -4,11 +4,13 @@ use commands::*;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use toml;
-use tauri::Manager;
 use tauri::path::BaseDirectory;
 use tauri_plugin_log::{Target, TargetKind};
-use std::path::PathBuf;
+use tauri::{Manager, Runtime};
+use tauri::http::Request;
 use std::fs;
+use std::path::PathBuf;
+use http::Response;
 
 
 //const CONFIG_PATH: &str = "resources/config.toml";
@@ -117,13 +119,51 @@ pub fn run() {
             Target::new(TargetKind::Webview),
         ]).build())
         // new section end.
+
+        .register_uri_scheme_protocol("media", |app, request| {
+            let app_handle = app.app_handle();  
+
+    // Get media directory
+    let media_dir = app_handle
+        .path()
+        .app_data_dir()
+        .expect("Could not get app dir")
+        .join("media");
+
+    // Parse file path from URI
+    let uri = request.uri().to_string();
+    let rel_path = uri.trim_start_matches("media://");
+    let full_path = media_dir.join(rel_path);
+
+            // Try to read the file
+            match std::fs::read(&full_path) {
+        Ok(data) => {
+            let mime = mime_guess::from_path(&full_path).first_or_octet_stream();
+            let resp = http::Response::builder()
+            .header("Content-Type", mime.as_ref())
+            .body(data)
+            .map_err(|e| format!("Failed to build response: {}", e))?;
+            Ok(resp)
+        }
+        Err(e) => {
+            println!("🛑 media:// failed to load {}: {}", rel_path, e);
+            let resp = http::Response::builder()
+                .status(404)
+                .body(Vec::new())
+                .unwrap();
+            Ok(resp)
+        }
+    }
+})
+
         .invoke_handler(tauri::generate_handler![
             get_config, 
             reset_config_to_default, 
             import_video, 
             import_images, 
-            get_video_path,
-            load_video,
+            resolve_media_path,
+            // get_video_path,
+            // load_video,
             get_image_path, 
             select_video_file])
         .run(tauri::generate_context!())
