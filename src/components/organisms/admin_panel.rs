@@ -16,7 +16,7 @@ pub fn admin_panel(props: &AppConfigProps) -> Html {
     let navigator = use_navigator().unwrap();
 
     let handle_video_import = Callback::from(move |new_path: String| {
-        log::info!("✅ Imported video path: {}", new_path);
+        log::info!("Imported video path: {}", new_path);
         // Handle the path: save it, update state, route, etc.
     });
 

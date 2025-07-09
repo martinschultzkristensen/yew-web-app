@@ -1,4 +1,5 @@
 //src/components/data/video_import.rs
+
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
@@ -22,7 +23,7 @@ pub struct VideoImportProps {
 #[function_component(VideoImport)]
 pub fn video_import(props: &VideoImportProps) -> Html {
     let importing = use_state(|| false);
-    let on_import = props.on_import.clone(); // ✅ clone callback here
+    let on_import = props.on_import.clone(); // clone callback here
 
     let on_import_click = {
         let importing = importing.clone();

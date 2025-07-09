@@ -117,7 +117,15 @@ pub fn run() {
             Target::new(TargetKind::Webview),
         ]).build())
         // new section end.
-        .invoke_handler(tauri::generate_handler![get_config, reset_config_to_default, import_video, get_video_path, select_video_file])
+        .invoke_handler(tauri::generate_handler![
+            get_config, 
+            reset_config_to_default, 
+            import_video, 
+            import_images, 
+            get_video_path,
+            load_video,
+            get_image_path, 
+            select_video_file])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

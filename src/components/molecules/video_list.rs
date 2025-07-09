@@ -6,6 +6,8 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 use serde_wasm_bindgen::{to_value, from_value};
 use web_sys::console;
+use web_sys::{Blob as WebBlob, Url};
+
 
 #[derive(Clone, PartialEq)]
 pub struct Video {
@@ -91,35 +93,44 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         None
     };
    
-    // 🧠 Start: Resolve path using Tauri backend
+    // This codeblock should Resolve path using Tauri backend
     let video_src = use_state(|| None);
-    {
+    {   
         let video_src = video_src.clone();
         let video_name = current_video.get_video().url.clone(); // e.g. "static/devVideo/DEMO_LetsDuet.mp4"
 
         use_effect_with(video_name.clone(), move |video_name| {
+            let video_src = video_src.clone();
+
             wasm_bindgen_futures::spawn_local({
-                let video_src = video_src.clone();
                 let video_name = video_name.clone();
                 async move {
                     console::time_with_label("get_video_path");
-                    let js_args = serde_wasm_bindgen::to_value(&json!({ "relativePath": video_name })).unwrap();
-                    let result = invoke("get_video_path", js_args).await;
-                    match serde_wasm_bindgen::from_value::<String>(result) {
-                        Ok(path) => {
-                            log::info!("🎥 Video path resolved: {}", path);
-                            video_src.set(Some(path));
-
-                    console::time_end_with_label("get_video_path");
+                    let js_args = serde_wasm_bindgen::to_value(&json!({ "path": video_name })).unwrap();
+                    let result = invoke("load_video", js_args).await;
+                    
+                    match serde_wasm_bindgen::from_value::<Vec<u8>>(result) {
+                        Ok(bytes) => {
+                            let array = js_sys::Uint8Array::from(&bytes[..]);
+                            let blob_parts = js_sys::Array::new();
+                            blob_parts.push(&array.buffer());
+                            let blob = web_sys::Blob::new_with_u8_array_sequence(&blob_parts).unwrap();
+                            let url = web_sys::Url::create_object_url_with_blob(&blob).unwrap();
+                            log::info!("🎥 Video path resolved: {}", &url);
+                            video_src.set(Some(url));
+                            console::time_end_with_label("get_video_path");
                         }
-                        Err(err) => log::error!("❌ Failed to parse video path: {:?}", err),
+                        Err(err) => log::error!("❌ Failed to parse video blob: {:?}", err),
                     }
+            
+       
+                    
                 }
             });
             || ()
         });
 
-}
+    }
 
     match current_video {
 
@@ -133,7 +144,10 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                 <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>
                     <div class="video-placeholder">
                     <video
-                        src={format!("/{url}", url = video.url)}
+                        
+                        src={video_src.as_ref().cloned().unwrap_or_default()}
+
+
                         autoplay=true
                         loop={should_loop}
                         onended={onended_attr}

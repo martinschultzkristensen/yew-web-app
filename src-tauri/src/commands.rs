@@ -55,9 +55,35 @@ pub fn import_video(handle: tauri::AppHandle, source_path: String) -> Result<Str
     Ok(path_string)
 }
 
+//command to import images from config.toml after build
 #[tauri::command]
-pub fn resolve_video_path(handle: tauri::AppHandle, path: String) -> Result<String, String> {
-    // If path starts with "media/", it's in the user media directory
+pub fn import_images(handle: tauri::AppHandle, source_path: String) -> Result<String, String> {
+    // Get the destination directory
+    let media_dir = get_user_media_path(&handle)?;
+    
+    // Extract the filename from the source path
+    let file_name = Path::new(&source_path)
+        .file_name()
+        .ok_or("Invalid source path")?
+        .to_str()
+        .ok_or("Invalid filename")?;
+    
+    // Create the destination path
+    let dest_path = media_dir.join(file_name);
+    
+    // Copy the file
+    std::fs::copy(&source_path, &dest_path)
+        .map_err(|e| format!("Failed to copy image: {}", e))?;
+    
+    // Return the path to be used in the config
+    let path_string = format!("media/{}", file_name);
+    
+    Ok(path_string)
+}
+
+#[tauri::command]
+pub fn resolve_media_path(handle: tauri::AppHandle, path: String) -> Result<String, String> {
+    // If path starts with "media/", it's in the ~/Library/Application Support/danceOmatic/media
     if path.starts_with("media/") {
         let file_name = path.strip_prefix("media/").unwrap();
         let media_path = get_user_media_path(&handle)?;
@@ -80,11 +106,29 @@ pub fn resolve_video_path(handle: tauri::AppHandle, path: String) -> Result<Stri
 }
 
 
+
 //serve the video files as a blob to the frontend. (I belive only for the videos build in)
 #[tauri::command]
 pub fn get_video_path(handle: tauri::AppHandle, relative_path: String) -> Result<String, String> {
-    resolve_video_path(handle, relative_path)
+    resolve_media_path(handle, relative_path)
 }
+#[tauri::command]
+pub fn load_video(handle: tauri::AppHandle, path: String) -> Result<Vec<u8>, String> {
+    use std::fs;
+
+    // Resolve full path using the same method you use elsewhere
+    let full_path = resolve_media_path(handle, path)?;
+
+    fs::read(&full_path).map_err(|e| format!("Failed to read video file: {}", e))
+}
+
+
+//serve the image files as a blob to the frontend.
+#[tauri::command]
+pub fn get_image_path(handle: tauri::AppHandle, relative_path: String) -> Result<String, String> {
+    resolve_media_path(handle, relative_path)
+}
+
 
 #[tauri::command]
 pub async fn select_video_file(handle: tauri::AppHandle) -> Result<Option<String>, String> { //seem to remember async functions in tuari::command are very experimental, and not reliable.

@@ -1,3 +1,4 @@
+// src/components/molecules/video_settings.rs
 // Example of how to integrate video import into your main component
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;

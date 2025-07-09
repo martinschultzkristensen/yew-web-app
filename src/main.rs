@@ -2,7 +2,7 @@
 use yew_app::DanceOmatic;
 use cfg_if::cfg_if;
 
-//Environment	Logger	Output
+//Environment Logger Output
 // Web (Trunk/Yew) --> wasm_logger --> Browser Console
 // Tauri Native	--> env_logger or tauri::log --> Terminal / Dev Tools
 
