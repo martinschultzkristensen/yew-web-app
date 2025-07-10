@@ -7,10 +7,10 @@ use toml;
 use tauri::path::BaseDirectory;
 use tauri_plugin_log::{Target, TargetKind};
 use tauri::{Manager, Runtime};
-use tauri::http::Request;
+use tauri::http::Response;
 use std::fs;
 use std::path::PathBuf;
-use http::Response;
+
 
 
 //const CONFIG_PATH: &str = "resources/config.toml";
@@ -123,38 +123,44 @@ pub fn run() {
         .register_uri_scheme_protocol("media", |app, request| {
             let app_handle = app.app_handle();  
 
-    // Get media directory
-    let media_dir = app_handle
-        .path()
-        .app_data_dir()
-        .expect("Could not get app dir")
-        .join("media");
+            // Get media directory
+            let media_dir = app_handle
+                .path()
+                .app_data_dir()
+                .expect("Could not get app dir")
+                .join("media");
 
-    // Parse file path from URI
-    let uri = request.uri().to_string();
-    let rel_path = uri.trim_start_matches("media://");
-    let full_path = media_dir.join(rel_path);
+            // Parse file path from URI
+            let uri = request.uri().to_string();
+            let rel_path = uri.trim_start_matches("media://");
+            let full_path = media_dir.join(rel_path);
 
-            // Try to read the file
-            match std::fs::read(&full_path) {
-        Ok(data) => {
-            let mime = mime_guess::from_path(&full_path).first_or_octet_stream();
-            let resp = http::Response::builder()
-            .header("Content-Type", mime.as_ref())
-            .body(data)
-            .map_err(|e| format!("Failed to build response: {}", e))?;
-            Ok(resp)
-        }
-        Err(e) => {
-            println!("🛑 media:// failed to load {}: {}", rel_path, e);
-            let resp = http::Response::builder()
-                .status(404)
-                .body(Vec::new())
-                .unwrap();
-            Ok(resp)
-        }
-    }
-})
+                // Try to read the file
+                match std::fs::read(&full_path) {
+                Ok(data) => {
+                    let mime = mime_guess::from_path(&full_path).first_or_octet_stream();
+                    match Response::builder()
+                        .header("Content-Type", mime.as_ref())
+                        .body(data) {
+                        Ok(resp) => resp,
+                        Err(e) => {
+                            eprintln!("Failed to build response: {}", e);
+                            Response::builder()
+                                .status(500)
+                                .body(Vec::new())
+                                .unwrap()
+                        }
+                    }
+                }
+                Err(e) => {
+                    eprintln!("🛑 media:// failed to load {}: {}", rel_path, e);
+                    Response::builder()
+                        .status(404)
+                        .body(Vec::new())
+                        .unwrap()
+                }
+            }
+        })
 
         .invoke_handler(tauri::generate_handler![
             get_config, 
