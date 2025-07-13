@@ -89,20 +89,16 @@ pub fn resolve_media_path(handle: tauri::AppHandle, path: String) -> Result<Stri
         let media_path = get_user_media_path(&handle)?;
         let full_path = media_path.join(file_name);
         
-        return Ok(full_path.to_string_lossy().to_string());
+        // Check if file exists
+        if !full_path.exists() {
+            return Err(format!("Media file not found: {}", file_name));
+        }
+
+        // Return media:// URL instead of file path
+        return Ok(format!("media://{}", file_name));
     }
-    
-    // If path is absolute, use it directly
-    if Path::new(&path).is_absolute() {
-        return Ok(path);
-    }
-    
-    // Otherwise, treat it as a resource path
-    let resource_path = handle.path()
-        .resolve(&path, BaseDirectory::Resource)
-        .map_err(|e| format!("Failed to resolve resource path: {}", e))?;
-    
-    Ok(resource_path.to_string_lossy().to_string())
+
+    Err("Only media/ paths are supported".to_string())
 }
 
 

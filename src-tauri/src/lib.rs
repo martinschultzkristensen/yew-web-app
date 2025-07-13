@@ -132,8 +132,13 @@ pub fn run() {
 
             // Parse file path from URI
             let uri = request.uri().to_string();
-            let rel_path = uri.trim_start_matches("media://");
+            let rel_path = uri.trim_start_matches("media://").trim_end_matches('/');
             let full_path = media_dir.join(rel_path);
+
+            // Debug logging
+            eprintln!("🔍 Original URI: {}", uri);
+            eprintln!("🔍 Relative path: '{}'", rel_path);
+            eprintln!("🔍 Full path: {:?}", full_path);
 
                 // Try to read the file
                 match std::fs::read(&full_path) {

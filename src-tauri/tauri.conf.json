@@ -43,7 +43,7 @@
   "productName": "danceOmatic",
   "mainBinaryName": "danceOmatic",
   "version": "0.1.0",
-  "identifier": "com.artfarm.danceomatic",
+  "identifier": "danceOmatic",
   "plugins": {},
   "app": {
     "withGlobalTauri": true,
@@ -60,7 +60,7 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self' media: blob: data: filesystem:" 
     }
   }
 }

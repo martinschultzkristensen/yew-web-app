@@ -110,8 +110,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                     let result = invoke("resolve_media_path", js_args).await;
                     
                      match serde_wasm_bindgen::from_value::<String>(result) {
-                        Ok(path) => {
-                            let url = format!("file://{}", path);
+                        Ok(url) => {
                             log::info!("🎥 Video path resolved: {}", &url);
                             video_src.set(Some(url));
                             console::time_end_with_label("get_video_path");
