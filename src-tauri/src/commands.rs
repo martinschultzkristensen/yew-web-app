@@ -160,42 +160,46 @@ pub async fn select_video_file(handle: tauri::AppHandle) -> Result<Option<String
 
 #[tauri::command]
 pub fn get_config(handle: tauri::AppHandle) -> Result<Config, String> {
-    // Get the external config path
-    let external_config_path = get_external_config_path(&handle)?;
+    println!("🔧 get_config called");
     
-    // If external config exists, use it
+    let external_config_path = get_external_config_path(&handle)?;
+    println!("🔧 External config path: {:?}", external_config_path);
+    
     if external_config_path.exists() {
+        println!("🔧 Loading external config");
         return Config::from_file(external_config_path.to_str().ok_or("Invalid path")?)
             .map_err(|err| format!("Error loading external config: {}", err));
     }
     
-// Function to ensure the external config exists
-fn ensure_external_config(handle: &tauri::AppHandle) -> Result<(), String> {
-    let external_config_path = get_external_config_path(handle)?;
+    println!("🔧 External config not found, loading default");
     
-    // Create parent directories if they don't exist
-    if let Some(parent_dir) = external_config_path.parent() {
-        if !parent_dir.exists() {
-            std::fs::create_dir_all(parent_dir)
-                .map_err(|e| format!("Failed to create config directory: {}", e))?;
+    // Function to ensure the external config exists
+    fn ensure_external_config(handle: &tauri::AppHandle) -> Result<(), String> {
+        let external_config_path = get_external_config_path(handle)?;
+    
+        // Create parent directories if they don't exist
+        if let Some(parent_dir) = external_config_path.parent() {
+            if !parent_dir.exists() {
+                std::fs::create_dir_all(parent_dir)
+                    .map_err(|e| format!("Failed to create config directory: {}", e))?;
+            }
         }
-    }
-    
-    // If external config doesn't exist, copy from resources
-    if !external_config_path.exists() {
-        // Get path to bundled config
-        let resource_path = handle.path()
-            .resolve(CONFIG_RESOURCE_PATH, BaseDirectory::Resource)
-            .map_err(|e| format!("Failed to resolve resource path: {}", e))?;
         
-        // Copy the default config to the external location
-        std::fs::copy(&resource_path, &external_config_path)
-            .map_err(|e| format!("Failed to copy default config: {}", e))?;
+        // If external config doesn't exist, copy from resources
+        if !external_config_path.exists() {
+            // Get path to bundled config
+            let resource_path = handle.path()
+                .resolve(CONFIG_RESOURCE_PATH, BaseDirectory::Resource)
+                .map_err(|e| format!("Failed to resolve resource path: {}", e))?;
+            
+            // Copy the default config to the external location
+            std::fs::copy(&resource_path, &external_config_path)
+                .map_err(|e| format!("Failed to copy default config: {}", e))?;
+            
+            println!("Created external config at: {}", external_config_path.display());
+        }
         
-        println!("Created external config at: {}", external_config_path.display());
-    }
-    
-    Ok(())
+        Ok(())
 }
 
     // External config doesn't exist - initialize it

@@ -4,12 +4,9 @@ use commands::*;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use toml;
-use tauri::path::BaseDirectory;
 use tauri_plugin_log::{Target, TargetKind};
 use tauri::{Manager, Runtime};
 use tauri::http::Response;
-use std::fs;
-use std::path::PathBuf;
 
 
 
@@ -118,7 +115,41 @@ pub fn run() {
             Target::new(TargetKind::LogDir { file_name: None }), //<-- to an com.artfarm.danceomatic
             Target::new(TargetKind::Webview),
         ]).build())
-        // new section end.
+         //detailed logging in build
+         .setup(|app| {
+            println!("🔧 App setup starting...");
+            //more logging of bundel app
+            if let Ok(resource_dir) = app.path().resource_dir() {
+                println!("📁 Resource dir: {:?}", resource_dir);
+                if let Ok(entries) = std::fs::read_dir(&resource_dir) {
+                    println!("📁 Resource dir contents:");
+                    for entry in entries {
+                        if let Ok(entry) = entry {
+                            println!("  - {:?}", entry.path());
+                        }
+                    }
+                }
+            }
+            // Check if media directory exists
+            if let Ok(app_data_dir) = app.path().app_data_dir() {
+                let media_dir = app_data_dir.join("media");
+                println!("📁 Media dir: {:?}", media_dir);
+                println!("📁 Media dir exists: {}", media_dir.exists());
+                
+                if let Ok(entries) = std::fs::read_dir(&media_dir) {
+                    println!("📁 Media dir contents:");
+                    for entry in entries {
+                        if let Ok(entry) = entry {
+                            println!("  - {:?}", entry.path());
+                        }
+                    }
+                }
+            }
+            
+            println!("🔧 App setup complete");
+            Ok(())
+        })
+
 
         .register_uri_scheme_protocol("media", |app, request| {
             let app_handle = app.app_handle();  

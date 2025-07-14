@@ -1,7 +1,9 @@
+
 {
+  
   "build": {
     "beforeDevCommand": "trunk serve",
-    "beforeBuildCommand": "trunk build",
+    "beforeBuildCommand": "trunk build --release",
     "frontendDist": "../dist",
     "devUrl": "http://localhost:8080/"
   },
@@ -60,7 +62,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self' media: blob: data: filesystem:" 
+  "csp": "default-src 'self' media: blob: data: filesystem: 'unsafe-inline' 'unsafe-eval'"
     }
   }
 }
