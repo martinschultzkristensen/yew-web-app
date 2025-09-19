@@ -7,25 +7,19 @@ use std::path::PathBuf;
 use std::path::Path;
 use crate::Config;
 use tauri::Emitter;
+use crate::path_utils::{external_config_path, media_dir};
+use crate::path_utils;
 
 const CONFIG_FILENAME: &str = "config.toml";
 const CONFIG_RESOURCE_PATH: &str = "resources/config.toml"; // Path relative to resources directory
 
 // This function creates a user media directory
 fn get_user_media_path(handle: &tauri::AppHandle) -> Result<PathBuf, String> {
-    let app_name = handle.package_info().name.clone();
-    
-    let path = handle.path().data_dir()  // Use data_dir instead of config_dir for media
-        .map_err(|e| format!("Failed to get data dir: {}", e))?
-        .join(app_name)
-        .join("media");
-    
-    // Create directory if it doesn't exist
+    let path = media_dir(handle)?;
     if !path.exists() {
         std::fs::create_dir_all(&path)
             .map_err(|e| format!("Failed to create media directory: {}", e))?;
     }
-    
     Ok(path)
 }
 
@@ -86,19 +80,17 @@ pub fn resolve_media_path(handle: tauri::AppHandle, path: String) -> Result<Stri
     // If path starts with "media/", it's in the ~/Library/Application Support/danceOmatic/media
     if path.starts_with("media/") {
         let file_name = path.strip_prefix("media/").unwrap();
-        let media_path = get_user_media_path(&handle)?;
+       let media_path = media_dir(&handle)?;               // ← unified helper
         let full_path = media_path.join(file_name);
         
-        // Check if file exists
         if !full_path.exists() {
-            return Err(format!("Media file not found: {}", file_name));
+            return Err(format!("Media file not found: {file_name}"));
         }
-
-        // Return media:// URL instead of file path
-        return Ok(format!("media://{}", file_name));
+        // Return a proper media:// URI
+        Ok(format!("media://{file_name}"))
+    } else {
+        Err("Only media/ paths are supported".into())
     }
-
-    Err("Only media/ paths are supported".to_string())
 }
 
 
@@ -128,6 +120,7 @@ pub fn resolve_media_path(handle: tauri::AppHandle, path: String) -> Result<Stri
 pub fn get_image_path(handle: tauri::AppHandle, relative_path: String) -> Result<String, String> {
     resolve_media_path(handle, relative_path)
 }
+
 
 
 #[tauri::command]
@@ -212,14 +205,7 @@ pub fn get_config(handle: tauri::AppHandle) -> Result<Config, String> {
 
 // Helper function to get the path to the external config file
 fn get_external_config_path(handle: &tauri::AppHandle) -> Result<PathBuf, String> {
-    let app_name = handle.package_info().name.clone();
-    
-    let path = handle.path().config_dir()
-        .map_err(|e| format!("Failed to get config dir: {}", e))?
-        .join(app_name)
-        .join(CONFIG_FILENAME);
-    
-    Ok(path)
+    external_config_path(handle)
 }
 
 //Command to reset config to default
@@ -241,7 +227,16 @@ pub fn reset_config_to_default(handle: tauri::AppHandle) -> Result<Config, Strin
         .map_err(|err| format!("Error loading reset config: {}", err))
 }
 
-
+#[tauri::command]
+pub fn debug_paths(handle: tauri::AppHandle) -> Result<String, String> {
+    let cfg = path_utils::external_config_path(&handle)?;
+    let media = path_utils::media_dir(&handle)?;
+    Ok(format!(
+        "Config file → {}\nMedia folder → {}",
+        cfg.display(),
+        media.display()
+    ))
+}
 
 //this command plays sound from backend. Works, but makes the sound more laggy.
 // #[tauri::command]

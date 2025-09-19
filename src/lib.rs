@@ -57,9 +57,9 @@ fn is_tauri() -> bool {
 #[function_component(DanceOmatic)]
 pub fn dance_o_matic() -> Html {
     let config = use_state(|| None::<Rc<Config>>);
-        let config_fetched = use_state(|| false);
-        let config_clone = config.clone();
-        let config_fetched_clone = config_fetched.clone();
+    let config_fetched = use_state(|| false);
+    let config_clone = config.clone();
+    let config_fetched_clone = config_fetched.clone();
 
 
         use_effect(move || {
@@ -71,6 +71,14 @@ pub fn dance_o_matic() -> Html {
                     let result = invoke("get_config", js_args).await;
                     log::info!("Raw result from invoke: {:?}", result);
     
+                    // Debugging: Call the debug_paths command to log paths
+                    let debug_result = invoke("debug_paths", JsValue::NULL).await;
+                    if let Some(txt) = debug_result.as_string() {
+                    log::info!("🛠️ debug_paths → {}", txt);
+                } else {
+                    log::warn!("debug_paths did not return a string");
+                }
+                    
                     match serde_wasm_bindgen::from_value::<Config>(result) {
                         Ok(loaded_config) => {
                             let new_config = Rc::new(loaded_config);
