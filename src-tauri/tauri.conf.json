@@ -1,9 +1,7 @@
-
 {
-  
   "build": {
     "beforeDevCommand": "trunk serve",
-    "beforeBuildCommand": "trunk build --release",
+    "beforeBuildCommand": "trunk build",
     "frontendDist": "../dist",
     "devUrl": "http://localhost:8080/"
   },
@@ -45,7 +43,7 @@
   "productName": "danceOmatic",
   "mainBinaryName": "danceOmatic",
   "version": "0.1.0",
-  "identifier": "danceOmatic",
+  "identifier": "com.artfarm.danceomatic",
   "plugins": {},
   "app": {
     "withGlobalTauri": true,
@@ -62,7 +60,7 @@
       }
     ],
     "security": {
-  "csp": "default-src 'self' media: blob: data: filesystem: 'unsafe-inline' 'unsafe-eval'"
+      "csp": null
     }
   }
 }

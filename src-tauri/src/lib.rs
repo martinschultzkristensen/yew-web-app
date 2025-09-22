@@ -89,7 +89,7 @@ impl Config {
     }
 }
 
-//now get's config from commands.rs Same code under comment: "Fall back to bundle config"
+// now get's config from commands.rs Same code under comment: "Fall back to bundle config"
 // #[tauri::command]
 // fn get_config(handle: tauri::AppHandle) -> Result<Config, String> {
 //     let resource_path = handle.path()
@@ -117,36 +117,79 @@ pub fn run() {
         )
         //detailed logging in build
         .setup(|app| {
-            println!("🔧 App setup starting...");
-            //more logging of bundel app
-            if let Ok(resource_dir) = app.path().resource_dir() {
-                println!("📁 Resource dir: {:?}", resource_dir);
-                if let Ok(entries) = std::fs::read_dir(&resource_dir) {
-                    println!("📁 Resource dir contents:");
-                    for entry in entries {
-                        if let Ok(entry) = entry {
-                            println!("  - {:?}", entry.path());
-                        }
-                    }
-                }
-            }
-            // Check if media directory exists
-            if let Ok(app_data_dir) = app.path().app_data_dir() {
-                let media_dir = app_data_dir.join("media");
-                println!("📁 Media dir: {:?}", media_dir);
-                println!("📁 Media dir exists: {}", media_dir.exists());
-
-                if let Ok(entries) = std::fs::read_dir(&media_dir) {
-                    println!("📁 Media dir contents:");
-                    for entry in entries {
-                        if let Ok(entry) = entry {
-                            println!("  - {:?}", entry.path());
-                        }
+            // -----------------------------------------------------------------
+            // 1️⃣ Log the resource directory (only for debugging – you can
+            //    comment this out later)
+            // -----------------------------------------------------------------
+            if let Ok(res_dir) = app.path().resource_dir() {
+                log::info!("📁 Resource dir: {:?}", res_dir);
+                if let Ok(entries) = std::fs::read_dir(&res_dir) {
+                    log::info!("📁 Resource dir contents:");
+                    for entry in entries.flatten() {
+                        log::info!("  - {:?}", entry.path());
                     }
                 }
             }
 
-            println!("🔧 App setup complete");
+            // -----------------------------------------------------------------
+            // 2️⃣ Ensure the **media** folder exists exactly once.
+            //    `media_dir()` returns the full path (<data_dir>/<app‑name>/media).
+            // -----------------------------------------------------------------
+            let media_path = path_utils::media_dir(&app.handle()).map_err(|e| {
+                log::error!("❌ Could not compute media dir: {e}");
+                e
+            })?;
+
+            // Create the folder if it isn’t there yet.
+            if !media_path.exists() {
+                std::fs::create_dir_all(&media_path).map_err(|e| {
+                    log::error!("❌ Failed to create media dir {media_path:?}: {e}");
+                    e
+                })?;
+                log::info!("🗂️ Created media folder at {:?}", media_path);
+            } else {
+                log::info!("📁 Media dir already exists: {:?}", media_path);
+            }
+
+            // Optional: list its current contents (helpful while developing)
+            if let Ok(entries) = std::fs::read_dir(&media_path) {
+                log::info!("📁 Media dir contents:");
+                for entry in entries.flatten() {
+                    log::info!("  - {:?}", entry.path());
+                }
+            }
+
+            // -----------------------------------------------------------------
+            // 3️⃣ Ensure the **config** file exists (or create a default one).
+            //    `external_config_path()` gives us <config_dir>/<app‑name>/config.toml.
+            // -----------------------------------------------------------------
+            let cfg_path = path_utils::external_config_path(&app.handle()).map_err(|e| {
+                log::error!("❌ Could not compute config path: {e}");
+                e
+            })?;
+
+            // If the file is missing, copy the bundled default.
+            if !cfg_path.exists() {
+                // The default lives in the resources folder (read‑only).
+                let default_res = app
+                    .path()
+                    .resource_dir()
+                    .map_err(|e| format!("resource_dir error: {e}"))?
+                    .join("config.toml"); // <-- adjust if you placed it elsewhere
+
+                std::fs::copy(&default_res, &cfg_path).map_err(|e| {
+                    log::error!("❌ Failed to copy default config: {e}");
+                    e
+                })?;
+                log::info!("📝 Created default config at {:?}", cfg_path);
+            } else {
+                log::info!("📄 Config file already exists: {:?}", cfg_path);
+            }
+
+            // -----------------------------------------------------------------
+            // 4️⃣ Final log – the app is ready to run.
+            // -----------------------------------------------------------------
+            log::info!("🔧 App setup complete");
             Ok(())
         })
         .register_uri_scheme_protocol("media", move |app, request| {
@@ -154,7 +197,7 @@ pub fn run() {
             let media_root = match path_utils::media_dir(&app.app_handle()) {
                 Ok(p) => p,
                 Err(e) => {
-                    eprintln!("⚠️ Could not resolve media dir: {e}");
+                    log::error!("⚠️ Could not resolve media dir: {e}");
                     return Response::builder().status(500).body(Vec::new()).unwrap();
                 }
             };
@@ -165,7 +208,7 @@ pub fn run() {
             let full_path = media_root.join(rel_path);
 
             // Debug logging
-            eprintln!("🔍 media:// request → {full_path:?}");
+            log::error!("🔍 media:// request → {full_path:?}");
 
             // Try to read the file
             match std::fs::read(&full_path) {
@@ -177,7 +220,7 @@ pub fn run() {
                         .unwrap()
                 }
                 Err(e) => {
-                    eprintln!("❌ Failed to serve {rel_path}: {e}");
+                    log::error!("❌ Failed to serve {rel_path}: {e}");
                     Response::builder().status(404).body(Vec::new()).unwrap()
                 }
             }
