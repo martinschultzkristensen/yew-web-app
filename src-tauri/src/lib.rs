@@ -2,8 +2,11 @@
 mod commands;
 use commands::*;
 use serde::{Deserialize, Serialize};
-use std::fmt;
-use tauri::http::Response;
+use std::{fmt, path::PathBuf};
+use std::fs::File;
+use std::io::{Read, Seek, SeekFrom};
+use http::response::Builder as ResponseBuilder; // <-- there are often other builders in scope. Therefore rename to avoid ambiguity.
+use tauri::http::{Request, Response};
 use tauri::{Manager, Runtime};
 use tauri_plugin_log::{Target, TargetKind};
 use toml;
@@ -193,38 +196,74 @@ pub fn run() {
             Ok(())
         })
         .register_uri_scheme_protocol("media", move |app, request| {
-            // Resolve the *same* media folder that the commands use
-            let media_root = match path_utils::media_dir(&app.app_handle()) {
-                Ok(p) => p,
-                Err(e) => {
-                    log::error!("⚠️ Could not resolve media dir: {e}");
-                    return Response::builder().status(500).body(Vec::new()).unwrap();
-                }
-            };
+    let media_root = match path_utils::media_dir(&app.app_handle()) {
+        Ok(p) => p,
+        Err(e) => {
+            log::error!("⚠️ Could not resolve media dir: {e}");
+            return Response::builder().status(500).body(Vec::new()).unwrap();
+        }
+    };
 
-            // Parse file path from URI
-            let uri = request.uri().to_string();
-            let rel_path = uri.trim_start_matches("media://").trim_end_matches('/');
-            let full_path = media_root.join(rel_path);
+    let uri = request.uri().to_string();
+    let rel_path = uri.trim_start_matches("media://").trim_end_matches('/');
+    let full_path: PathBuf = media_root.join(rel_path);
 
-            // Debug logging
-            log::error!("🔍 media:// request → {full_path:?}");
+    log::info!("🔍 media:// request → {:?}", full_path);
 
-            // Try to read the file
-            match std::fs::read(&full_path) {
-                Ok(data) => {
-                    let mime = mime_guess::from_path(&full_path).first_or_octet_stream();
-                    Response::builder()
-                        .header("Content-Type", mime.as_ref())
-                        .body(data)
-                        .unwrap()
-                }
-                Err(e) => {
-                    log::error!("❌ Failed to serve {rel_path}: {e}");
-                    Response::builder().status(404).body(Vec::new()).unwrap()
-                }
-            }
-        })
+    let mut file = match File::open(&full_path) {
+        Ok(f) => f,
+        Err(e) => {
+            log::error!("❌ Could not open file: {e}");
+            return Response::builder().status(404).body(Vec::new()).unwrap();
+        }
+    };
+
+    let metadata = file.metadata().unwrap();
+    let file_size = metadata.len();
+    let mime = mime_guess::from_path(&full_path).first_or_octet_stream();
+
+    // Parse range header
+    let range_header = request
+        .headers()
+        .get("range")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("");
+
+    let (start, end, status) = if range_header.starts_with("bytes=") {
+        let bytes = &range_header["bytes=".len()..];
+        let mut parts = bytes.split('-');
+        let start = parts.next().and_then(|s| s.parse::<u64>().ok()).unwrap_or(0);
+        let end = parts.next().and_then(|s| s.parse::<u64>().ok()).unwrap_or(file_size - 1);
+        if start >= file_size {
+            return Response::builder()
+                .status(416)
+                .header("Content-Range", format!("bytes */{file_size}"))
+                .body(Vec::new())
+                .unwrap();
+        }
+        (start, end.min(file_size - 1), 206)
+    } else {
+        (0, file_size - 1, 200)
+    };
+
+    let chunk_size = end - start + 1;
+    let mut buffer = Vec::with_capacity(chunk_size as usize);
+    file.seek(SeekFrom::Start(start)).unwrap();
+    file.take(chunk_size).read_to_end(&mut buffer).unwrap();
+
+    let mut resp = Response::builder()
+        .status(status)
+        .header("Accept-Ranges", "bytes")
+        .header("Content-Type", mime.as_ref())
+        .header("Content-Length", chunk_size.to_string());
+
+    if status == 206 {
+        resp = resp.header("Content-Range", format!("bytes {start}-{end}/{file_size}"));
+    }
+
+    resp.body(buffer).unwrap()
+})
+
         .invoke_handler(tauri::generate_handler![
             get_config,
             debug_paths,
