@@ -7,6 +7,7 @@ use crate::components::atoms::shared_props::AppConfigProps;
 use crate::Route;
 use crate::components::atoms::use_focus_div::use_focus_div;
 use crate::components::data::video_imports::VideoImport; // Note: singular 'video_import'
+use crate::components::data::image_imports::ImageImport; 
 
 
 
@@ -16,6 +17,11 @@ pub fn admin_panel(props: &AppConfigProps) -> Html {
     let navigator = use_navigator().unwrap();
 
     let handle_video_import = Callback::from(move |new_path: String| {
+        log::info!("Imported video path: {}", new_path);
+        // Handle the path: save it, update state, route, etc.
+    });
+
+    let handle_image_import = Callback::from(move |new_path: String| {
         log::info!("Imported video path: {}", new_path);
         // Handle the path: save it, update state, route, etc.
     });
@@ -36,6 +42,7 @@ pub fn admin_panel(props: &AppConfigProps) -> Html {
             <p>{ "Welcome to the lightweight admin panel." }</p>
 
             <VideoImport on_import={handle_video_import} />
+            <ImageImport on_import={handle_image_import} />
 
             <h2>{ "Current Config:" }</h2>
                 <pre>{ format!("{:#?}", props.config) }</pre>

@@ -3,3 +3,4 @@
 pub mod choreography_data;
 pub mod config;
 pub mod video_imports;
+pub mod image_imports;
