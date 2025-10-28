@@ -124,7 +124,7 @@ pub fn get_image_path(handle: tauri::AppHandle, relative_path: String) -> Result
 
 
 #[tauri::command]
-pub async fn select_video_file(handle: tauri::AppHandle) -> Result<Option<String>, String> { //seem to remember async functions in tuari::command are very experimental, and not reliable.
+pub async fn select_video_file(handle: tauri::AppHandle) -> Result<Option<String>, String> {
     use tauri_plugin_dialog::{DialogExt, FileDialogBuilder};
 
     let dialog = handle.dialog().clone(); // 👈 clone the Dialog to pass ownership
