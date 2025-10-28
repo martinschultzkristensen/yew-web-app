@@ -274,7 +274,8 @@ pub fn run() {
             // get_video_path,
             // load_video,
             get_image_path,
-            select_video_file
+            select_video_file,
+            select_img_file
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

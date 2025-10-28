@@ -147,6 +147,30 @@ pub async fn select_video_file(handle: tauri::AppHandle) -> Result<Option<String
     receiver.await.map_err(|err| err.to_string())
 }
 
+#[tauri::command]
+pub async fn select_img_file(handle: tauri::AppHandle) -> Result<Option<String>, String> {
+    use tauri_plugin_dialog::{DialogExt, FileDialogBuilder};
+
+    let dialog = handle.dialog().clone(); // 👈 clone the Dialog to pass ownership
+
+    let (sender, receiver) = tokio::sync::oneshot::channel();
+
+    FileDialogBuilder::new(dialog)
+        .add_filter("Image Files", &["png", "jpg", "jpeg", "gif"])
+        .pick_file(move |file_path| {
+            let result = match file_path {
+                Some(tauri_plugin_dialog::FilePath::Path(path_buf)) => {
+                    Some(path_buf.to_string_lossy().to_string())
+                }
+                Some(tauri_plugin_dialog::FilePath::Url(url)) => Some(url.to_string()),
+                None => None,
+            };
+            let _ = sender.send(result);
+        });
+
+    receiver.await.map_err(|err| err.to_string())
+}
+
 
 
 
