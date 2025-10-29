@@ -1,38 +1,295 @@
-extern crate rodio;
+//src-tauri/src/commands.rs
+
+//use rodio::{Decoder, OutputStream, Sink}; 
+use tauri::Manager;
+use tauri::path::BaseDirectory;
 use std::path::PathBuf;
-use std::fs::File;
-use std::io::BufReader;
-use rodio::{Decoder, OutputStream, Sink, source::Source};
-// use symphonia::core::formats::FormatOptions;
-// use symphonia::core::io::MediaSourceStream;
-// use symphonia::core::meta::MetadataOptions;
-// use symphonia::default::get_probe;
+use std::path::Path;
+use crate::Config;
+use tauri::Emitter;
+use crate::path_utils::{external_config_path, media_dir};
+use crate::path_utils;
+
+const CONFIG_FILENAME: &str = "config.toml";
+const CONFIG_RESOURCE_PATH: &str = "resources/config.toml"; // Path relative to resources directory
+
+// This function creates a user media directory
+fn get_user_media_path(handle: &tauri::AppHandle) -> Result<PathBuf, String> {
+    let path = media_dir(handle)?;
+    if !path.exists() {
+        std::fs::create_dir_all(&path)
+            .map_err(|e| format!("Failed to create media directory: {}", e))?;
+    }
+    Ok(path)
+}
+
+//command to import video. Note in video_imports.rs source_path is changed to sourcePath since Tauri commands use camelCase by default when bridging between JavaScript and Rust
+#[tauri::command]
+pub fn import_video(handle: tauri::AppHandle, source_path: String) -> Result<String, String> {
+    // Get the destination directory
+    let media_dir = get_user_media_path(&handle)?;
+    
+    // Extract the filename from the source path
+    let file_name = Path::new(&source_path)
+        .file_name()
+        .ok_or("Invalid source path")?
+        .to_str()
+        .ok_or("Invalid filename")?;
+    
+    // Create the destination path
+    let dest_path = media_dir.join(file_name);
+    
+    // Copy the file
+    std::fs::copy(&source_path, &dest_path)
+        .map_err(|e| format!("Failed to copy video: {}", e))?;
+    
+    // Return the path to be used in the config
+    let path_string = format!("media/{}", file_name);
+    
+    Ok(path_string)
+}
+
+//command to import images from config.toml after build
+#[tauri::command]
+pub fn import_images(handle: tauri::AppHandle, source_path: String) -> Result<String, String> {
+    // Get the destination directory
+    let media_dir = get_user_media_path(&handle)?;
+    
+    // Extract the filename from the source path
+    let file_name = Path::new(&source_path)
+        .file_name()
+        .ok_or("Invalid source path")?
+        .to_str()
+        .ok_or("Invalid filename")?;
+    
+    // Create the destination path
+    let dest_path = media_dir.join(file_name);
+    
+    // Copy the file
+    std::fs::copy(&source_path, &dest_path)
+        .map_err(|e| format!("Failed to copy image: {}", e))?;
+    
+    // Return the path to be used in the config
+    let path_string = format!("media/{}", file_name);
+    
+    Ok(path_string)
+}
+
+#[tauri::command]
+pub fn resolve_media_path(handle: tauri::AppHandle, path: String) -> Result<String, String> {
+    // If path starts with "media/", it's in the ~/Library/Application Support/danceOmatic/media
+    if path.starts_with("media/") {
+        let file_name = path.strip_prefix("media/").unwrap();
+       let media_path = media_dir(&handle)?;               // ← unified helper
+        let full_path = media_path.join(file_name);
+        
+        if !full_path.exists() {
+            return Err(format!("Media file not found: {file_name}"));
+        }
+        // Return a proper media:// URI
+        Ok(format!("media://{file_name}"))
+    } else {
+        Err("Only media/ paths are supported".into())
+    }
+}
+
+
+//this code should be unnesesarry for serving video as blob. Test and delete.
+// //serve the video files as a blob to the frontend. (I belive only for the videos build in)
+// #[tauri::command]
+// pub fn get_video_path(handle: tauri::AppHandle, relative_path: String) -> Result<String, String> {
+//     let asset_path = handle.path_resolver().resolve_resource(&relative_path)
+//         .ok_or("Could not resolve video path")?;
+
+//     let url = format!("file://{}", asset_path.display());
+//     Ok(url)
+// }
+// #[tauri::command]
+// pub fn load_video(handle: tauri::AppHandle, path: String) -> Result<Vec<u8>, String> {
+//     use std::fs;
+
+//     // Resolve full path using the same method you use elsewhere
+//     let full_path = resolve_media_path(handle, path)?;
+
+//     fs::read(&full_path).map_err(|e| format!("Failed to read video file: {}", e))
+// }
+
+
+//serve the image files as a blob to the frontend.
+#[tauri::command]
+pub fn get_image_path(handle: tauri::AppHandle, relative_path: String) -> Result<String, String> {
+    resolve_media_path(handle, relative_path)
+}
+
 
 
 #[tauri::command]
-pub fn play_sound_backend() {
-    let (_stream, stream_handle) = OutputStream::try_default().unwrap();
-    let sink = Sink::try_new(&stream_handle).unwrap();
+pub async fn select_video_file(handle: tauri::AppHandle) -> Result<Option<String>, String> {
+    use tauri_plugin_dialog::{DialogExt, FileDialogBuilder};
 
-    // The path will be relative to where the binary is run, which is typically the root dir
-    let mut path = PathBuf::from("resources/button-124476.mp3");
+    let dialog = handle.dialog().clone(); // 👈 clone the Dialog to pass ownership
 
-    // Open and decode the audio file
-    let file = BufReader::new(File::open(&path).unwrap());
-    let source = Decoder::new(file).unwrap();
-    sink.append(source);
-    sink.sleep_until_end();
+    let (sender, receiver) = tokio::sync::oneshot::channel();
+
+    FileDialogBuilder::new(dialog)
+        .add_filter("Video Files", &["mp4", "webm", "mov"])
+        .pick_file(move |file_path| {
+            let result = match file_path {
+                Some(tauri_plugin_dialog::FilePath::Path(path_buf)) => {
+                    Some(path_buf.to_string_lossy().to_string())
+                }
+                Some(tauri_plugin_dialog::FilePath::Url(url)) => Some(url.to_string()),
+                None => None,
+            };
+            let _ = sender.send(result);
+        });
+
+    receiver.await.map_err(|err| err.to_string())
 }
 
+#[tauri::command]
+pub async fn select_img_file(handle: tauri::AppHandle) -> Result<Option<String>, String> {
+    use tauri_plugin_dialog::{DialogExt, FileDialogBuilder};
+
+    let dialog = handle.dialog().clone(); // 👈 clone the Dialog to pass ownership
+
+    let (sender, receiver) = tokio::sync::oneshot::channel();
+
+    FileDialogBuilder::new(dialog)
+        .add_filter("Image Files", &["png", "jpg", "jpeg", "gif"])
+        .pick_file(move |file_path| {
+            let result = match file_path {
+                Some(tauri_plugin_dialog::FilePath::Path(path_buf)) => {
+                    Some(path_buf.to_string_lossy().to_string())
+                }
+                Some(tauri_plugin_dialog::FilePath::Url(url)) => Some(url.to_string()),
+                None => None,
+            };
+            let _ = sender.send(result);
+        });
+
+    receiver.await.map_err(|err| err.to_string())
+}
+
+
+
+
+
+#[tauri::command]
+pub fn get_config(handle: tauri::AppHandle) -> Result<Config, String> {
+    println!("🔧 get_config called");
+    
+    let external_config_path = get_external_config_path(&handle)?;
+    println!("🔧 External config path: {:?}", external_config_path);
+    
+    if external_config_path.exists() {
+        println!("🔧 Loading external config");
+        return Config::from_file(external_config_path.to_str().ok_or("Invalid path")?)
+            .map_err(|err| format!("Error loading external config: {}", err));
+    }
+    
+    println!("🔧 External config not found, loading default");
+    
+    // Function to ensure the external config exists
+    fn ensure_external_config(handle: &tauri::AppHandle) -> Result<(), String> {
+        let external_config_path = get_external_config_path(handle)?;
+    
+        // Create parent directories if they don't exist
+        if let Some(parent_dir) = external_config_path.parent() {
+            if !parent_dir.exists() {
+                std::fs::create_dir_all(parent_dir)
+                    .map_err(|e| format!("Failed to create config directory: {}", e))?;
+            }
+        }
+        
+        // If external config doesn't exist, copy from resources
+        if !external_config_path.exists() {
+            // Get path to bundled config
+            let resource_path = handle.path()
+                .resolve(CONFIG_RESOURCE_PATH, BaseDirectory::Resource)
+                .map_err(|e| format!("Failed to resolve resource path: {}", e))?;
+            
+            // Copy the default config to the external location
+            std::fs::copy(&resource_path, &external_config_path)
+                .map_err(|e| format!("Failed to copy default config: {}", e))?;
+            
+            println!("Created external config at: {}", external_config_path.display());
+        }
+        
+        Ok(())
+}
+
+    // External config doesn't exist - initialize it
+    ensure_external_config(&handle)?;
+    
+    // Now try loading the newly created external config
+    Config::from_file(external_config_path.to_str().ok_or("Invalid path")?)
+        .map_err(|err| format!("Error loading external config: {}", err))
+}
+
+// Helper function to get the path to the external config file
+fn get_external_config_path(handle: &tauri::AppHandle) -> Result<PathBuf, String> {
+    external_config_path(handle)
+}
+
+//Command to reset config to default
+#[tauri::command]
+pub fn reset_config_to_default(handle: tauri::AppHandle) -> Result<Config, String> {
+    let external_config_path = get_external_config_path(&handle)?;
+    
+    // Get path to bundled config
+    let resource_path = handle.path()
+        .resolve(CONFIG_RESOURCE_PATH, BaseDirectory::Resource)
+        .map_err(|e| format!("Failed to resolve resource path: {}", e))?;
+    
+    // Copy the default config to the external location (overwriting existing)
+    std::fs::copy(&resource_path, &external_config_path)
+        .map_err(|e| format!("Failed to reset config: {}", e))?;
+    
+    // Load and return the reset config
+    Config::from_file(external_config_path.to_str().ok_or("Invalid path")?)
+        .map_err(|err| format!("Error loading reset config: {}", err))
+}
+
+#[tauri::command]
+pub fn debug_paths(handle: tauri::AppHandle) -> Result<String, String> {
+    let cfg = path_utils::external_config_path(&handle)?;
+    let media = path_utils::media_dir(&handle)?;
+    Ok(format!(
+        "Config file → {}\nMedia folder → {}",
+        cfg.display(),
+        media.display()
+    ))
+}
+
+//this command plays sound from backend. Works, but makes the sound more laggy.
 // #[tauri::command]
-// fn init_app_data(app_handle: tauri::AppHandle) -> Result<String, String> {
-//     let app_dir = app_handle.path_resolver().app_data_dir().expect("Failed to get app data dir");
-//     let custom_dir = app_dir.join("customizable");
-    
-//     // Create directory if it doesn't exist
-//     if !custom_dir.exists() {
-//         std::fs::create_dir_all(&custom_dir).map_err(|e| e.to_string())?;
-//     }
-    
-//     Ok(custom_dir.to_string_lossy().to_string())
+// fn play_sound_backend(sound_file: String) {
+//     // Resolve absolute path (you can adjust based on how/where you store files)
+//     let base_path = tauri::api::path::resource_dir().expect("No resource dir");
+//     let full_path = base_path.join(sound_file);
+
+//     let (_stream, handle) = OutputStream::try_default().expect("No audio output stream");
+//     let sink = Sink::try_new(&handle).expect("Failed to create audio sink");
+
+//     let file = File::open(full_path).expect("Failed to open sound file");
+//     let source = Decoder::new(BufReader::new(file)).expect("Failed to decode audio");
+
+//     sink.append(source);
+//     sink.detach(); // play-and-forget
+// }
+
+// #[tauri::command]
+// pub fn get_video_path(handle: tauri::AppHandle, video_name: String) -> Result<String, String> {
+//     let start = std::time::Instant::now(); //<--logger variable
+//     let video_path = handle.path()
+//         .resolve(&format!("static/devVideo/{}", video_name), BaseDirectory::Resource)
+//         .map_err(|e| e.to_string())?;
+
+//         log::info!("my_command from tauri backend took {:?}", start.elapsed()); //<--logger shows in terminal
+
+//     video_path.to_str()
+//         .map(|s| s.to_string())
+//         .ok_or("Failed to convert path to string".to_string())
+        
 // }

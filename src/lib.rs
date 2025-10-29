@@ -4,10 +4,10 @@ use crate::components::organisms::choreo_videos::ChoreoVideo;
 use crate::components::organisms::intro_screen::IntroScreen;
 use crate::components::organisms::load_screen::LoadScreenVideo;
 use crate::components::organisms::main_menu::MainMenu;
+use crate::components::organisms::admin_panel::AdminPanel;
 use crate::components::data::config::Config;
 use crate::components::molecules::music_context::MusicContextProvider;
 use crate::components::molecules::sound_effects::*;
-use components::data::video_data::*;
 use components::molecules::video_list::VideosList;
 use components::molecules::keydown_logic::get_toggle_key;
 use yew::functional::*;
@@ -18,6 +18,9 @@ use std::rc::Rc;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 use serde_wasm_bindgen::to_value;
+use wasm_bindgen::closure::Closure;
+use wasm_bindgen::JsCast;
+
 
 mod components;
 #[derive(Clone, Routable, Debug, PartialEq)]
@@ -32,6 +35,8 @@ pub enum Route {
     ChoreoVideo,
     #[at("/loadscreen_video")]
     LoadScreenVideo,
+    #[at("/admin-panel")]
+    AdminPanel, // New route for the admin panel
 }
 
 #[wasm_bindgen]
@@ -52,9 +57,9 @@ fn is_tauri() -> bool {
 #[function_component(DanceOmatic)]
 pub fn dance_o_matic() -> Html {
     let config = use_state(|| None::<Rc<Config>>);
-        let config_fetched = use_state(|| false);
-        let config_clone = config.clone();
-        let config_fetched_clone = config_fetched.clone();
+    let config_fetched = use_state(|| false);
+    let config_clone = config.clone();
+    let config_fetched_clone = config_fetched.clone();
 
 
         use_effect(move || {
@@ -66,6 +71,14 @@ pub fn dance_o_matic() -> Html {
                     let result = invoke("get_config", js_args).await;
                     log::info!("Raw result from invoke: {:?}", result);
     
+                    // Debugging: Call the debug_paths command to log paths
+                    let debug_result = invoke("debug_paths", JsValue::NULL).await;
+                    if let Some(txt) = debug_result.as_string() {
+                    log::info!("🛠️ debug_paths → {}", txt);
+                } else {
+                    log::warn!("debug_paths did not return a string");
+                }
+                    
                     match serde_wasm_bindgen::from_value::<Config>(result) {
                         Ok(loaded_config) => {
                             let new_config = Rc::new(loaded_config);
@@ -85,6 +98,39 @@ pub fn dance_o_matic() -> Html {
     
             || ()
         });
+
+    // Callback for key detection to navigate to adminpannel
+    {
+        use_effect(|| {
+            let callback = Closure::wrap(Box::new(move |event: KeyboardEvent| {
+                if event.ctrl_key() && event.shift_key() && event.key() == "A" {
+                    // Navigate to the Admin Panel
+                    web_sys::window()
+                        .unwrap()
+                        .location()
+                        .set_href("/admin-panel")
+                        .unwrap();
+                }
+            }) as Box<dyn FnMut(_)>);
+
+            // Attach the listener
+            web_sys::window()
+                .unwrap()
+                .add_event_listener_with_callback("keydown", callback.as_ref().unchecked_ref())
+                .unwrap();
+
+            // Cleanup
+            move || {
+                web_sys::window()
+                    .unwrap()
+                    .remove_event_listener_with_callback(
+                        "keydown",
+                        callback.as_ref().unchecked_ref(),
+                    )
+                    .unwrap();
+            }
+        });
+    }
 
 
     html! {
@@ -111,7 +157,8 @@ fn switch(config: Rc<Config>) -> impl Fn(Route) -> Html {
             Route::MainMenu => html! { <MainMenu config={config.clone()} /> },
             Route::IntroScreen1 => html! { <IntroScreen config={config.clone()} /> },
             Route::ChoreoVideo => html! { <ChoreoVideo config={config.clone()}/> },
-            Route::LoadScreenVideo => html! { <LoadScreenVideo/> },
+            Route::LoadScreenVideo => html! { <LoadScreenVideo config={config.clone()}/> },
+            Route::AdminPanel => html! { <AdminPanel config={config.clone()}/> }, // Render AdminPanel
         }
     }
 }

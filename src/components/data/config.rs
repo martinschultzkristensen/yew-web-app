@@ -45,7 +45,9 @@ pub struct DemoVideoConfig {
     pub id: usize,
     pub url: String,
     pub loop_video: bool,
+    pub choreo_img: Option<String>,
     pub title: String,
+    pub description: Option<String>,
     pub duration: String,
 }
 
@@ -71,6 +73,8 @@ pub struct Config {
     pub dancers: Dancers,
     pub demo_videos: DemoVideos,
     pub choreo_videos: ChoreoVideos,
+    pub loadscreen_video: ChoreoVideoConfig,
+    pub intro_video: ChoreoVideoConfig,
 }
 
 //impl PartialEq for Config and comprare relevant fields
@@ -81,6 +85,7 @@ impl Config {
         // Deserialize the JsValue into Config struct using serde_wasm_bindgen
         from_value(js_value).map_err(|e| ConfigError(format!("Failed to deserialize JsValue: {:?}", e)))
     }
+    
     pub fn load_dancers(&self) -> std::collections::HashMap<usize, Vec<Dancer>> {
         let mut choreography_map = std::collections::HashMap::new();
 
@@ -112,9 +117,27 @@ impl Config {
                     loop_video: video_config.loop_video,
                 },
                 title: video_config.title.clone(),
+                description: video_config.description.clone().unwrap_or_else(|| "There is not yet a description for this choreography".to_string()),
                 duration: video_config.duration.clone(),
+                choreo_img: video_config.choreo_img.clone().unwrap_or_else(|| "static/img/Ming_Niels.png".to_string()),
             })
         }).collect()
+    }
+
+    pub fn get_loadscreen_video(&self) -> Vec<VideoType> {
+        vec![VideoType::Regular(Video {
+            id: self.loadscreen_video.id,
+            url: self.loadscreen_video.url.clone(),
+            loop_video: self.loadscreen_video.loop_video,
+        })]
+    }
+
+    pub fn get_intro_video(&self) -> Vec<VideoType> {
+        vec![VideoType::Regular(Video {
+            id: self.intro_video.id,
+            url: self.intro_video.url.clone(),
+            loop_video: self.intro_video.loop_video,
+        })]
     }
 
     pub fn load_choreo_videos(&self) -> Vec<VideoType> {

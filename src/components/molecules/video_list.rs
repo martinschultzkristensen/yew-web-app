@@ -1,8 +1,12 @@
 //src/components/molecules/video_list.rs
 use crate::components::atoms::arrow_respnd_ui::*;
 use yew::prelude::*;
-
-
+use serde_json::json;
+use wasm_bindgen::prelude::wasm_bindgen;
+use wasm_bindgen::JsValue;
+use serde_wasm_bindgen::{to_value, from_value};
+use web_sys::console;
+use web_sys::{Blob as WebBlob, Url};
 
 
 #[derive(Clone, PartialEq)]
@@ -17,6 +21,8 @@ pub struct DemoVideo {
     pub video: Video,
     pub title: String,
     pub duration: String,
+    pub description: String,
+    pub choreo_img: String,
 }
 
 #[derive(Clone, PartialEq)]
@@ -44,6 +50,12 @@ impl VideoType {
     }
 }
 
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"], js_name = invoke)]
+    async fn invoke(cmd: &str, args: JsValue) -> JsValue;
+}
+
 #[derive(Properties, PartialEq)]
 pub struct VideosListProps {
     pub videos: Vec<VideoType>,
@@ -56,12 +68,18 @@ pub struct VideosListProps {
 #[function_component(VideosList)]
 pub fn videos_list(props: &VideosListProps) -> Html {
     
+    use_effect(|| {
+        web_sys::console::log_1(&"VideosList mounted".into());
+        || ()
+    });
+
     let VideosListProps {
         videos,
         current_index,
         on_ended,
         video_class,
     } = props;
+
     let current_video = &videos[*current_index]; // <- get current_index to display the corresponding video. Access the inner Video with .video
     let video = current_video.get_video();
     let should_loop = current_video.should_loop();
@@ -75,11 +93,47 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         None
     };
    
-    
+    // This codeblock should Resolve path using Tauri backend
+    let video_src = use_state(|| None);
+    {   
+        let video_src = video_src.clone();
+        let video_name = current_video.get_video().url.clone(); // e.g. "static/devVideo/DEMO_LetsDuet.mp4"
+
+        use_effect_with(video_name.clone(), move |video_name| {
+            let video_src = video_src.clone();
+
+            wasm_bindgen_futures::spawn_local({
+                let video_name = video_name.clone();
+                async move {
+                    console::time_with_label("get_video_path");
+                    let js_args = serde_wasm_bindgen::to_value(&json!({ "path": video_name })).unwrap();
+                    let result = invoke("resolve_media_path", js_args).await;
+                    
+                     match serde_wasm_bindgen::from_value::<String>(result) {
+                        Ok(url) => {
+                            log::info!("🎥 Video path resolved: {}", &url);
+                            video_src.set(Some(url));
+                            console::time_end_with_label("get_video_path");
+                        }
+                        Err(err) => log::error!("❌ Failed to parse video blob: {:?}", err),
+                    }
+            
+       
+                    
+                }
+            });
+            || ()
+        });
+
+    }
 
     match current_video {
 
-        VideoType::Demo(demo) => html! {
+        VideoType::Demo(demo) => {
+        let src = video_src.as_ref().cloned().unwrap_or_default();
+        log::info!("🎬 Final video_src to render: {}", src);
+        
+        html! {
         <div class="main_menu-container">
                 <div class="video-wrapper">
                     <div class="svg-arrow-in-main">
@@ -89,11 +143,15 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                 <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>
                     <div class="video-placeholder">
                     <video
-                        src={format!("{}", video.url)}
+                        
+                        src={video_src.as_ref().cloned().unwrap_or_default()}
+
+
                         autoplay=true
                         loop={should_loop}
                         onended={onended_attr}
                         class={classes!(video_class.clone(), "smallscreenvideo")}
+                        preload="auto"
                     />
                     </div>
                     <div class="svg-arrow-in-main">
@@ -109,14 +167,16 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                 </div>
             </div>
             </div>
+            }
         },
         VideoType::Regular(_) => html! {
             <video
-                src={format!("{}", video.url)}
+                src={video_src.as_ref().cloned().unwrap_or_default()}
                 autoplay=true
                 loop={should_loop}
                 onended={onended_attr}
                 class={classes!(video_class.clone(), "fullscreenvideo")}
+                preload="auto"
             />
         },
     }
