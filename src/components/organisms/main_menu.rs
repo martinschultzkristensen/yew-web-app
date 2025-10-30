@@ -89,10 +89,10 @@ let press_r_for_about = {
     let navigator = Rc::clone(&navigator);
     Callback::from(move |event: KeyboardEvent| {
         if event.key() == "r" {
-            play_sound.emit("uiToAboutChoreo".to_string());
+            play_sound.emit("uiToAboutChoreo.mp3".to_string());
             navigate_to_about(*current_video_index_clone, &navigator);
         } else if event.key() == "e" {
-            play_sound.emit("buttonSelect".to_string());
+            play_sound.emit("BtnStart.mp3".to_string());
             execute_choreo_video(*current_video_index_clone, &navigator, &ctx.stop_music);
         }
     })

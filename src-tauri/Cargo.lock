@@ -94,9 +94,11 @@ checksum = "dcfed56ad506cb2c684a14971b8861fdc3baaaae314b9e5f9bb532cbe3ba7a4f"
 name = "app"
 version = "0.2.0"
 dependencies = [
+ "bytes",
  "http 0.2.12",
  "log",
  "mime_guess",
+ "parking_lot",
  "serde",
  "serde_json",
  "tauri",

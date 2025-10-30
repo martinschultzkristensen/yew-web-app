@@ -79,16 +79,13 @@ pub fn about_choreo(props: &AppConfigProps) -> Html {
             navigator.push(&Route::IntroScreen1)
         }
         "r" => {
-            play_sound.emit("uiToAboutChoreo".to_string());
+            play_sound.emit("uiToAboutChoreo.mp3".to_string());
             navigator.push_with_state(&Route::MainMenu, video_index)
         }
         "e" => {
             stop_music.emit(());
-            play_sound.emit("buttonSelect".to_string());
+            play_sound.emit("BtnStart.mp3".to_string());
             navigator.push_with_state(&Route::ChoreoVideo, video_index);
-            let soundeffect =
-                web_sys::HtmlAudioElement::new_with_src("/static/buttonSelect.mp3").unwrap();
-            let _ = soundeffect.play();
         }
         _ => (),
     });

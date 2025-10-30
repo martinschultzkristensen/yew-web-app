@@ -1,0 +1,155 @@
+//src/components/molecules/sound_effects.rs
+
+use js_sys::Uint8Array;
+use log;
+use serde_wasm_bindgen::to_value;
+use std::collections::HashMap;
+use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsValue;
+use wasm_bindgen_futures::spawn_local;
+use wasm_bindgen_futures::JsFuture;
+use web_sys::{AudioBuffer, AudioContext, AudioDestinationNode, AudioNode};
+use yew::prelude::*;
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"], js_name = invoke)]
+    async fn invoke(cmd: &str, args: JsValue) -> JsValue;
+}
+
+async fn get_audio_effect(effect_name: &str) -> Result<js_sys::Uint8Array, JsValue> {
+    let args = to_value(&serde_json::json!({
+        "effectName": effect_name,
+    }))
+    .map_err(|e| format!("Failed to serialize args: {:?}", e))?;
+
+    let result = invoke("get_audio_effect", args).await;
+    Ok(js_sys::Uint8Array::new(&result))
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct SoundEffectsContext {
+    audio_context: AudioContext,
+    effects: HashMap<String, AudioBuffer>,
+    play_sound: Callback<String>,
+}
+
+pub enum SoundEffectsAction {
+    PlaySound(String),
+    LoadEffect(String, AudioBuffer),
+}
+
+#[derive(Properties, PartialEq)]
+pub struct SoundEffectsProviderProps {
+    #[prop_or_default]
+    pub children: Children,
+}
+
+#[derive(Clone, PartialEq)]
+pub struct SoundEffectsProvider {
+    sound_effects_context: SoundEffectsContext,
+}
+
+impl Component for SoundEffectsProvider {
+    type Message = SoundEffectsAction;
+    type Properties = SoundEffectsProviderProps;
+
+    fn create(ctx: &Context<Self>) -> Self {
+        let audio_context = AudioContext::new().unwrap();
+        let effects = HashMap::new();
+        let link = ctx.link().clone();
+
+        // Pre-load effects
+        let effect_names = vec!["uiToAboutChoreo.mp3", "BtnStart.mp3", "button-124476.mp3"];
+        for name in effect_names {
+            spawn_local({
+                let audio_context = audio_context.clone();
+                let link = link.clone();
+                async move {
+                    match get_audio_effect(name).await {
+                        Ok(data) => {
+                            let array_buffer = data.buffer();
+                            match JsFuture::from(
+                                audio_context.decode_audio_data(&array_buffer).unwrap(),
+                            )
+                            .await
+                            {
+                                Ok(buffer) => {
+                                    let audio_buffer = buffer.dyn_into::<AudioBuffer>().unwrap();
+                                    link.send_message(SoundEffectsAction::LoadEffect(
+                                        name.to_string(),
+                                        audio_buffer,
+                                    ));
+                                }
+                                Err(e) => {
+                                    log::error!("Failed to decode audio data: {:?}", e);
+                                }
+                            }
+                        }
+                        Err(e) => {
+                            log::error!("Failed to load audio effect {}: {:?}", name, e);
+                        }
+                    }
+                }
+            });
+        }
+
+        let play_sound = Callback::from(move |effect_name: String| {
+            link.send_message(SoundEffectsAction::PlaySound(effect_name))
+        });
+
+        let mut effects = HashMap::new();
+        effects.insert("uiToAboutChoreo".to_string(), NodeRef::default());
+        effects.insert("buttonSelect".to_string(), NodeRef::default());
+        effects.insert("toggleUpDown".to_string(), NodeRef::default());
+
+        let sound_effects_context = SoundEffectsContext {
+            effects,
+            play_sound,
+        };
+
+        Self {
+            sound_effects_context,
+        }
+    }
+
+    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
+        let SoundEffectsAction::PlaySound(effect_name) = msg;
+
+        if let Some(audio_ref) = self.sound_effects_context.effects.get(&effect_name) {
+            if let Some(audio) = audio_ref.cast::<HtmlAudioElement>() {
+                let _ = audio.set_current_time(0.0);
+                let _ = audio.play();
+            }
+        }
+
+        false
+    }
+
+    fn view(&self, ctx: &Context<Self>) -> Html {
+        let ui_to_about_choreo = self
+            .sound_effects_context
+            .effects
+            .get("uiToAboutChoreo")
+            .unwrap();
+        let button_select = self
+            .sound_effects_context
+            .effects
+            .get("buttonSelect")
+            .unwrap();
+        let toggle_up_down = self
+            .sound_effects_context
+            .effects
+            .get("toggleUpDown")
+            .unwrap();
+
+        html! {
+            <ContextProvider<SoundEffectsContext> context={self.sound_effects_context.clone()}>
+                <audio ref={ui_to_about_choreo.clone()} src=" /static/uiToAboutChoreo.mp3" />
+                <audio ref={button_select.clone()} src="/static/BtnStart.mp3" />
+                <audio ref={toggle_up_down.clone()} src="/static/button-124476.mp3" preload="auto"/>
+                { for ctx.props().children.iter() }
+            </ContextProvider<SoundEffectsContext>>
+        }
+    }
+}

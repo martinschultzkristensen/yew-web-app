@@ -19,6 +19,12 @@ web-sys = { version = "0.3.66", features = [
     "HtmlElement",
     "DomTokenList",
     "SvgElement",
+    "AudioContext",
+    "AudioBuffer",
+    "AudioNode",
+    "AudioDestinationNode",
+    "AudioBufferSourceNode",
+    "BaseAudioContext"
 ] }
 #yew-router = { git = "https://github.com/yewstack/yew.git" }
 yew-router = "0.18.0"
