@@ -6,14 +6,14 @@ name = "Mr danceOmatic"
 image = "/static/img/Martinus.png"
 strength = 5
 flexibility = 5
-in_choreography_nr = [1, 3, 5]
+in_choreography_nr = [1, 3]
 
 [[dancers.list]]
 name = "Jon"
 image = "/static/img/Jon.png"
 strength = 8
 flexibility = 7
-in_choreography_nr = [2, 4, 5]
+in_choreography_nr = [2, 4]
 
 [[dancers.list]]
 name = "Meng-Ting"
@@ -34,12 +34,13 @@ in_choreography_nr = [3, 4, 2]
 [demo_videos]
 [[demo_videos.list]]
 id = 1
-url = "media/DEMO_LetsDuet.mp4"
+url = "static/devVideo/AI&Boy.mp4"
 loop_video = true
-title = "Let's Duet"
-description = "Two individuals long to break free and embrace their raw, primal instincts—but they're trapped in a world rigidly governed by systems, rules, and straight lines."
+title = "AI & Boy"
+description = "The very firts choreography made for danceOmatic. Follow Boy as he creates his very own robot!"
 duration = "300"
-choreo_img = "/static/img/LetsDuet.jpg"
+choreo_img = "static/svg/letsDuet.svg
+
 
 [[demo_videos.list]]
 id = 2
@@ -48,7 +49,7 @@ loop_video = true
 title = "Siblings"
 description = "Three individuals share a deeply unique relationship with each other during an outing."
 duration = "25"
-choreo_img = "/static/img/siblings.png"
+choreo_img = "/static/svg/Siblings.svg"
 
 [[demo_videos.list]]
 id = 3
@@ -57,7 +58,7 @@ loop_video = true
 title = "Hej-Nihao"
 description = "Two people from very different cultures meet and try to make their gestures meaningful to one another."
 duration = "12"
-choreo_img = "/static/img/Hej-Nihao.png"
+choreo_img = "/static/svg/hejNihao.svg"
 
 [[demo_videos.list]]
 id = 4
@@ -68,14 +69,6 @@ description = "A culture mashup, blending traditional Taiwanese dance with break
 duration = "103"
 choreo_img = "/static/img/culture4fun.png"
 
-[[demo_videos.list]]
-id = 5
-url = "static/devVideo/AI&Boy.mp4"
-loop_video = true
-title = "Chef"
-description = "These three chefs come straight from the kitchen, masters of collaboration. This is a small part of Art Farm's piece, Frikadelle."
-duration = "103"
-choreo_img = "/static/img/frikadelle1080x1080.jpg"
 
 [choreo_videos]
 [[choreo_videos.list]]
@@ -98,10 +91,6 @@ id = 4
 url = "static/devVideo/AI&Boy.mp4"
 loop_video = false
 
-[[choreo_videos.list]]
-id = 5
-url = "static/devVideo/AI&Boy.mp4"
-loop_video = false
 
 [loadscreen_video]
 id = 1
