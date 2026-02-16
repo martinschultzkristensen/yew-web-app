@@ -2,29 +2,29 @@
 
 [dancers]
 [[dancers.list]]
-name = "Mr danceOmatic"
-image = "/static/img/Martinus.png"
+name = "Alien"
+image = "/static/img/Alien.png"
 strength = 5
 flexibility = 5
 in_choreography_nr = [1, 3]
 
 [[dancers.list]]
-name = "Jon"
-image = "/static/img/Jon.png"
+name = "Bear"
+image = "/static/img/Bear.png"
 strength = 8
 flexibility = 7
 in_choreography_nr = [2, 4]
 
 [[dancers.list]]
-name = "Meng-Ting"
-image = "/static/img/Mengting.png"
+name = "Umbrella Girl Left"
+image = "/static/img/UmbrellaGirlLeft.png"
 strength = 5
 flexibility = 10
 in_choreography_nr = [1, 2, 3]
 
 [[dancers.list]]
-name = "Meng-Yuan"
-image = "/static/img/Mengyuin.png"
+name = "Umbrella Girl Right"
+image = "/static/img/UmbrellaGirlRight.png"
 strength = 8
 flexibility = 7
 in_choreography_nr = [3, 4, 2]
@@ -34,7 +34,7 @@ in_choreography_nr = [3, 4, 2]
 [demo_videos]
 [[demo_videos.list]]
 id = 1
-url = "static/devVideo/AI&Boy.mp4"
+url = "static/devVideo/Flash_AI&Boy.mp4"
 loop_video = true
 title = "AI & Boy"
 description = "The very firts choreography made for danceOmatic. Follow Boy as he creates his very own robot!"
@@ -67,7 +67,7 @@ loop_video = true
 title = "culture4Fun"
 description = "A culture mashup, blending traditional Taiwanese dance with breakdance elements. How will they combine?"
 duration = "103"
-choreo_img = "/static/img/culture4fun.png"
+choreo_img = "/static/img/jumpCrew.png"
 
 
 [choreo_videos]
