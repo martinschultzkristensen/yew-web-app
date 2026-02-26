@@ -5,12 +5,15 @@ use http::response::Builder as ResponseBuilder; // <-- there are often other bui
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
-use std::{fmt, path::PathBuf};
+use std::{fmt, path::PathBuf, sync::Mutex};
 use tauri::http::{Request, Response};
 use tauri::{Manager, Runtime};
 use tauri_plugin_log::{Target, TargetKind};
 use toml;
 pub mod path_utils;
+
+// Track last logged media path to avoid duplicate logs during streaming
+static LAST_LOGGED_MEDIA_PATH: Mutex<Option<String>> = Mutex::new(None);
 
 //const CONFIG_PATH: &str = "resources/config.toml";
 
@@ -92,17 +95,6 @@ impl Config {
     }
 }
 
-// now get's config from commands.rs Same code under comment: "Fall back to bundle config"
-// #[tauri::command]
-// fn get_config(handle: tauri::AppHandle) -> Result<Config, String> {
-//     let resource_path = handle.path()
-//     .resolve(CONFIG_PATH, BaseDirectory::Resource)
-//     .map_err(|err| err.to_string())?;
-
-//     Config::from_file(resource_path.to_str().ok_or("Invalid path")?)
-//         .map_err(|err| err.to_string())
-
-// }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -209,7 +201,14 @@ pub fn run() {
             let rel_path = uri.trim_start_matches("media://").trim_end_matches('/');
             let full_path: PathBuf = media_root.join(rel_path);
 
-            log::info!("🔍 media:// request → {:?}", full_path);
+            // Log only once per unique media path (not for every range request)
+            let full_path_str = full_path.to_string_lossy().to_string();
+            if let Ok(mut last_path) = LAST_LOGGED_MEDIA_PATH.lock() {
+                if last_path.as_ref() != Some(&full_path_str) {
+                    log::info!("🔍 media:// request → {:?}", full_path);
+                    *last_path = Some(full_path_str);
+                }
+            }
 
             let mut file = match File::open(&full_path) {
                 Ok(f) => f,
