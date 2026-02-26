@@ -164,25 +164,6 @@ pub fn resolve_media_path(handle: tauri::AppHandle, path: String) -> Result<Stri
     }
 }
 
-//this code should be unnesesarry for serving video as blob. Test and delete.
-// //serve the video files as a blob to the frontend. (I belive only for the videos build in)
-// #[tauri::command]
-// pub fn get_video_path(handle: tauri::AppHandle, relative_path: String) -> Result<String, String> {
-//     let asset_path = handle.path_resolver().resolve_resource(&relative_path)
-//         .ok_or("Could not resolve video path")?;
-
-//     let url = format!("file://{}", asset_path.display());
-//     Ok(url)
-// }
-// #[tauri::command]
-// pub fn load_video(handle: tauri::AppHandle, path: String) -> Result<Vec<u8>, String> {
-//     use std::fs;
-
-//     // Resolve full path using the same method you use elsewhere
-//     let full_path = resolve_media_path(handle, path)?;
-
-//     fs::read(&full_path).map_err(|e| format!("Failed to read video file: {}", e))
-// }
 
 //serve the image files as a blob to the frontend.
 #[tauri::command]

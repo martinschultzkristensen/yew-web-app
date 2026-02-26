@@ -34,17 +34,17 @@ in_choreography_nr = [3, 4, 2]
 [demo_videos]
 [[demo_videos.list]]
 id = 1
-url = "static/devVideo/Flash_AI&Boy.mp4"
+url = "/static/devVideo/Flash_AI&Boy.mp4"
 loop_video = true
 title = "AI & Boy"
 description = "The very firts choreography made for danceOmatic. Follow Boy as he creates his very own robot!"
 duration = "300"
-choreo_img = "static/svg/letsDuet.svg
+choreo_img = "/static/svg/letsDuet.svg"
 
 
 [[demo_videos.list]]
 id = 2
-url = "static/devVideo/Flash_Siblings.mp4"
+url = "/static/devVideo/Flash_Siblings.mp4"
 loop_video = true
 title = "Siblings"
 description = "Three individuals share a deeply unique relationship with each other during an outing."
@@ -53,7 +53,7 @@ choreo_img = "/static/svg/Siblings.svg"
 
 [[demo_videos.list]]
 id = 3
-url = "static/devVideo/Flash_Hej-Nihao.mp4"
+url = "/static/devVideo/Flash_Hej-Nihao.mp4"
 loop_video = true
 title = "Hej-Nihao"
 description = "Two people from very different cultures meet and try to make their gestures meaningful to one another."
@@ -62,7 +62,7 @@ choreo_img = "/static/svg/hejNihao.svg"
 
 [[demo_videos.list]]
 id = 4
-url = "static/devVideo/Flash_Culture4Fun.mp4"
+url = "/static/devVideo/Flash_Culture4Fun.mp4"
 loop_video = true
 title = "culture4Fun"
 description = "A culture mashup, blending traditional Taiwanese dance with breakdance elements. How will they combine?"
@@ -73,33 +73,33 @@ choreo_img = "/static/img/jumpCrew.png"
 [choreo_videos]
 [[choreo_videos.list]]
 id = 1
-url = "static/devVideo/AI&Boy.mp4"
+url = "/static/devVideo/choreoDemoVid_8sec.mp4"
 loop_video = false
 
 [[choreo_videos.list]]
 id = 2
-url = "static/devVideo/AI&Boy.mp4"
+url = "/static/devVideo/choreoDemoVid_8sec.mp4"
 loop_video = false
 
 [[choreo_videos.list]]
 id = 3
-url = "static/devVideo/AI&Boy.mp4"
+url = "/static/devVideo/choreoDemoVid_8sec.mp4"
 loop_video = false
 
 [[choreo_videos.list]]
 id = 4
-url = "static/devVideo/AI&Boy.mp4"
+url = "/static/devVideo/choreoDemoVid_8sec.mp4"
 loop_video = false
 
 
 [loadscreen_video]
 id = 1
-url = "static/devVideo/LoadScreenTest4s.mp4"
+url = "/static/devVideo/LoadScreenTest4s.mp4"
 loop_video = false
 
 [intro_video]
 id = 0
-url = "static/devVideo/IntroDemoVid_4sec.mp4"
+url = "/static/devVideo/IntroDemoVid_4sec.mp4"
 loop_video = true
 
 # Add more configuration sections as needed
