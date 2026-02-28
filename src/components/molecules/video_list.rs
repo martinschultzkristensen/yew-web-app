@@ -94,34 +94,38 @@ pub fn videos_list(props: &VideosListProps) -> Html {
     };
    
     // This codeblock should Resolve path using Tauri backend
-    let video_src = use_state(|| None);
+    let video_src = use_state(|| None::<String>);
     {   
         let video_src = video_src.clone();
-        let video_name = current_video.get_video().url.clone(); // e.g. "static/devVideo/DEMO_LetsDuet.mp4"
+        let video_name = current_video.get_video().url.clone(); // for instance "/static/devVideo/IntroDemoVid_4sec.mp4"
 
         use_effect_with(video_name.clone(), move |video_name| {
             let video_src = video_src.clone();
 
-            wasm_bindgen_futures::spawn_local({
-                let video_name = video_name.clone();
-                async move {
-                    console::time_with_label("get_video_path");
-                    let js_args = serde_wasm_bindgen::to_value(&json!({ "path": video_name })).unwrap();
-                    let result = invoke("resolve_media_path", js_args).await;
-                    
-                     match serde_wasm_bindgen::from_value::<String>(result) {
-                        Ok(url) => {
-                            log::info!("🎥 Video path resolved: {}", &url);
-                            video_src.set(Some(url));
+            // For /static/ paths, use directly (like images do)
+            if video_name.starts_with("/static/") {
+                log::info!("🎥 Using static path directly: {}", &video_name);
+                video_src.set(Some(video_name.clone()));
+            } else {
+                // For media/ paths, resolve through backend
+                wasm_bindgen_futures::spawn_local({
+                    let video_name = video_name.clone();
+                    async move {
+                        console::time_with_label("get_video_path");
+                        let js_args = serde_wasm_bindgen::to_value(&json!({ "path": video_name })).unwrap();
+                        let result = invoke("resolve_media_path", js_args).await;
+                        
+                         match serde_wasm_bindgen::from_value::<String>(result) {
+                            Ok(url) => {
+                                log::info!("🎥 Video path resolved: {}", &url);
+                                video_src.set(Some(url));
                             console::time_end_with_label("get_video_path");
                         }
                         Err(err) => log::error!("❌ Failed to parse video blob: {:?}", err),
                     }
-            
-       
-                    
                 }
             });
+            }
             || ()
         });
 
