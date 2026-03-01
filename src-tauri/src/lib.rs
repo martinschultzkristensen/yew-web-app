@@ -279,6 +279,8 @@ pub fn run() {
             get_config,
             debug_paths,
             reset_config_to_default,
+            update_config_video,
+            update_intro_video,
             import_video,
             import_images,
             resolve_media_path,

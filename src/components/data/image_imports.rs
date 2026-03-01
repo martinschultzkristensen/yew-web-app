@@ -21,7 +21,7 @@ pub struct ImageImportProps {
 
 
 #[function_component(ImageImport)]
-pub fn video_import(props: &ImageImportProps) -> Html {
+pub fn image_import(props: &ImageImportProps) -> Html {
     let importing = use_state(|| false);
     let on_import = props.on_import.clone(); // clone callback here
 

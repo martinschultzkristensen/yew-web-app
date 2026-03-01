@@ -108,6 +108,7 @@ dependencies = [
  "tauri-plugin-log",
  "tokio",
  "toml",
+ "toml_edit 0.22.24",
 ]
 
 [[package]]

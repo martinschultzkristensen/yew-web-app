@@ -11,6 +11,9 @@ use std::sync::Arc;
 use tauri::path::BaseDirectory;
 use tauri::Emitter;
 use tauri::Manager;
+use toml_edit::{value, DocumentMut};
+use std::fs;
+
 
 const CONFIG_FILENAME: &str = "config.toml";
 const CONFIG_RESOURCE_PATH: &str = "resources/config.toml"; // Path relative to resources directory
@@ -96,6 +99,50 @@ fn get_user_media_path(handle: &tauri::AppHandle) -> Result<PathBuf, String> {
     Ok(path)
 }
 
+#[tauri::command]
+pub fn update_config_video(
+    handle: tauri::AppHandle,
+    section: String,
+    index: Option<usize>,
+    new_path: String,
+) -> Result<Config, String> {
+    let config_path = get_external_config_path(&handle)?;
+
+    let content =
+        fs::read_to_string(&config_path).map_err(|e| format!("Failed to read config: {}", e))?;
+
+    let mut doc = content
+        .parse::<DocumentMut>()
+        .map_err(|e| format!("Invalid TOML: {}", e))?;
+
+    // Handle both single tables (intro_video, loadscreen_video) and array tables (demo_videos, choreo_videos)
+    match section.as_str() {
+        "intro_video" | "loadscreen_video" => {
+            doc[&section]["url"] = value(new_path);
+        }
+        "demo_videos" | "choreo_videos" => {
+            let idx = index.ok_or(format!("Index required for section '{}'", section))?;
+            doc[&section]["list"][idx]["url"] = value(new_path);
+        }
+        _ => {
+            return Err(format!("Unknown section: {}", section));
+        }
+    }
+
+    fs::write(&config_path, doc.to_string())
+        .map_err(|e| format!("Failed to write config: {}", e))?;
+
+    // Reload typed config
+    Config::from_file(config_path.to_str().ok_or("Invalid path")?)
+        .map_err(|err| format!("Error reloading config: {}", err))
+}
+
+// Deprecated: kept for backwards compatibility <--- Test if this can be removed after confirming generic update function "update_config_video" works.
+#[tauri::command]
+pub fn update_intro_video(handle: tauri::AppHandle, new_path: String) -> Result<Config, String> {
+    update_config_video(handle, "intro_video".to_string(), None, new_path)
+}
+
 //command to import video. Note in video_imports.rs source_path is changed to sourcePath since Tauri commands use camelCase by default when bridging between JavaScript and Rust
 #[tauri::command]
 pub fn import_video(handle: tauri::AppHandle, source_path: String) -> Result<String, String> {
@@ -163,7 +210,6 @@ pub fn resolve_media_path(handle: tauri::AppHandle, path: String) -> Result<Stri
         Err("Only media/ paths are supported".into())
     }
 }
-
 
 //serve the image files as a blob to the frontend.
 #[tauri::command]
@@ -310,5 +356,3 @@ pub fn debug_paths(handle: tauri::AppHandle) -> Result<String, String> {
         media.display()
     ))
 }
-
-

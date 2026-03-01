@@ -3,6 +3,8 @@ use crate::components::atoms::dancer::DancerData;
 use crate::components::data::config::Config;
 use crate::components::molecules::video_list::VideoType;
 
+const DEFAULT_CHOREO_IMG: &str = "/static/img/default_choreo_img.png";
+
 #[derive(Clone)]
 pub struct ChoreographyData {
     pub title: String,
@@ -19,7 +21,6 @@ pub fn get_choreography_data(config: &Config, choreo_number: usize) -> Choreogra
     let dancers_map = config.load_dancers();
 
     let default_description = "There is not yet a description for this choreography.".to_string();
-    let default_choreo_img = "/static/img/default_choreo_img.png".to_string();
 
     let demo_video = config
         .demo_videos
@@ -31,12 +32,12 @@ pub fn get_choreography_data(config: &Config, choreo_number: usize) -> Choreogra
         Some(video) => (
             video.title.clone(),
             video.description.clone().unwrap_or_else(|| default_description.clone()),
-            video.choreo_img.clone().unwrap_or_else(|| default_choreo_img.clone()),
+            video.choreo_img.clone().unwrap_or_else(|| DEFAULT_CHOREO_IMG.to_string()),
         ),
         None => (
             "Default Title".to_string(),
             default_description.clone(),
-            default_choreo_img.clone(),
+            DEFAULT_CHOREO_IMG.to_string(),
         ),
     };
 

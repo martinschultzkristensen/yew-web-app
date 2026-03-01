@@ -7,8 +7,7 @@ use serde::Deserialize;
 use serde_wasm_bindgen::from_value;
 use wasm_bindgen::JsValue;
 
-
-
+const DEFAULT_CHOREO_IMG: &str = "/static/img/default_choreo_img.png";
 
 pub struct ConfigError(String);
 
@@ -119,7 +118,7 @@ impl Config {
                 title: video_config.title.clone(),
                 description: video_config.description.clone().unwrap_or_else(|| "There is not yet a description for this choreography".to_string()),
                 duration: video_config.duration.clone(),
-                choreo_img: video_config.choreo_img.clone().unwrap_or_else(|| "static/img/Ming_Niels.png".to_string()),
+                choreo_img: video_config.choreo_img.clone().unwrap_or_else(|| DEFAULT_CHOREO_IMG.to_string()),
             })
         }).collect()
     }
