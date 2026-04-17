@@ -3,5 +3,10 @@
     "@tauri-apps/api": "^2.4.0",
     "@tauri-apps/cli": "^2.4.0",
     "@tauri-apps/plugin-fs": "^2.2.1"
+  },
+  "scripts": {
+    "build": "cargo tauri build --release",
+    "build:rpi": "cargo tauri build --release --target aarch64-unknown-linux-gnu",
+    "dev": "cargo tauri dev"
   }
 }
