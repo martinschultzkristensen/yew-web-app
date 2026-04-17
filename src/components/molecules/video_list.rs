@@ -102,8 +102,8 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         use_effect_with(video_name.clone(), move |video_name| {
             let video_src = video_src.clone();
 
-            // For /static/ paths, use directly (like images do)
-            if video_name.starts_with("/static/") {
+            // For /static/ or static/ paths, use directly (like images do)
+            if video_name.starts_with("/static/") || video_name.starts_with("static/") {
                 log::info!("🎥 Using static path directly: {}", &video_name);
                 video_src.set(Some(video_name.clone()));
             } else {
