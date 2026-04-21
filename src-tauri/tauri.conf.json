@@ -33,7 +33,8 @@
     },
     "resources": [
       "resources/config.toml",
-      "resources/static/**"
+      "resources/static",
+      "resources/static/**/*"
     ],
     "shortDescription": "",
     "linux": {

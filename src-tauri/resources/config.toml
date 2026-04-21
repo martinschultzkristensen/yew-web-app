@@ -39,7 +39,7 @@ loop_video = true
 title = "AI & Boy"
 description = "The very firts choreography made for danceOmatic. Follow Boy as he creates his very own robot!"
 duration = "300"
-choreo_img = "static/svg/letsDuet.svg
+choreo_img = "/static/svg/letsDuet.svg
 
 
 [[demo_videos.list]]
@@ -73,22 +73,22 @@ choreo_img = "/static/img/jumpCrew.png"
 [choreo_videos]
 [[choreo_videos.list]]
 id = 1
-url = "static/devVideo/AI&Boy.mp4"
+url = "static/devVideo/IntroDemoVid_4sec.mp4"
 loop_video = false
 
 [[choreo_videos.list]]
 id = 2
-url = "static/devVideo/AI&Boy.mp4"
+url = "static/devVideo/IntroDemoVid_4sec.mp4"
 loop_video = false
 
 [[choreo_videos.list]]
 id = 3
-url = "static/devVideo/AI&Boy.mp4"
+url = "static/devVideo/IntroDemoVid_4sec.mp4"
 loop_video = false
 
 [[choreo_videos.list]]
 id = 4
-url = "static/devVideo/AI&Boy.mp4"
+url = "static/devVideo/IntroDemoVid_4sec.mp4"
 loop_video = false
 
 
