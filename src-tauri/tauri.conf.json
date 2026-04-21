@@ -33,9 +33,7 @@
     },
     "resources": [
       "resources/config.toml",
-      "resources/static/*",
-      "../static/devVideo/",
-      "../static/img/"
+      "resources/static/**"
     ],
     "shortDescription": "",
     "linux": {
