@@ -1,11 +1,14 @@
 //src-tauri/src/lib.rs
 mod commands;
+pub mod supabase_sync;
+
 use commands::*;
 use http::response::Builder as ResponseBuilder; // <-- there are often other builders in scope. Therefore rename to avoid ambiguity.
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
 use std::{fmt, path::PathBuf, sync::Mutex};
+use supabase_sync::*;
 use tauri::http::{Request, Response};
 use tauri::{Manager, Runtime};
 use tauri_plugin_log::{Target, TargetKind};
@@ -94,7 +97,6 @@ impl Config {
         Ok(config)
     }
 }
-
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -282,12 +284,14 @@ pub fn run() {
             import_video,
             import_images,
             resolve_media_path,
-            // get_video_path,
-            // load_video,
             get_image_path,
             select_video_file,
             select_img_file,
-            get_audio_effect
+            get_audio_effect,
+            activate_machine,
+            check_machine_connection,
+            fetch_machine_manifest,
+            clear_machine_session
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
