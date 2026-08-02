@@ -291,6 +291,9 @@ pub fn run() {
             activate_machine,
             check_machine_connection,
             fetch_machine_manifest,
+            fetch_latest_machine_delivery,
+            start_machine_delivery_download,
+            report_machine_delivery_result,
             clear_machine_session
         ])
         .run(tauri::generate_context!())

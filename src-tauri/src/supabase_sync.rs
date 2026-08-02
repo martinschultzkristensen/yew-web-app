@@ -1,4 +1,5 @@
 use reqwest::Client;
+use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::fs;
@@ -108,6 +109,67 @@ pub struct MachineConnectionResult {
     pub session_expires_at: u64,
     pub choreography_count: usize,
     pub file_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MachineLatestDeliveryResponse {
+    pub machine: ManifestMachine,
+    pub latest_delivery: Option<MachineDelivery>,
+    pub last_installed_delivery: Option<MachineInstalledDeliverySummary>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MachineDelivery {
+    pub id: String,
+    pub version: i64,
+    pub status: String,
+    pub manifest_schema_version: u32,
+    pub manifest: MachineManifest,
+    pub choreography_count: usize,
+    pub file_count: usize,
+    pub created_at: String,
+    pub status_updated_at: String,
+    pub download_started_at: Option<String>,
+    pub installed_at: Option<String>,
+    pub machine_reported_at: Option<String>,
+    pub last_error: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MachineInstalledDeliverySummary {
+    pub id: String,
+    pub version: i64,
+    pub status: String,
+    pub installed_at: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MachineDeliveryActionResult {
+    pub deployment_id: String,
+    pub machine_id: String,
+    pub version: i64,
+    pub status: String,
+
+    #[serde(default)]
+    pub download_started_at: Option<String>,
+
+    #[serde(default)]
+    pub installed_at: Option<String>,
+
+    #[serde(default)]
+    pub last_error: Option<String>,
+
+    #[serde(default)]
+    pub already_installed: bool,
+
+    #[serde(default)]
+    pub ignored_failure_report: bool,
+
+    #[serde(default)]
+    pub newer_version: Option<i64>,
+
+    #[serde(default)]
+    pub reason: Option<String>,
 }
 
 fn unix_time_seconds() -> Result<u64, String> {
@@ -330,6 +392,45 @@ async fn load_or_refresh_session(
     }
 }
 
+async fn call_machine_rpc<T>(
+    config: &SupabaseConfig,
+    session: &MachineSession,
+    rpc_name: &str,
+    payload: serde_json::Value,
+) -> Result<T, String>
+where
+    T: DeserializeOwned,
+{
+    let client = create_http_client()?;
+    let url = format!("{}/rest/v1/rpc/{rpc_name}", config.supabase_url);
+
+    let response = client
+        .post(url)
+        .header("apikey", &config.publishable_key)
+        .bearer_auth(&session.access_token)
+        .header("Content-Type", "application/json")
+        .json(&payload)
+        .send()
+        .await
+        .map_err(|error| format!("{rpc_name} request failed: {error}"))?;
+
+    let status = response.status();
+
+    let body = response
+        .text()
+        .await
+        .map_err(|error| format!("Failed to read {rpc_name} response: {error}"))?;
+
+    if !status.is_success() {
+        return Err(format!(
+            "{rpc_name} request failed with HTTP {status}: {body}"
+        ));
+    }
+
+    serde_json::from_str::<T>(&body)
+        .map_err(|error| format!("Invalid {rpc_name} response: {error}. Response: {body}"))
+}
+
 async fn fetch_manifest_from_supabase(
     config: &SupabaseConfig,
     session: &MachineSession,
@@ -432,6 +533,79 @@ pub async fn fetch_machine_manifest(handle: AppHandle) -> Result<MachineManifest
     fetch_manifest_from_supabase(&config, &session).await
 }
 
+#[tauri::command]
+pub async fn fetch_latest_machine_delivery(
+    handle: AppHandle,
+) -> Result<MachineLatestDeliveryResponse, String> {
+    let config = load_supabase_config(&handle)?;
+    let session = load_or_refresh_session(&handle, &config).await?;
+
+    call_machine_rpc(&config, &session, "get_machine_latest_delivery", json!({})).await
+}
+
+#[tauri::command]
+pub async fn start_machine_delivery_download(
+    handle: AppHandle,
+    deployment_id: String,
+) -> Result<MachineDeliveryActionResult, String> {
+    let deployment_id = deployment_id.trim();
+
+    if deployment_id.is_empty() {
+        return Err("Deployment ID is required".to_string());
+    }
+
+    let config = load_supabase_config(&handle)?;
+    let session = load_or_refresh_session(&handle, &config).await?;
+
+    call_machine_rpc(
+        &config,
+        &session,
+        "machine_start_delivery_download",
+        json!({
+            "p_deployment_id": deployment_id
+        }),
+    )
+    .await
+}
+
+#[tauri::command]
+pub async fn report_machine_delivery_result(
+    handle: AppHandle,
+    deployment_id: String,
+    installed: bool,
+    error: Option<String>,
+) -> Result<MachineDeliveryActionResult, String> {
+    let deployment_id = deployment_id.trim();
+
+    if deployment_id.is_empty() {
+        return Err("Deployment ID is required".to_string());
+    }
+
+    let error = error.and_then(|value| {
+        let trimmed = value.trim();
+
+        if trimmed.is_empty() {
+            None
+        } else {
+            Some(trimmed.to_string())
+        }
+    });
+
+    let config = load_supabase_config(&handle)?;
+    let session = load_or_refresh_session(&handle, &config).await?;
+
+    call_machine_rpc(
+        &config,
+        &session,
+        "machine_report_delivery_result",
+        json!({
+            "p_deployment_id": deployment_id,
+            "p_installed": installed,
+            "p_error": error
+        }),
+    )
+    .await
+}
 #[tauri::command]
 pub fn clear_machine_session(handle: AppHandle) -> Result<bool, String> {
     let path = session_path(&handle)?;
