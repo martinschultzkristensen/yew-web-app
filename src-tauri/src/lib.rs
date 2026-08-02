@@ -1,9 +1,11 @@
 //src-tauri/src/lib.rs
 mod commands;
+pub mod machine_delivery_store;
 pub mod supabase_sync;
 
 use commands::*;
 use http::response::Builder as ResponseBuilder; // <-- there are often other builders in scope. Therefore rename to avoid ambiguity.
+use machine_delivery_store::*;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
@@ -292,6 +294,7 @@ pub fn run() {
             check_machine_connection,
             fetch_machine_manifest,
             fetch_latest_machine_delivery,
+            initialize_machine_delivery_storage,
             start_machine_delivery_download,
             report_machine_delivery_result,
             clear_machine_session
