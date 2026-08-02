@@ -295,6 +295,7 @@ pub fn run() {
             fetch_machine_manifest,
             fetch_latest_machine_delivery,
             initialize_machine_delivery_storage,
+            download_latest_machine_delivery_to_staging,
             start_machine_delivery_download,
             report_machine_delivery_result,
             clear_machine_session

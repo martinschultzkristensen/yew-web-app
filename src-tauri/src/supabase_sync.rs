@@ -618,3 +618,188 @@ pub fn clear_machine_session(handle: AppHandle) -> Result<bool, String> {
 
     Ok(true)
 }
+
+pub(crate) struct AuthenticatedStorageClient {
+    client: reqwest::Client,
+    supabase_url: String,
+    publishable_key: String,
+    access_token: String,
+}
+
+impl AuthenticatedStorageClient {
+    pub(crate) async fn download_object_to_file(
+        &self,
+        bucket: &str,
+        object_path: &str,
+        destination: &std::path::Path,
+    ) -> Result<u64, String> {
+        use futures_util::StreamExt as _;
+        use tokio::io::AsyncWriteExt as _;
+
+        let bucket = bucket.trim();
+        let object_path = object_path.trim();
+
+        if bucket.is_empty() {
+            return Err("Storage bucket is required".to_string());
+        }
+
+        if object_path.is_empty() {
+            return Err("Storage object path is required".to_string());
+        }
+
+        if object_path.split('/').any(|segment| segment.is_empty()) {
+            return Err(format!(
+                "Storage object path contains an empty segment: {object_path}"
+            ));
+        }
+
+        let mut url = reqwest::Url::parse(&format!(
+            "{}/storage/v1/object/authenticated",
+            self.supabase_url
+        ))
+        .map_err(|error| format!("Failed to construct Storage URL: {error}"))?;
+
+        {
+            let mut segments = url
+                .path_segments_mut()
+                .map_err(|_| "Supabase Storage URL cannot contain path segments".to_string())?;
+
+            segments.push(bucket);
+
+            for segment in object_path.split('/') {
+                segments.push(segment);
+            }
+        }
+
+        let response = self
+            .client
+            .get(url)
+            .header("apikey", &self.publishable_key)
+            .bearer_auth(&self.access_token)
+            .send()
+            .await
+            .map_err(|error| {
+                format!("Storage download request failed for {bucket}/{object_path}: {error}")
+            })?;
+
+        let status = response.status();
+
+        if !status.is_success() {
+            let response_body = response
+                .text()
+                .await
+                .unwrap_or_else(|_| "Could not read Storage error response".to_string());
+
+            let response_excerpt = response_body.chars().take(500).collect::<String>();
+
+            return Err(format!(
+                "Storage download failed for {bucket}/{object_path} with HTTP {status}: \
+                 {response_excerpt}"
+            ));
+        }
+
+        let expected_length = response.content_length();
+
+        let parent = destination.parent().ok_or_else(|| {
+            format!(
+                "Download destination has no parent directory: {}",
+                destination.display()
+            )
+        })?;
+
+        tokio::fs::create_dir_all(parent).await.map_err(|error| {
+            format!(
+                "Failed to create download directory {}: {error}",
+                parent.display()
+            )
+        })?;
+
+        let download_result = async {
+            let mut destination_file =
+                tokio::fs::File::create(destination)
+                    .await
+                    .map_err(|error| {
+                        format!(
+                            "Failed to create download file {}: {error}",
+                            destination.display()
+                        )
+                    })?;
+
+            let mut stream = response.bytes_stream();
+            let mut bytes_written = 0_u64;
+
+            while let Some(chunk_result) = stream.next().await {
+                let chunk = chunk_result.map_err(|error| {
+                    format!("Download stream failed for {bucket}/{object_path}: {error}")
+                })?;
+
+                destination_file.write_all(&chunk).await.map_err(|error| {
+                    format!(
+                        "Failed to write download file {}: {error}",
+                        destination.display()
+                    )
+                })?;
+
+                bytes_written = bytes_written
+                    .checked_add(chunk.len() as u64)
+                    .ok_or_else(|| {
+                        format!("Downloaded byte count overflowed for {bucket}/{object_path}")
+                    })?;
+            }
+
+            destination_file.flush().await.map_err(|error| {
+                format!(
+                    "Failed to flush download file {}: {error}",
+                    destination.display()
+                )
+            })?;
+
+            destination_file.sync_all().await.map_err(|error| {
+                format!(
+                    "Failed to synchronize download file {}: {error}",
+                    destination.display()
+                )
+            })?;
+
+            drop(destination_file);
+
+            if bytes_written == 0 {
+                return Err(format!(
+                    "Downloaded Storage object is empty: {bucket}/{object_path}"
+                ));
+            }
+
+            if let Some(expected_length) = expected_length {
+                if bytes_written != expected_length {
+                    return Err(format!(
+                        "Incomplete download for {bucket}/{object_path}: expected \
+                         {expected_length} bytes but received {bytes_written}"
+                    ));
+                }
+            }
+
+            Ok(bytes_written)
+        }
+        .await;
+
+        if download_result.is_err() {
+            let _ = tokio::fs::remove_file(destination).await;
+        }
+
+        download_result
+    }
+}
+
+pub(crate) async fn authenticated_storage_client(
+    handle: &AppHandle,
+) -> Result<AuthenticatedStorageClient, String> {
+    let config = load_supabase_config(handle)?;
+    let session = load_or_refresh_session(handle, &config).await?;
+
+    Ok(AuthenticatedStorageClient {
+        client: create_http_client()?,
+        supabase_url: config.supabase_url,
+        publishable_key: config.publishable_key,
+        access_token: session.access_token,
+    })
+}
