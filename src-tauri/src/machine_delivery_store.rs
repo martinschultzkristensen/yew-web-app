@@ -419,3 +419,435 @@ pub async fn download_latest_machine_delivery_to_staging(
         }
     }
 }
+
+#[derive(Debug, Clone, Serialize)]
+pub struct MachineDeliveryActivationResult {
+    pub deployment_id: String,
+    pub version: i64,
+    pub deployment_directory: String,
+    pub state_file: String,
+    pub active: LocalDeliveryReference,
+    pub previous: Option<LocalDeliveryReference>,
+    pub moved_from_staging: bool,
+    pub already_active: bool,
+    pub remote_reported: bool,
+    pub remote_status: Option<String>,
+    pub remote_report_error: Option<String>,
+}
+
+async fn read_delivery_file(path: &Path) -> Result<MachineDelivery, String> {
+    let contents = tokio::fs::read(path)
+        .await
+        .map_err(|error| format!("Failed to read {}: {error}", path.display()))?;
+
+    serde_json::from_slice(&contents)
+        .map_err(|error| format!("Invalid delivery file {}: {error}", path.display()))
+}
+
+fn count_regular_files_recursively(directory: &Path) -> Result<usize, String> {
+    let mut count = 0_usize;
+
+    for entry_result in fs::read_dir(directory)
+        .map_err(|error| format!("Failed to read directory {}: {error}", directory.display()))?
+    {
+        let entry = entry_result.map_err(|error| {
+            format!(
+                "Failed to read directory entry in {}: {error}",
+                directory.display()
+            )
+        })?;
+
+        let file_type = entry.file_type().map_err(|error| {
+            format!(
+                "Failed to inspect directory entry {}: {error}",
+                entry.path().display()
+            )
+        })?;
+
+        if file_type.is_symlink() {
+            return Err(format!(
+                "Symbolic links are not allowed in machine deliveries: {}",
+                entry.path().display()
+            ));
+        }
+
+        if file_type.is_dir() {
+            count = count
+                .checked_add(count_regular_files_recursively(&entry.path())?)
+                .ok_or_else(|| "Local delivery file count overflowed".to_string())?;
+        } else if file_type.is_file() {
+            count = count
+                .checked_add(1)
+                .ok_or_else(|| "Local delivery file count overflowed".to_string())?;
+        }
+    }
+
+    Ok(count)
+}
+
+fn validate_local_delivery_files(
+    delivery_directory: &Path,
+    delivery: &MachineDelivery,
+) -> Result<(), String> {
+    if delivery.file_count != delivery.manifest.files.len() {
+        return Err(format!(
+            "Delivery file count mismatch: delivery says {} but manifest contains {}",
+            delivery.file_count,
+            delivery.manifest.files.len()
+        ));
+    }
+
+    if delivery.choreography_count != delivery.manifest.choreographies.len() {
+        return Err(format!(
+            "Delivery choreography count mismatch: delivery says {} but manifest contains {}",
+            delivery.choreography_count,
+            delivery.manifest.choreographies.len()
+        ));
+    }
+
+    let files_directory = delivery_directory.join("files");
+
+    if !files_directory.is_dir() {
+        return Err(format!(
+            "Local delivery files directory is missing: {}",
+            files_directory.display()
+        ));
+    }
+
+    let mut seen_files = HashSet::new();
+
+    for manifest_file in &delivery.manifest.files {
+        let unique_key = format!("{}\0{}", manifest_file.bucket, manifest_file.path);
+
+        if !seen_files.insert(unique_key) {
+            return Err(format!(
+                "Manifest contains duplicate Storage object: {}/{}",
+                manifest_file.bucket, manifest_file.path
+            ));
+        }
+
+        let local_path = storage_destination(
+            delivery_directory,
+            &manifest_file.bucket,
+            &manifest_file.path,
+        )?;
+
+        let metadata = fs::metadata(&local_path).map_err(|error| {
+            format!(
+                "Required local delivery file is missing {}: {error}",
+                local_path.display()
+            )
+        })?;
+
+        if !metadata.is_file() {
+            return Err(format!(
+                "Required local delivery path is not a file: {}",
+                local_path.display()
+            ));
+        }
+
+        if metadata.len() == 0 {
+            return Err(format!(
+                "Required local delivery file is empty: {}",
+                local_path.display()
+            ));
+        }
+    }
+
+    let actual_file_count = count_regular_files_recursively(&files_directory)?;
+
+    if actual_file_count != delivery.file_count {
+        return Err(format!(
+            "Local delivery contains an unexpected number of files: expected {} but found {}",
+            delivery.file_count, actual_file_count
+        ));
+    }
+
+    Ok(())
+}
+
+async fn validate_local_delivery(
+    delivery_directory: &Path,
+    expected_delivery: &MachineDelivery,
+) -> Result<(), String> {
+    let delivery_file = delivery_directory.join("delivery.json");
+    let local_delivery = read_delivery_file(&delivery_file).await?;
+
+    if local_delivery.id != expected_delivery.id {
+        return Err(format!(
+            "Local delivery ID {} does not match expected delivery ID {}",
+            local_delivery.id, expected_delivery.id
+        ));
+    }
+
+    if local_delivery.version != expected_delivery.version {
+        return Err(format!(
+            "Local delivery version {} does not match expected version {}",
+            local_delivery.version, expected_delivery.version
+        ));
+    }
+
+    if local_delivery.manifest_schema_version != expected_delivery.manifest_schema_version {
+        return Err(format!(
+            "Local manifest schema version {} does not match expected version {}",
+            local_delivery.manifest_schema_version, expected_delivery.manifest_schema_version
+        ));
+    }
+
+    if local_delivery.created_at != expected_delivery.created_at {
+        return Err(format!(
+            "Local delivery creation timestamp does not match the immutable delivery: {}",
+            delivery_file.display()
+        ));
+    }
+
+    if local_delivery.choreography_count != expected_delivery.choreography_count
+        || local_delivery.file_count != expected_delivery.file_count
+    {
+        return Err(format!(
+            "Local delivery counts do not match the immutable delivery: {}",
+            delivery_file.display()
+        ));
+    }
+
+    let expected_manifest = serde_json::to_value(&expected_delivery.manifest)
+        .map_err(|error| format!("Failed to compare expected manifest: {error}"))?;
+
+    let local_manifest = serde_json::to_value(&local_delivery.manifest)
+        .map_err(|error| format!("Failed to compare local manifest: {error}"))?;
+
+    if local_manifest != expected_manifest {
+        return Err(format!(
+            "Local manifest does not match the latest immutable delivery: {}",
+            delivery_file.display()
+        ));
+    }
+
+    validate_local_delivery_files(delivery_directory, &local_delivery)
+}
+
+#[cfg(windows)]
+fn replace_file_atomically(source: &Path, destination: &Path) -> Result<(), String> {
+    use std::os::windows::ffi::OsStrExt as _;
+
+    const MOVEFILE_REPLACE_EXISTING: u32 = 0x0000_0001;
+    const MOVEFILE_WRITE_THROUGH: u32 = 0x0000_0008;
+
+    #[link(name = "Kernel32")]
+    unsafe extern "system" {
+        #[link_name = "MoveFileExW"]
+        fn move_file_ex_w(
+            existing_file_name: *const u16,
+            new_file_name: *const u16,
+            flags: u32,
+        ) -> i32;
+    }
+
+    let source_wide = source
+        .as_os_str()
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect::<Vec<_>>();
+
+    let destination_wide = destination
+        .as_os_str()
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect::<Vec<_>>();
+
+    let succeeded = unsafe {
+        move_file_ex_w(
+            source_wide.as_ptr(),
+            destination_wide.as_ptr(),
+            MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH,
+        )
+    };
+
+    if succeeded == 0 {
+        return Err(format!(
+            "Failed to atomically replace {}: {}",
+            destination.display(),
+            std::io::Error::last_os_error()
+        ));
+    }
+
+    Ok(())
+}
+
+#[cfg(not(windows))]
+fn replace_file_atomically(source: &Path, destination: &Path) -> Result<(), String> {
+    fs::rename(source, destination).map_err(|error| {
+        format!(
+            "Failed to atomically replace {}: {error}",
+            destination.display()
+        )
+    })?;
+
+    let parent = destination.parent().ok_or_else(|| {
+        format!(
+            "Local delivery state has no parent directory: {}",
+            destination.display()
+        )
+    })?;
+
+    fs::File::open(parent)
+        .and_then(|directory| directory.sync_all())
+        .map_err(|error| {
+            format!(
+                "Failed to synchronize state directory {}: {error}",
+                parent.display()
+            )
+        })?;
+
+    Ok(())
+}
+
+async fn write_state_atomically(
+    state_file: &Path,
+    state: &LocalDeliveryState,
+) -> Result<(), String> {
+    let state_filename = state_file
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or_else(|| {
+            format!(
+                "Local delivery state filename is invalid: {}",
+                state_file.display()
+            )
+        })?;
+
+    let temporary_file = state_file.with_file_name(format!("{state_filename}.next"));
+
+    if temporary_file.exists() {
+        tokio::fs::remove_file(&temporary_file)
+            .await
+            .map_err(|error| {
+                format!(
+                    "Failed to remove stale temporary state file {}: {error}",
+                    temporary_file.display()
+                )
+            })?;
+    }
+
+    write_json_file(&temporary_file, state).await?;
+
+    if let Err(error) = replace_file_atomically(&temporary_file, state_file) {
+        let _ = tokio::fs::remove_file(&temporary_file).await;
+        return Err(error);
+    }
+
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn activate_latest_staged_machine_delivery(
+    handle: AppHandle,
+) -> Result<MachineDeliveryActivationResult, String> {
+    let response = fetch_latest_machine_delivery(handle.clone()).await?;
+
+    let delivery = response
+        .latest_delivery
+        .ok_or_else(|| "No machine delivery is available for activation".to_string())?;
+
+    let storage = initialize_machine_delivery_storage(handle.clone())?;
+
+    let staging_root = PathBuf::from(&storage.staging);
+    let deployments_root = PathBuf::from(&storage.deployments);
+    let state_file = PathBuf::from(&storage.state_file);
+
+    let directory_name = staging_directory_name(&delivery)?;
+    let staging_directory = staging_root.join(&directory_name);
+    let deployment_directory = deployments_root.join(&directory_name);
+
+    let staging_exists = staging_directory.exists();
+    let deployment_exists = deployment_directory.exists();
+
+    if staging_exists && deployment_exists {
+        return Err(format!(
+            "Delivery exists in both staging and deployments: {}",
+            directory_name
+        ));
+    }
+
+    if !staging_exists && !deployment_exists {
+        return Err(format!(
+            "No complete local copy exists for machine delivery version {}",
+            delivery.version
+        ));
+    }
+
+    let mut moved_from_staging = false;
+
+    if staging_exists {
+        validate_local_delivery(&staging_directory, &delivery).await?;
+
+        tokio::fs::rename(&staging_directory, &deployment_directory)
+            .await
+            .map_err(|error| {
+                format!(
+                    "Failed to move delivery from staging {} to deployments {}: {error}",
+                    staging_directory.display(),
+                    deployment_directory.display()
+                )
+            })?;
+
+        moved_from_staging = true;
+    }
+
+    validate_local_delivery(&deployment_directory, &delivery).await?;
+
+    let active_reference = LocalDeliveryReference {
+        deployment_id: delivery.id.clone(),
+        version: delivery.version,
+        directory_name,
+    };
+
+    let mut new_state = storage.state;
+
+    let already_active = new_state.active.as_ref().is_some_and(|active| {
+        active.deployment_id == active_reference.deployment_id
+            && active.version == active_reference.version
+            && active.directory_name == active_reference.directory_name
+    });
+
+    if !already_active {
+        new_state.previous = new_state.active.take();
+        new_state.active = Some(active_reference.clone());
+
+        write_state_atomically(&state_file, &new_state).await?;
+    }
+
+    let previous = new_state.previous.clone();
+
+    let report_result =
+        report_machine_delivery_result(handle, delivery.id.clone(), true, None).await;
+
+    let (remote_reported, remote_status, remote_report_error) = match report_result {
+        Ok(result) if result.status == "installed" || result.already_installed => {
+            (true, Some(result.status), None)
+        }
+        Ok(result) => (
+            false,
+            Some(result.status.clone()),
+            Some(format!(
+                "Supabase returned unexpected delivery status {}",
+                result.status
+            )),
+        ),
+        Err(error) => (false, None, Some(error)),
+    };
+
+    Ok(MachineDeliveryActivationResult {
+        deployment_id: delivery.id,
+        version: delivery.version,
+        deployment_directory: path_string(&deployment_directory),
+        state_file: path_string(&state_file),
+        active: active_reference,
+        previous,
+        moved_from_staging,
+        already_active,
+        remote_reported,
+        remote_status,
+        remote_report_error,
+    })
+}
