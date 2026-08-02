@@ -3,7 +3,7 @@ use crate::supabase_sync::{
     start_machine_delivery_download, MachineDelivery,
 };
 use serde::{Deserialize, Serialize};
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 use tauri::{AppHandle, Manager};
@@ -850,4 +850,381 @@ pub async fn activate_latest_staged_machine_delivery(
         remote_status,
         remote_report_error,
     })
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct ActiveMachineConfigResult {
+    pub deployment_id: String,
+    pub version: i64,
+    pub deployment_directory: String,
+    pub choreography_count: usize,
+    pub dancer_entry_count: usize,
+    pub config: crate::Config,
+}
+
+fn formatted_duration(duration_seconds: u32) -> String {
+    let minutes = duration_seconds / 60;
+    let seconds = duration_seconds % 60;
+    format!("{minutes}:{seconds:02}")
+}
+
+fn build_delivery_file_bucket_map(
+    delivery: &MachineDelivery,
+) -> Result<HashMap<String, String>, String> {
+    let mut file_buckets = HashMap::new();
+
+    for manifest_file in &delivery.manifest.files {
+        if manifest_file.path.trim().is_empty() {
+            return Err("Manifest contains an empty Storage object path".to_string());
+        }
+
+        if let Some(existing_bucket) =
+            file_buckets.insert(manifest_file.path.clone(), manifest_file.bucket.clone())
+        {
+            return Err(format!(
+                "Manifest path {} exists in more than one bucket: {} and {}",
+                manifest_file.path, existing_bucket, manifest_file.bucket
+            ));
+        }
+    }
+
+    Ok(file_buckets)
+}
+
+fn active_delivery_media_reference(
+    active: &LocalDeliveryReference,
+    deployment_directory: &Path,
+    file_buckets: &HashMap<String, String>,
+    object_path: &str,
+) -> Result<String, String> {
+    let bucket = file_buckets.get(object_path).ok_or_else(|| {
+        format!("Manifest media path is not present in the delivery file list: {object_path}")
+    })?;
+
+    let local_path = storage_destination(deployment_directory, bucket, object_path)?;
+
+    let metadata = fs::metadata(&local_path).map_err(|error| {
+        format!(
+            "Active delivery media file is missing {}: {error}",
+            local_path.display()
+        )
+    })?;
+
+    if !metadata.is_file() {
+        return Err(format!(
+            "Active delivery media path is not a file: {}",
+            local_path.display()
+        ));
+    }
+
+    if metadata.len() == 0 {
+        return Err(format!(
+            "Active delivery media file is empty: {}",
+            local_path.display()
+        ));
+    }
+
+    Ok(format!(
+        "delivery/{}/files/{}/{}",
+        active.directory_name, bucket, object_path
+    ))
+}
+
+async fn build_active_machine_config(
+    handle: &AppHandle,
+) -> Result<ActiveMachineConfigResult, String> {
+    let storage = initialize_machine_delivery_storage(handle.clone())?;
+
+    let active = storage
+        .state
+        .active
+        .ok_or_else(|| "No active machine delivery is installed".to_string())?;
+
+    let deployment_directory = PathBuf::from(&storage.deployments).join(&active.directory_name);
+
+    if !deployment_directory.is_dir() {
+        return Err(format!(
+            "Active deployment directory is missing: {}",
+            deployment_directory.display()
+        ));
+    }
+
+    let delivery_file = deployment_directory.join("delivery.json");
+    let delivery = read_delivery_file(&delivery_file).await?;
+
+    if delivery.id != active.deployment_id {
+        return Err(format!(
+            "Active state deployment ID {} does not match delivery.json ID {}",
+            active.deployment_id, delivery.id
+        ));
+    }
+
+    if delivery.version != active.version {
+        return Err(format!(
+            "Active state version {} does not match delivery.json version {}",
+            active.version, delivery.version
+        ));
+    }
+
+    let expected_directory_name = staging_directory_name(&delivery)?;
+
+    if expected_directory_name != active.directory_name {
+        return Err(format!(
+            "Active deployment directory name is invalid: expected {} but state contains {}",
+            expected_directory_name, active.directory_name
+        ));
+    }
+
+    validate_local_delivery_files(&deployment_directory, &delivery)?;
+
+    let file_buckets = build_delivery_file_bucket_map(&delivery)?;
+
+    let mut choreographies = delivery.manifest.choreographies.iter().collect::<Vec<_>>();
+    choreographies.sort_by_key(|choreography| choreography.display_order);
+
+    for (index, choreography) in choreographies.iter().enumerate() {
+        let expected_order = u32::try_from(index + 1)
+            .map_err(|_| "Choreography display order overflowed".to_string())?;
+
+        if choreography.display_order != expected_order {
+            return Err(format!(
+                "Choreography display order must be contiguous from 1; expected {} but found {}",
+                expected_order, choreography.display_order
+            ));
+        }
+    }
+
+    let mut choreography_numbers = HashMap::new();
+
+    for choreography in &choreographies {
+        choreography_numbers.insert(
+            choreography.id.clone(),
+            usize::try_from(choreography.display_order)
+                .map_err(|_| "Choreography number cannot fit in usize".to_string())?,
+        );
+    }
+
+    let mut dancers_by_id = HashMap::new();
+
+    for dancer in &delivery.manifest.dancers {
+        if dancers_by_id.insert(dancer.id.clone(), dancer).is_some() {
+            return Err(format!(
+                "Manifest contains duplicate dancer ID: {}",
+                dancer.id
+            ));
+        }
+    }
+
+    let mut relations = delivery
+        .manifest
+        .choreography_dancers
+        .iter()
+        .collect::<Vec<_>>();
+
+    relations.sort_by(|left, right| {
+        let left_number = choreography_numbers
+            .get(&left.choreography_id)
+            .copied()
+            .unwrap_or(usize::MAX);
+
+        let right_number = choreography_numbers
+            .get(&right.choreography_id)
+            .copied()
+            .unwrap_or(usize::MAX);
+
+        left_number
+            .cmp(&right_number)
+            .then(left.sort_order.cmp(&right.sort_order))
+            .then(left.dancer_id.cmp(&right.dancer_id))
+    });
+
+    let mut seen_relations = HashSet::new();
+    let mut dancer_order = Vec::new();
+    let mut choreography_numbers_by_dancer: HashMap<String, Vec<usize>> = HashMap::new();
+
+    for relation in relations {
+        let choreography_number = choreography_numbers
+            .get(&relation.choreography_id)
+            .copied()
+            .ok_or_else(|| {
+                format!(
+                    "Dancer relation references unknown choreography ID: {}",
+                    relation.choreography_id
+                )
+            })?;
+
+        if !dancers_by_id.contains_key(&relation.dancer_id) {
+            return Err(format!(
+                "Dancer relation references unknown dancer ID: {}",
+                relation.dancer_id
+            ));
+        }
+
+        let relation_key = (relation.choreography_id.clone(), relation.dancer_id.clone());
+
+        if !seen_relations.insert(relation_key) {
+            return Err(format!(
+                "Manifest contains duplicate choreography/dancer relation: {} / {}",
+                relation.choreography_id, relation.dancer_id
+            ));
+        }
+
+        if !choreography_numbers_by_dancer.contains_key(&relation.dancer_id) {
+            dancer_order.push(relation.dancer_id.clone());
+        }
+
+        choreography_numbers_by_dancer
+            .entry(relation.dancer_id.clone())
+            .or_default()
+            .push(choreography_number);
+    }
+
+    let mut config_dancers = Vec::with_capacity(dancer_order.len());
+
+    for dancer_id in dancer_order {
+        let dancer = dancers_by_id
+            .get(&dancer_id)
+            .ok_or_else(|| format!("Active delivery is missing dancer ID: {dancer_id}"))?;
+
+        let dancer_image_path = dancer.image_path.as_deref().ok_or_else(|| {
+            format!(
+                "Dancer {} has no image in the active machine delivery",
+                dancer.name
+            )
+        })?;
+
+        let dancer_image = active_delivery_media_reference(
+            &active,
+            &deployment_directory,
+            &file_buckets,
+            dancer_image_path,
+        )?;
+
+        let in_choreography_nr = choreography_numbers_by_dancer
+            .remove(&dancer_id)
+            .ok_or_else(|| {
+                format!(
+                    "Active delivery has no choreography assignments for dancer ID: {dancer_id}"
+                )
+            })?;
+
+        config_dancers.push(crate::ConfigDancer {
+            name: dancer.name.clone(),
+            image: dancer_image,
+            strength: dancer.strength,
+            flexibility: dancer.flexibility,
+            in_choreography_nr,
+        });
+    }
+
+    let mut demo_videos = Vec::with_capacity(choreographies.len());
+    let mut choreo_videos = Vec::with_capacity(choreographies.len());
+
+    for choreography in choreographies {
+        let choreography_number = usize::try_from(choreography.display_order)
+            .map_err(|_| "Choreography number cannot fit in usize".to_string())?;
+
+        let image = active_delivery_media_reference(
+            &active,
+            &deployment_directory,
+            &file_buckets,
+            &choreography.image_path,
+        )?;
+
+        let demo_video = active_delivery_media_reference(
+            &active,
+            &deployment_directory,
+            &file_buckets,
+            &choreography.demo_video_path,
+        )?;
+
+        let choreo_video = active_delivery_media_reference(
+            &active,
+            &deployment_directory,
+            &file_buckets,
+            &choreography.choreo_video_path,
+        )?;
+
+        demo_videos.push(crate::DemoVideoConfig {
+            id: choreography_number,
+            url: demo_video,
+            loop_video: false,
+            title: choreography.title.clone(),
+            description: Some(choreography.description.clone()),
+            duration: formatted_duration(choreography.duration_seconds),
+            choreo_img: Some(image),
+        });
+
+        choreo_videos.push(crate::ChoreoVideoConfig {
+            id: choreography_number,
+            url: choreo_video,
+            loop_video: false,
+        });
+    }
+
+    let intro_object_path = delivery
+        .manifest
+        .machine_media
+        .intro_video_path
+        .as_deref()
+        .ok_or_else(|| "Active machine delivery does not contain an intro video".to_string())?;
+
+    let load_object_path = delivery
+        .manifest
+        .machine_media
+        .load_video_path
+        .as_deref()
+        .ok_or_else(|| {
+            "Active machine delivery does not contain a load-screen video".to_string()
+        })?;
+
+    let intro_video = active_delivery_media_reference(
+        &active,
+        &deployment_directory,
+        &file_buckets,
+        intro_object_path,
+    )?;
+
+    let loadscreen_video = active_delivery_media_reference(
+        &active,
+        &deployment_directory,
+        &file_buckets,
+        load_object_path,
+    )?;
+
+    let config = crate::Config {
+        dancers: crate::Dancers {
+            list: config_dancers,
+        },
+        demo_videos: crate::DemoVideos { list: demo_videos },
+        choreo_videos: crate::ChoreoVideos {
+            list: choreo_videos,
+        },
+        intro_video: crate::ChoreoVideoConfig {
+            id: 1,
+            url: intro_video,
+            loop_video: false,
+        },
+        loadscreen_video: crate::ChoreoVideoConfig {
+            id: 1,
+            url: loadscreen_video,
+            loop_video: true,
+        },
+    };
+
+    Ok(ActiveMachineConfigResult {
+        deployment_id: active.deployment_id,
+        version: active.version,
+        deployment_directory: path_string(&deployment_directory),
+        choreography_count: config.choreo_videos.list.len(),
+        dancer_entry_count: config.dancers.list.len(),
+        config,
+    })
+}
+
+#[tauri::command]
+pub async fn get_active_machine_config(
+    handle: AppHandle,
+) -> Result<ActiveMachineConfigResult, String> {
+    build_active_machine_config(&handle).await
 }
