@@ -68,17 +68,14 @@ pub fn execute_choreo_video(
 ) -> usize {
     if let Some(navigator) = navigator {
         stop_music.emit(());
-        match index {
-            0 => navigator.push_with_state(&Route::ChoreoVideo, 0usize),
-            1 => navigator.push_with_state(&Route::ChoreoVideo, 1usize),
-            2 => navigator.push_with_state(&Route::ChoreoVideo, 2usize),
-            3 => navigator.push_with_state(&Route::ChoreoVideo, 3usize),
-            4 => navigator.push_with_state(&Route::ChoreoVideo, 4usize),
-            _ => {log!("no Route matching DemoVideo index. Add one in match index in main_menu.rs")}
-        }
+
+        // The selected index is passed directly to ChoreoVideo.
+        // This supports any number of choreographies.
+        navigator.push_with_state(&Route::ChoreoVideo, index);
     } else {
         log!("Navigator is None");
     }
+
     index
 }
 
