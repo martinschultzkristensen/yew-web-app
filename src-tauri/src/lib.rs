@@ -291,6 +291,28 @@ pub fn run() {
             // Initialize TauriState
             let state = TauriState::new(app.handle())?;
             app.manage(state);
+
+            // Check for a newer machine delivery without delaying app startup.
+            // A newly installed delivery becomes active for the next normal app start.
+            let update_handle = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                match install_latest_machine_delivery_if_new(update_handle).await {
+                    Ok(result) => {
+                        log::info!(
+                            "Machine delivery startup update finished: outcome={}, version={:?}, deployment_id={:?}",
+                            result.outcome,
+                            result.version,
+                            result.deployment_id
+                        );
+                    }
+                    Err(error) => {
+                        log::warn!(
+                            "Machine delivery startup update was skipped or failed: {error}"
+                        );
+                    }
+                }
+            });
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
