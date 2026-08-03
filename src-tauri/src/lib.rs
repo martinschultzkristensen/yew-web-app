@@ -1,11 +1,16 @@
 //src-tauri/src/lib.rs
 mod commands;
+pub mod machine_delivery_store;
+pub mod supabase_sync;
+
 use commands::*;
 use http::response::Builder as ResponseBuilder; // <-- there are often other builders in scope. Therefore rename to avoid ambiguity.
+use machine_delivery_store::*;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
 use std::{fmt, path::PathBuf, sync::Mutex};
+use supabase_sync::*;
 use tauri::http::{Request, Response};
 use tauri::{Manager, Runtime};
 use tauri_plugin_log::{Target, TargetKind};
@@ -94,7 +99,6 @@ impl Config {
         Ok(config)
     }
 }
-
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -189,17 +193,31 @@ pub fn run() {
             Ok(())
         })
         .register_uri_scheme_protocol("media", move |app, request| {
-            let media_root = match path_utils::media_dir(&app.app_handle()) {
-                Ok(p) => p,
-                Err(e) => {
-                    log::error!("⚠️ Could not resolve media dir: {e}");
-                    return Response::builder().status(500).body(Vec::new()).unwrap();
-                }
-            };
+            let rel_path = request
+                .uri()
+                .path()
+                .trim_start_matches('/')
+                .trim_end_matches('/');
 
-            let uri = request.uri().to_string();
-            let rel_path = uri.trim_start_matches("media://").trim_end_matches('/');
-            let full_path: PathBuf = media_root.join(rel_path);
+            let full_path: PathBuf = if rel_path.starts_with("delivery/") {
+                match resolve_delivery_media_file(&app.app_handle(), rel_path) {
+                    Ok(path) => path,
+                    Err(error) => {
+                        log::error!("Could not resolve delivery media file: {error}");
+                        return Response::builder().status(404).body(Vec::new()).unwrap();
+                    }
+                }
+            } else {
+                let media_root = match path_utils::media_dir(&app.app_handle()) {
+                    Ok(path) => path,
+                    Err(error) => {
+                        log::error!("Could not resolve media directory: {error}");
+                        return Response::builder().status(500).body(Vec::new()).unwrap();
+                    }
+                };
+
+                media_root.join(rel_path)
+            };
 
             // Log only once per unique media path (not for every range request)
             let full_path_str = full_path.to_string_lossy().to_string();
@@ -282,12 +300,21 @@ pub fn run() {
             import_video,
             import_images,
             resolve_media_path,
-            // get_video_path,
-            // load_video,
             get_image_path,
             select_video_file,
             select_img_file,
-            get_audio_effect
+            get_audio_effect,
+            activate_machine,
+            check_machine_connection,
+            fetch_machine_manifest,
+            fetch_latest_machine_delivery,
+            initialize_machine_delivery_storage,
+            download_latest_machine_delivery_to_staging,
+            activate_latest_staged_machine_delivery,
+            get_active_machine_config,
+            start_machine_delivery_download,
+            report_machine_delivery_result,
+            clear_machine_session
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -1,4 +1,5 @@
 //src-tauri/src/commands.rs
+use crate::machine_delivery_store::{load_active_machine_config, resolve_delivery_media_file};
 use crate::path_utils;
 use crate::path_utils::{external_config_path, media_dir};
 use crate::Config;
@@ -146,24 +147,44 @@ pub fn import_images(handle: tauri::AppHandle, source_path: String) -> Result<St
     Ok(path_string)
 }
 
-#[tauri::command]
-pub fn resolve_media_path(handle: tauri::AppHandle, path: String) -> Result<String, String> {
-    // If path starts with "media/", it's in the ~/Library/Application Support/danceOmatic/media
-    if path.starts_with("media/") {
-        let file_name = path.strip_prefix("media/").unwrap();
-        let media_path = media_dir(&handle)?; // ← unified helper
-        let full_path = media_path.join(file_name);
+fn media_protocol_url(path: &str) -> String {
+    #[cfg(any(target_os = "windows", target_os = "android"))]
+    {
+        format!("https://media.localhost/{path}")
+    }
 
-        if !full_path.exists() {
-            return Err(format!("Media file not found: {file_name}"));
-        }
-        // Return a proper media:// URI
-        Ok(format!("media://{file_name}"))
-    } else {
-        Err("Only media/ paths are supported".into())
+    #[cfg(not(any(target_os = "windows", target_os = "android")))]
+    {
+        format!("media://{path}")
     }
 }
 
+#[tauri::command]
+pub fn resolve_media_path(handle: tauri::AppHandle, path: String) -> Result<String, String> {
+    if let Some(file_name) = path.strip_prefix("media/") {
+        if file_name.is_empty()
+            || Path::new(file_name)
+                .components()
+                .any(|component| !matches!(component, std::path::Component::Normal(_)))
+        {
+            return Err(format!("Invalid media path: {path}"));
+        }
+
+        let media_path = media_dir(&handle)?;
+        let full_path = media_path.join(file_name);
+
+        if !full_path.is_file() {
+            return Err(format!("Media file not found: {file_name}"));
+        }
+
+        Ok(media_protocol_url(file_name))
+    } else if path.starts_with("delivery/") {
+        resolve_delivery_media_file(&handle, &path)?;
+        Ok(media_protocol_url(&path))
+    } else {
+        Err("Only media/ and delivery/ paths are supported".to_string())
+    }
+}
 //this code should be unnesesarry for serving video as blob. Test and delete.
 // //serve the video files as a blob to the frontend. (I belive only for the videos build in)
 // #[tauri::command]
@@ -238,8 +259,7 @@ pub async fn select_img_file(handle: tauri::AppHandle) -> Result<Option<String>,
     receiver.await.map_err(|err| err.to_string())
 }
 
-#[tauri::command]
-pub fn get_config(handle: tauri::AppHandle) -> Result<Config, String> {
+fn load_external_or_default_config(handle: tauri::AppHandle) -> Result<Config, String> {
     println!("🔧 get_config called");
 
     let external_config_path = get_external_config_path(&handle)?;
@@ -294,6 +314,24 @@ pub fn get_config(handle: tauri::AppHandle) -> Result<Config, String> {
         .map_err(|err| format!("Error loading external config: {}", err))
 }
 
+#[tauri::command]
+pub async fn get_config(handle: tauri::AppHandle) -> Result<Config, String> {
+    match load_active_machine_config(&handle).await {
+        Ok(config) => {
+            log::info!("Loaded config from active machine delivery");
+            Ok(config)
+        }
+        Err(active_error) => {
+            log::warn!(
+                "Active machine delivery could not be used; falling back to config.toml: {}",
+                active_error
+            );
+
+            load_external_or_default_config(handle)
+        }
+    }
+}
+
 // Helper function to get the path to the external config file
 fn get_external_config_path(handle: &tauri::AppHandle) -> Result<PathBuf, String> {
     external_config_path(handle)
@@ -329,5 +367,3 @@ pub fn debug_paths(handle: tauri::AppHandle) -> Result<String, String> {
         media.display()
     ))
 }
-
-

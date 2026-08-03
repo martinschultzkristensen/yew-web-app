@@ -33,10 +33,11 @@
     },
     "resources": [
       "resources/config.toml",
+      "resources/supabase.toml",
       "resources/static/*",
       "../static/devVideo/",
       "../static/img/"
-    ],
+],
     "shortDescription": "",
     "linux": {
       "appimage": {
