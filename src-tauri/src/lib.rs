@@ -193,17 +193,31 @@ pub fn run() {
             Ok(())
         })
         .register_uri_scheme_protocol("media", move |app, request| {
-            let media_root = match path_utils::media_dir(&app.app_handle()) {
-                Ok(p) => p,
-                Err(e) => {
-                    log::error!("⚠️ Could not resolve media dir: {e}");
-                    return Response::builder().status(500).body(Vec::new()).unwrap();
-                }
-            };
+            let rel_path = request
+                .uri()
+                .path()
+                .trim_start_matches('/')
+                .trim_end_matches('/');
 
-            let uri = request.uri().to_string();
-            let rel_path = uri.trim_start_matches("media://").trim_end_matches('/');
-            let full_path: PathBuf = media_root.join(rel_path);
+            let full_path: PathBuf = if rel_path.starts_with("delivery/") {
+                match resolve_delivery_media_file(&app.app_handle(), rel_path) {
+                    Ok(path) => path,
+                    Err(error) => {
+                        log::error!("Could not resolve delivery media file: {error}");
+                        return Response::builder().status(404).body(Vec::new()).unwrap();
+                    }
+                }
+            } else {
+                let media_root = match path_utils::media_dir(&app.app_handle()) {
+                    Ok(path) => path,
+                    Err(error) => {
+                        log::error!("Could not resolve media directory: {error}");
+                        return Response::builder().status(500).body(Vec::new()).unwrap();
+                    }
+                };
+
+                media_root.join(rel_path)
+            };
 
             // Log only once per unique media path (not for every range request)
             let full_path_str = full_path.to_string_lossy().to_string();

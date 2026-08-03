@@ -852,6 +852,82 @@ pub async fn activate_latest_staged_machine_delivery(
     })
 }
 
+pub(crate) fn resolve_delivery_media_file(
+    handle: &AppHandle,
+    path: &str,
+) -> Result<PathBuf, String> {
+    let relative = path
+        .strip_prefix("delivery/")
+        .ok_or_else(|| "Delivery media path must start with delivery/".to_string())?;
+
+    if relative.is_empty() {
+        return Err("Delivery media path is empty".to_string());
+    }
+
+    let mut safe_relative = PathBuf::new();
+
+    for component in Path::new(relative).components() {
+        match component {
+            std::path::Component::Normal(segment) => {
+                safe_relative.push(segment);
+            }
+            _ => {
+                return Err(format!("Invalid delivery media path: {path}"));
+            }
+        }
+    }
+
+    let mut components = safe_relative.components();
+
+    let deployment_directory_is_present =
+        matches!(components.next(), Some(std::path::Component::Normal(_)));
+
+    let files_directory_is_present = matches!(
+        components.next(),
+        Some(std::path::Component::Normal(segment)) if segment == "files"
+    );
+
+    let bucket_is_present = components.next().is_some();
+    let object_is_present = components.next().is_some();
+
+    if !deployment_directory_is_present
+        || !files_directory_is_present
+        || !bucket_is_present
+        || !object_is_present
+    {
+        return Err(format!(
+            "Delivery media path has an invalid structure: {path}"
+        ));
+    }
+
+    let full_path = storage_root(handle)?
+        .join("deployments")
+        .join(safe_relative);
+
+    let metadata = fs::metadata(&full_path).map_err(|error| {
+        format!(
+            "Delivery media file does not exist {}: {error}",
+            full_path.display()
+        )
+    })?;
+
+    if !metadata.is_file() {
+        return Err(format!(
+            "Delivery media path is not a regular file: {}",
+            full_path.display()
+        ));
+    }
+
+    if metadata.len() == 0 {
+        return Err(format!(
+            "Delivery media file is empty: {}",
+            full_path.display()
+        ));
+    }
+
+    Ok(full_path)
+}
+
 #[derive(Debug, Clone, Serialize)]
 pub struct ActiveMachineConfigResult {
     pub deployment_id: String,
@@ -1148,7 +1224,7 @@ async fn build_active_machine_config(
         demo_videos.push(crate::DemoVideoConfig {
             id: choreography_number,
             url: demo_video,
-            loop_video: false,
+            loop_video: true,
             title: choreography.title.clone(),
             description: Some(choreography.description.clone()),
             duration: formatted_duration(choreography.duration_seconds),
@@ -1203,12 +1279,12 @@ async fn build_active_machine_config(
         intro_video: crate::ChoreoVideoConfig {
             id: 1,
             url: intro_video,
-            loop_video: false,
+            loop_video: true,
         },
         loadscreen_video: crate::ChoreoVideoConfig {
             id: 1,
             url: loadscreen_video,
-            loop_video: true,
+            loop_video: false,
         },
     };
 
@@ -1220,6 +1296,12 @@ async fn build_active_machine_config(
         dancer_entry_count: config.dancers.list.len(),
         config,
     })
+}
+
+pub(crate) async fn load_active_machine_config(
+    handle: &AppHandle,
+) -> Result<crate::Config, String> {
+    Ok(build_active_machine_config(handle).await?.config)
 }
 
 #[tauri::command]

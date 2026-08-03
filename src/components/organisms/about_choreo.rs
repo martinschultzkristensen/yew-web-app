@@ -51,7 +51,7 @@ pub fn about_choreo(props: &AppConfigProps) -> Html {
         let img_src = img_src.clone();
         let img_path = choreography_data.choreo_image.clone();
         use_effect_with(img_path.clone(), move |img_path| {
-            if img_path.starts_with("media/") {
+            if img_path.starts_with("media/") || img_path.starts_with("delivery/") {
                 wasm_bindgen_futures::spawn_local({
                     let img_src = img_src.clone();
                     let img_path = img_path.clone();
