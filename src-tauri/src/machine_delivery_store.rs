@@ -372,16 +372,10 @@ async fn stage_machine_delivery(
     staging_result
 }
 
-#[tauri::command]
-pub async fn download_latest_machine_delivery_to_staging(
+async fn download_machine_delivery_to_staging(
     handle: AppHandle,
+    delivery: MachineDelivery,
 ) -> Result<MachineDeliveryDownloadResult, String> {
-    let response = fetch_latest_machine_delivery(handle.clone()).await?;
-
-    let delivery = response
-        .latest_delivery
-        .ok_or_else(|| "No machine delivery is available".to_string())?;
-
     let start_result = start_machine_delivery_download(handle.clone(), delivery.id.clone()).await?;
 
     if start_result.already_installed || start_result.status == "installed" {
@@ -420,6 +414,18 @@ pub async fn download_latest_machine_delivery_to_staging(
     }
 }
 
+#[tauri::command]
+pub async fn download_latest_machine_delivery_to_staging(
+    handle: AppHandle,
+) -> Result<MachineDeliveryDownloadResult, String> {
+    let response = fetch_latest_machine_delivery(handle.clone()).await?;
+
+    let delivery = response
+        .latest_delivery
+        .ok_or_else(|| "No machine delivery is available".to_string())?;
+
+    download_machine_delivery_to_staging(handle, delivery).await
+}
 #[derive(Debug, Clone, Serialize)]
 pub struct MachineDeliveryActivationResult {
     pub deployment_id: String,
@@ -435,6 +441,15 @@ pub struct MachineDeliveryActivationResult {
     pub remote_report_error: Option<String>,
 }
 
+#[derive(Debug, Clone, Serialize)]
+pub struct MachineDeliveryAutoUpdateResult {
+    pub outcome: String,
+    pub deployment_id: Option<String>,
+    pub version: Option<i64>,
+    pub active_before: Option<LocalDeliveryReference>,
+    pub download: Option<MachineDeliveryDownloadResult>,
+    pub activation: Option<MachineDeliveryActivationResult>,
+}
 async fn read_delivery_file(path: &Path) -> Result<MachineDelivery, String> {
     let contents = tokio::fs::read(path)
         .await
@@ -739,16 +754,10 @@ async fn write_state_atomically(
     Ok(())
 }
 
-#[tauri::command]
-pub async fn activate_latest_staged_machine_delivery(
+async fn activate_staged_machine_delivery(
     handle: AppHandle,
+    delivery: MachineDelivery,
 ) -> Result<MachineDeliveryActivationResult, String> {
-    let response = fetch_latest_machine_delivery(handle.clone()).await?;
-
-    let delivery = response
-        .latest_delivery
-        .ok_or_else(|| "No machine delivery is available for activation".to_string())?;
-
     let storage = initialize_machine_delivery_storage(handle.clone())?;
 
     let staging_root = PathBuf::from(&storage.staging);
@@ -852,6 +861,101 @@ pub async fn activate_latest_staged_machine_delivery(
     })
 }
 
+#[tauri::command]
+pub async fn activate_latest_staged_machine_delivery(
+    handle: AppHandle,
+) -> Result<MachineDeliveryActivationResult, String> {
+    let response = fetch_latest_machine_delivery(handle.clone()).await?;
+
+    let delivery = response
+        .latest_delivery
+        .ok_or_else(|| "No machine delivery is available for activation".to_string())?;
+
+    activate_staged_machine_delivery(handle, delivery).await
+}
+#[tauri::command]
+pub async fn install_latest_machine_delivery_if_new(
+    handle: AppHandle,
+) -> Result<MachineDeliveryAutoUpdateResult, String> {
+    let response = fetch_latest_machine_delivery(handle.clone()).await?;
+    let storage = initialize_machine_delivery_storage(handle.clone())?;
+    let active_before = storage.state.active;
+
+    let Some(delivery) = response.latest_delivery else {
+        return Ok(MachineDeliveryAutoUpdateResult {
+            outcome: "no_delivery".to_string(),
+            deployment_id: None,
+            version: None,
+            active_before,
+            download: None,
+            activation: None,
+        });
+    };
+
+    if let Some(active) = active_before.as_ref() {
+        if active.version > delivery.version {
+            return Err(format!(
+                "Local active delivery version {} is newer than remote latest version {}",
+                active.version, delivery.version
+            ));
+        }
+
+        if active.version == delivery.version {
+            if active.deployment_id != delivery.id {
+                return Err(format!(
+                    "Local and remote deliveries use version {} but have different deployment IDs",
+                    delivery.version
+                ));
+            }
+
+            return Ok(MachineDeliveryAutoUpdateResult {
+                outcome: "already_active".to_string(),
+                deployment_id: Some(delivery.id),
+                version: Some(delivery.version),
+                active_before: active_before.clone(),
+                download: None,
+                activation: None,
+            });
+        }
+    }
+
+    let deployment_id = delivery.id.clone();
+    let version = delivery.version;
+
+    let download = download_machine_delivery_to_staging(handle.clone(), delivery.clone()).await?;
+
+    let activation_result = activate_staged_machine_delivery(handle.clone(), delivery).await;
+
+    let activation = match activation_result {
+        Ok(result) => result,
+        Err(activation_error) => {
+            let report_result = report_machine_delivery_result(
+                handle,
+                deployment_id.clone(),
+                false,
+                Some(activation_error.clone()),
+            )
+            .await;
+
+            return match report_result {
+                Ok(_) => Err(activation_error),
+                Err(report_error) => Err(format!(
+                    "{activation_error}; additionally failed to report the activation error: \
+                     {report_error}"
+                )),
+            };
+        }
+    };
+
+    Ok(MachineDeliveryAutoUpdateResult {
+        outcome: "installed".to_string(),
+        deployment_id: Some(deployment_id),
+        version: Some(version),
+        active_before,
+        download: Some(download),
+        activation: Some(activation),
+    })
+}
 pub(crate) fn resolve_delivery_media_file(
     handle: &AppHandle,
     path: &str,

@@ -9,7 +9,15 @@ use machine_delivery_store::*;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
-use std::{fmt, path::PathBuf, sync::Mutex};
+use std::{
+    fmt,
+    path::PathBuf,
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Mutex,
+    },
+    time::Duration,
+};
 use supabase_sync::*;
 use tauri::http::{Request, Response};
 use tauri::{Manager, Runtime};
@@ -19,6 +27,47 @@ pub mod path_utils;
 
 // Track last logged media path to avoid duplicate logs during streaming
 static LAST_LOGGED_MEDIA_PATH: Mutex<Option<String>> = Mutex::new(None);
+static MACHINE_RESTART_PENDING: AtomicBool = AtomicBool::new(false);
+
+async fn check_machine_delivery_update(handle: tauri::AppHandle, trigger: &'static str) {
+    match install_latest_machine_delivery_if_new(handle).await {
+        Ok(result) => {
+            if result.outcome == "installed" {
+                MACHINE_RESTART_PENDING.store(true, Ordering::SeqCst);
+
+                log::info!(
+                    "Machine delivery version {:?} installed; restart is pending",
+                    result.version
+                );
+            }
+
+            log::info!(
+                "Machine delivery update finished: trigger={}, outcome={}, version={:?}, deployment_id={:?}",
+                trigger,
+                result.outcome,
+                result.version,
+                result.deployment_id
+            );
+        }
+        Err(error) => {
+            log::warn!(
+                "Machine delivery update was skipped or failed: trigger={}, error={}",
+                trigger,
+                error
+            );
+        }
+    }
+}
+
+#[tauri::command]
+fn restart_if_machine_update_pending(handle: tauri::AppHandle) -> bool {
+    if !MACHINE_RESTART_PENDING.swap(false, Ordering::SeqCst) {
+        return false;
+    }
+
+    log::info!("Restarting DanceOmatic to load the newly installed delivery");
+    handle.restart();
+}
 
 //const CONFIG_PATH: &str = "resources/config.toml";
 
@@ -291,6 +340,37 @@ pub fn run() {
             // Initialize TauriState
             let state = TauriState::new(app.handle())?;
             app.manage(state);
+
+            // Check immediately, then once more after 10 minutes.
+            // The checks never block normal kiosk startup or video playback.
+            let update_handle = app.handle().clone();
+
+            tauri::async_runtime::spawn(async move {
+                check_machine_delivery_update(
+                    update_handle.clone(),
+                    "startup",
+                )
+                .await;
+
+                let _ = tauri::async_runtime::spawn_blocking(|| {
+                    std::thread::sleep(Duration::from_secs(10 * 60));
+                })
+                .await;
+
+                if MACHINE_RESTART_PENDING.load(Ordering::SeqCst) {
+                    log::info!(
+                        "Skipping 10-minute machine delivery check because restart is already pending"
+                    );
+                    return;
+                }
+
+                check_machine_delivery_update(
+                    update_handle,
+                    "10-minute follow-up",
+                )
+                .await;
+            });
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -311,6 +391,8 @@ pub fn run() {
             initialize_machine_delivery_storage,
             download_latest_machine_delivery_to_staging,
             activate_latest_staged_machine_delivery,
+            install_latest_machine_delivery_if_new,
+            restart_if_machine_update_pending,
             get_active_machine_config,
             start_machine_delivery_download,
             report_machine_delivery_result,
