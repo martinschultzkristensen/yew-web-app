@@ -1,13 +1,12 @@
 //src/components/molecules/video_list.rs
 use crate::components::atoms::arrow_respnd_ui::*;
-use yew::prelude::*;
 use serde_json::json;
+use serde_wasm_bindgen::{from_value, to_value};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
-use serde_wasm_bindgen::{to_value, from_value};
 use web_sys::console;
 use web_sys::{Blob as WebBlob, Url};
-
+use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]
 pub struct Video {
@@ -54,6 +53,9 @@ impl VideoType {
 extern "C" {
     #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"], js_name = invoke)]
     async fn invoke(cmd: &str, args: JsValue) -> JsValue;
+
+    #[wasm_bindgen(js_namespace = ["window", "__TAURI__", "core"], js_name = convertFileSrc)]
+    fn convert_file_src(file_path: &str) -> String;
 }
 
 #[derive(Properties, PartialEq)]
@@ -67,7 +69,6 @@ pub struct VideosListProps {
 
 #[function_component(VideosList)]
 pub fn videos_list(props: &VideosListProps) -> Html {
-    
     use_effect(|| {
         web_sys::console::log_1(&"VideosList mounted".into());
         || ()
@@ -80,22 +81,31 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         video_class,
     } = props;
 
+    let video_ref = use_node_ref();
+
     let current_video = &videos[*current_index]; // <- get current_index to display the corresponding video. Access the inner Video with .video
     let video = current_video.get_video();
     let should_loop = current_video.should_loop();
-    let onended_attr = if !should_loop {
-        on_ended.clone().map(|callback| {
-            Callback::from(move |_| {
-                callback.emit(());
-            })
-        })
-    } else {
-        None
-    };
-   
+    let video_ref_for_ended = video_ref.clone();
+    let on_ended_callback = on_ended.clone();
+
+    let onended_attr = Callback::from(move |_event: web_sys::Event| {
+        if should_loop {
+            if let Some(video_element) = video_ref_for_ended.cast::<web_sys::HtmlVideoElement>() {
+                video_element.set_current_time(0.0);
+
+                if let Err(error) = video_element.play() {
+                    log::error!("❌ Failed to restart looping video: {:?}", error);
+                }
+            }
+        } else if let Some(callback) = &on_ended_callback {
+            callback.emit(());
+        }
+    });
+
     // This codeblock should Resolve path using Tauri backend
     let video_src = use_state(|| None::<String>);
-    {   
+    {
         let video_src = video_src.clone();
         let video_name = current_video.get_video().url.clone(); // for instance "/static/devVideo/IntroDemoVid_4sec.mp4"
 
@@ -112,73 +122,84 @@ pub fn videos_list(props: &VideosListProps) -> Html {
                     let video_name = video_name.clone();
                     async move {
                         console::time_with_label("get_video_path");
-                        let js_args = serde_wasm_bindgen::to_value(&json!({ "path": video_name })).unwrap();
-                        let result = invoke("resolve_media_path", js_args).await;
-                        
-                         match serde_wasm_bindgen::from_value::<String>(result) {
-                            Ok(url) => {
+                        let js_args =
+                            serde_wasm_bindgen::to_value(&json!({ "path": video_name })).unwrap();
+                        let result = invoke("resolve_video_path", js_args).await;
+
+                        match serde_wasm_bindgen::from_value::<String>(result) {
+                            Ok(resolved) => {
+                                let url = if resolved.starts_with("http://")
+                                    || resolved.starts_with("https://")
+                                    || resolved.starts_with("media://")
+                                    || resolved.starts_with("asset:")
+                                {
+                                    resolved
+                                } else {
+                                    convert_file_src(&resolved)
+                                };
+
                                 log::info!("🎥 Video path resolved: {}", &url);
                                 video_src.set(Some(url));
-                            console::time_end_with_label("get_video_path");
+                                console::time_end_with_label("get_video_path");
+                            }
+                            Err(err) => log::error!("❌ Failed to parse video blob: {:?}", err),
                         }
-                        Err(err) => log::error!("❌ Failed to parse video blob: {:?}", err),
                     }
-                }
-            });
+                });
             }
             || ()
         });
-
     }
 
     match current_video {
-
         VideoType::Demo(demo) => {
-        let src = video_src.as_ref().cloned().unwrap_or_default();
-        log::info!("🎬 Final video_src to render: {}", src);
-        
-        html! {
-        <div class="main_menu-container">
-                <div class="video-wrapper">
-                    <div class="svg-arrow-in-main">
-                    <ArrowUpIcon/>
+            let src = video_src.as_ref().cloned().unwrap_or_default();
+            log::info!("🎬 Final video_src to render: {}", src);
+
+            html! {
+            <div class="main_menu-container">
+                    <div class="video-wrapper">
+                        <div class="svg-arrow-in-main">
+                        <ArrowUpIcon/>
+                        </div>
+
+                    <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>
+                        <div class="video-placeholder">
+                        <video
+
+                            src={video_src.as_ref().cloned().unwrap_or_default()}
+
+
+                            ref={video_ref.clone()}
+                            autoplay=true
+                            loop=false
+                            onended={onended_attr.clone()}
+                            class={classes!(video_class.clone(), "smallscreenvideo")}
+                            preload="auto"
+                        />
+                        </div>
+                        <div class="svg-arrow-in-main">
+                        <ArrowDownIcon/>
+                        </div>
+
+
                     </div>
-
-                <p class="title-center arcadefont">{current_video.get_displayed_id().unwrap_or_default()}</p>
-                    <div class="video-placeholder">
-                    <video
-                        
-                        src={video_src.as_ref().cloned().unwrap_or_default()}
-
-
-                        autoplay=true
-                        loop={should_loop}
-                        onended={onended_attr}
-                        class={classes!(video_class.clone(), "smallscreenvideo")}
-                        preload="auto"
-                    />
+                    <div class="right-column">
+                    <div class="video-info arcadefont">
+                        <h4>{format!("{}", &demo.title)}</h4>
+                        <h4>{"Duration: "}{&demo.duration}{" seconds"}</h4>
                     </div>
-                    <div class="svg-arrow-in-main">
-                    <ArrowDownIcon/>
-                    </div>
-
-                    
                 </div>
-                <div class="right-column">
-                <div class="video-info arcadefont">
-                    <h4>{format!("{}", &demo.title)}</h4>
-                    <h4>{"Duration: "}{&demo.duration}{" seconds"}</h4>
                 </div>
-            </div>
-            </div>
-            }
-        },
+                }
+        }
         VideoType::Regular(_) => html! {
             <video
                 src={video_src.as_ref().cloned().unwrap_or_default()}
+                ref={video_ref.clone()}
                 autoplay=true
-                loop={should_loop}
-                onended={onended_attr}
+                loop=false
+                onended={onended_attr.clone()}
                 class={classes!(video_class.clone(), "fullscreenvideo")}
                 preload="auto"
             />

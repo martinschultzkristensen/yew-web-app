@@ -9,7 +9,9 @@
     "active": true,
     "category": "DeveloperTool",
     "copyright": "",
-    "targets": ["deb"],
+    "targets": [
+      "deb"
+    ],
     "externalBin": [],
     "icon": [
       "icons/32x32.png",
@@ -37,7 +39,7 @@
       "resources/static/*",
       "../static/devVideo/",
       "../static/img/"
-],
+    ],
     "shortDescription": "",
     "linux": {
       "appimage": {
@@ -68,7 +70,15 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": {
+          "allow": [
+            "/home/danceomatic/.local/share/danceOmatic/**/*"
+          ]
+        }
+      }
     }
   }
 }

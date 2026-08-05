@@ -1,14 +1,11 @@
 //src/components/organisms/choreo_videos.rs
+use crate::components::atoms::shared_props::AppConfigProps;
+use crate::components::atoms::use_focus_div::use_focus_div;
 use crate::use_location;
 use crate::Route;
 use crate::VideosList;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
-use crate::components::atoms::use_focus_div::use_focus_div;
-use crate::components::atoms::shared_props::AppConfigProps;
-
-
-
 
 #[function_component(ChoreoVideo)]
 pub fn choreographic_videos(props: &AppConfigProps) -> Html {
@@ -17,7 +14,6 @@ pub fn choreographic_videos(props: &AppConfigProps) -> Html {
 
     let navigator = use_navigator().unwrap();
     let div_ref = use_focus_div();
-
 
     let choreo_video_index: usize = use_location()
         .and_then(|l| l.state::<usize>().map(|i| *i))
@@ -55,5 +51,3 @@ pub fn choreographic_videos(props: &AppConfigProps) -> Html {
         </div>
     }
 }
-    
-

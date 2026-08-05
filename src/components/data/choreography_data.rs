@@ -8,12 +8,10 @@ pub struct ChoreographyData {
     pub title: String,
     pub choreo_image: String,
     pub dancers: Vec<DancerData>,
-    pub description: String,  // Optional: if you want to add descriptions
+    pub description: String, // Optional: if you want to add descriptions
     pub videos: Vec<VideoType>,
 }
 
-
-    
 pub fn get_choreography_data(config: &Config, choreo_number: usize) -> ChoreographyData {
     let videos = config.load_choreo_videos();
     let dancers_map = config.load_dancers();
@@ -30,8 +28,14 @@ pub fn get_choreography_data(config: &Config, choreo_number: usize) -> Choreogra
     let (title, description, choreo_img) = match demo_video {
         Some(video) => (
             video.title.clone(),
-            video.description.clone().unwrap_or_else(|| default_description.clone()),
-            video.choreo_img.clone().unwrap_or_else(|| default_choreo_img.clone()),
+            video
+                .description
+                .clone()
+                .unwrap_or_else(|| default_description.clone()),
+            video
+                .choreo_img
+                .clone()
+                .unwrap_or_else(|| default_choreo_img.clone()),
         ),
         None => (
             "Default Title".to_string(),
@@ -48,4 +52,3 @@ pub fn get_choreography_data(config: &Config, choreo_number: usize) -> Choreogra
         videos,
     }
 }
-

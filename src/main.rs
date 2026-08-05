@@ -1,6 +1,6 @@
 //main.rs
-use yew_app::DanceOmatic;
 use cfg_if::cfg_if;
+use yew_app::DanceOmatic;
 
 //Environment Logger Output
 // Web (Trunk/Yew) --> wasm_logger --> Browser Console
@@ -8,14 +8,14 @@ use cfg_if::cfg_if;
 
 fn main() {
     cfg_if! {
-        if #[cfg(target_arch = "wasm32")] {
-            wasm_logger::init(wasm_logger::Config::default());
-            console_error_panic_hook::set_once();
+            if #[cfg(target_arch = "wasm32")] {
+                wasm_logger::init(wasm_logger::Config::default());
+                console_error_panic_hook::set_once();
+            }
+        else {
+            // For native (Tauri backend, CLI, etc.)
+            env_logger::init();
         }
-    else {
-        // For native (Tauri backend, CLI, etc.)
-        env_logger::init();
     }
-}
     yew::Renderer::<DanceOmatic>::new().render();
 }

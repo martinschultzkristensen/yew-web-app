@@ -1,10 +1,9 @@
+use crate::components::atoms::shared_props::AppConfigProps;
+use crate::components::atoms::use_focus_div::use_focus_div;
 use crate::Route;
 use crate::VideosList;
 use yew::prelude::*;
 use yew_router::prelude::use_navigator;
-use crate::components::atoms::use_focus_div::use_focus_div;
-use crate::components::atoms::shared_props::AppConfigProps;
-
 
 #[function_component(LoadScreenVideo)]
 pub fn load_screen_video(props: &AppConfigProps) -> Html {
@@ -12,7 +11,6 @@ pub fn load_screen_video(props: &AppConfigProps) -> Html {
 
     let current_video_index = use_state(|| 0);
     let div_ref = use_focus_div(); // Hook sets focus on the div when the component mounts.
-
 
     let navigator = use_navigator().unwrap();
     let handle_video_ended = {

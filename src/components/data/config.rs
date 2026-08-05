@@ -7,9 +7,6 @@ use serde::Deserialize;
 use serde_wasm_bindgen::from_value;
 use wasm_bindgen::JsValue;
 
-
-
-
 pub struct ConfigError(String);
 
 impl std::fmt::Debug for ConfigError {
@@ -83,9 +80,10 @@ impl Config {
     // Deserialize the `JsValue` into the Rust struct
     pub fn from_jsvalue(js_value: JsValue) -> Result<Config, ConfigError> {
         // Deserialize the JsValue into Config struct using serde_wasm_bindgen
-        from_value(js_value).map_err(|e| ConfigError(format!("Failed to deserialize JsValue: {:?}", e)))
+        from_value(js_value)
+            .map_err(|e| ConfigError(format!("Failed to deserialize JsValue: {:?}", e)))
     }
-    
+
     pub fn load_dancers(&self) -> std::collections::HashMap<usize, Vec<Dancer>> {
         let mut choreography_map = std::collections::HashMap::new();
 
@@ -109,19 +107,28 @@ impl Config {
     }
 
     pub fn get_demo_videos(&self) -> Vec<VideoType> {
-        self.demo_videos.list.iter().map(|video_config| {
-            VideoType::Demo(DemoVideo {
-                video: Video {
-                    id: video_config.id,
-                    url: video_config.url.clone(),
-                    loop_video: video_config.loop_video,
-                },
-                title: video_config.title.clone(),
-                description: video_config.description.clone().unwrap_or_else(|| "There is not yet a description for this choreography".to_string()),
-                duration: video_config.duration.clone(),
-                choreo_img: video_config.choreo_img.clone().unwrap_or_else(|| "static/img/Ming_Niels.png".to_string()),
+        self.demo_videos
+            .list
+            .iter()
+            .map(|video_config| {
+                VideoType::Demo(DemoVideo {
+                    video: Video {
+                        id: video_config.id,
+                        url: video_config.url.clone(),
+                        loop_video: video_config.loop_video,
+                    },
+                    title: video_config.title.clone(),
+                    description: video_config.description.clone().unwrap_or_else(|| {
+                        "There is not yet a description for this choreography".to_string()
+                    }),
+                    duration: video_config.duration.clone(),
+                    choreo_img: video_config
+                        .choreo_img
+                        .clone()
+                        .unwrap_or_else(|| "static/img/Ming_Niels.png".to_string()),
+                })
             })
-        }).collect()
+            .collect()
     }
 
     pub fn get_loadscreen_video(&self) -> Vec<VideoType> {
@@ -141,13 +148,16 @@ impl Config {
     }
 
     pub fn load_choreo_videos(&self) -> Vec<VideoType> {
-        self.choreo_videos.list.iter().map(|video_config| {
-            VideoType::Regular(Video {
-                id: video_config.id,
-                url: video_config.url.clone(),
-                loop_video: video_config.loop_video,
+        self.choreo_videos
+            .list
+            .iter()
+            .map(|video_config| {
+                VideoType::Regular(Video {
+                    id: video_config.id,
+                    url: video_config.url.clone(),
+                    loop_video: video_config.loop_video,
+                })
             })
-        }).collect()
+            .collect()
     }
-
 }

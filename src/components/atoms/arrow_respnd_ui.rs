@@ -1,6 +1,6 @@
-use yew::prelude::*;
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::JsCast;
+use yew::prelude::*;
 
 #[derive(Properties, PartialEq)]
 pub struct ArrowIconProps {
@@ -10,19 +10,14 @@ pub struct ArrowIconProps {
     pub transform: String,
 }
 
-
-
-
 #[function_component(ArrowUpIcon)]
 pub fn arrow_up_icon(props: &ArrowIconProps) -> Html {
     let respond = use_state(|| false);
     let respond_clone = respond.clone();
 
-    
-
     use_effect(move || {
         let respond = respond_clone.clone();
-    
+
         let listener = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
             if event.key() == "w" {
                 respond.set(true);
@@ -55,22 +50,19 @@ pub fn arrow_up_icon(props: &ArrowIconProps) -> Html {
                 <object type="image/svg+xml" data="/static/arrowUpPixel.svg" class={classes!(props.class.clone(), bounce_class, "base-arrow")}></object>
                 <object type="image/svg+xml" data="/static/pinkArrowUp.svg" class={classes!(props.class.clone(), outline_class)}></object>
         </div>
-        
+
     }
 }
-
 
 #[function_component(ArrowDownIcon)]
 pub fn arrow_down_icon(props: &ArrowIconProps) -> Html {
     let respond = use_state(|| false);
     let respond_clone = respond.clone();
 
-
     use_effect(move || {
         let respond = respond_clone.clone();
         let listener = Closure::wrap(Box::new(move |event: web_sys::KeyboardEvent| {
             if event.key() == "s" {
-
                 respond.set(true);
                 let respond_reset = respond.clone();
                 gloo::timers::callback::Timeout::new(300, move || {
@@ -103,6 +95,3 @@ pub fn arrow_down_icon(props: &ArrowIconProps) -> Html {
         </div>
     }
 }
-
-
-

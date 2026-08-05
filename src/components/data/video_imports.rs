@@ -1,11 +1,11 @@
 //src/components/data/video_import.rs
 
+use gloo::console::log;
+use serde_wasm_bindgen::to_value;
+use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
-use serde_wasm_bindgen::to_value;
-use gloo::console::log;
-use wasm_bindgen::prelude::wasm_bindgen;
 
 #[wasm_bindgen]
 extern "C" {
@@ -17,8 +17,6 @@ extern "C" {
 pub struct VideoImportProps {
     pub on_import: Callback<String>, // Called with the new path after successful import
 }
-
-
 
 #[function_component(VideoImport)]
 pub fn video_import(props: &VideoImportProps) -> Html {
@@ -53,12 +51,12 @@ pub fn video_import(props: &VideoImportProps) -> Html {
                             Ok(new_path) => {
                                 log!("Imported video to: ", &new_path);
                                 on_import.emit(new_path); // now this is safe
-                            },
+                            }
                             Err(e) => {
                                 log!("Failed to deserialize import result: ", e);
                             }
                         }
-                    },
+                    }
                     Err(e) => {
                         log!("Failed to select file: ", e);
                     }

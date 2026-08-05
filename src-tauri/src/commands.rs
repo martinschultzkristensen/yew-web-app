@@ -155,7 +155,7 @@ fn media_protocol_url(path: &str) -> String {
 
     #[cfg(not(any(target_os = "windows", target_os = "android")))]
     {
-        format!("media://{path}")
+        format!("media://localhost/{path}")
     }
 }
 
@@ -185,6 +185,61 @@ pub fn resolve_media_path(handle: tauri::AppHandle, path: String) -> Result<Stri
         Err("Only media/ and delivery/ paths are supported".to_string())
     }
 }
+#[tauri::command]
+pub fn resolve_video_path(
+    handle: tauri::AppHandle,
+    path: String,
+) -> Result<String, String> {
+    #[cfg(any(target_os = "windows", target_os = "android"))]
+    {
+        resolve_media_path(handle, path)
+    }
+
+    #[cfg(not(any(target_os = "windows", target_os = "android")))]
+    {
+        fn encode_relative_path(path: &str) -> String {
+            path.split('/')
+                .map(|segment| urlencoding::encode(segment).into_owned())
+                .collect::<Vec<_>>()
+                .join("/")
+        }
+
+        if let Some(file_name) = path.strip_prefix("media/") {
+            if file_name.is_empty()
+                || Path::new(file_name)
+                    .components()
+                    .any(|component| {
+                        !matches!(component, std::path::Component::Normal(_))
+                    })
+            {
+                return Err(format!("Invalid media path: {path}"));
+            }
+
+            let full_path = media_dir(&handle)?.join(file_name);
+
+            if !full_path.is_file() {
+                return Err(format!("Media file not found: {file_name}"));
+            }
+
+            Ok(format!(
+                "{}/media/{}",
+                crate::local_media_server::LOCAL_MEDIA_BASE_URL,
+                encode_relative_path(file_name)
+            ))
+        } else if let Some(relative) = path.strip_prefix("delivery/") {
+            resolve_delivery_media_file(&handle, &path)?;
+
+            Ok(format!(
+                "{}/delivery/{}",
+                crate::local_media_server::LOCAL_MEDIA_BASE_URL,
+                encode_relative_path(relative)
+            ))
+        } else {
+            Err("Only media/ and delivery/ paths are supported".to_string())
+        }
+    }
+}
+
 //this code should be unnesesarry for serving video as blob. Test and delete.
 // //serve the video files as a blob to the frontend. (I belive only for the videos build in)
 // #[tauri::command]

@@ -1,11 +1,11 @@
 //src/components/data/image_import.rs
 
+use gloo::console::log;
+use serde_wasm_bindgen::to_value;
+use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
-use serde_wasm_bindgen::to_value;
-use gloo::console::log;
-use wasm_bindgen::prelude::wasm_bindgen;
 
 #[wasm_bindgen]
 extern "C" {
@@ -17,8 +17,6 @@ extern "C" {
 pub struct ImageImportProps {
     pub on_import: Callback<String>, // Called with the new path after successful import
 }
-
-
 
 #[function_component(ImageImport)]
 pub fn video_import(props: &ImageImportProps) -> Html {
@@ -53,12 +51,12 @@ pub fn video_import(props: &ImageImportProps) -> Html {
                             Ok(new_path) => {
                                 log!("Imported image to: ", &new_path);
                                 on_import.emit(new_path); // now this is safe
-                            },
+                            }
                             Err(e) => {
                                 log!("Failed to deserialize import result: ", e);
                             }
                         }
-                    },
+                    }
                     Err(e) => {
                         log!("Failed to select file: ", e);
                     }

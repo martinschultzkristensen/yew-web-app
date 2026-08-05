@@ -1,26 +1,25 @@
 //lib.rs
-use components::organisms::about_choreo::*;
+use crate::components::data::config::Config;
+use crate::components::molecules::music_context::MusicContextProvider;
+use crate::components::molecules::sound_effects::*;
+use crate::components::organisms::admin_panel::AdminPanel;
 use crate::components::organisms::choreo_videos::ChoreoVideo;
 use crate::components::organisms::intro_screen::IntroScreen;
 use crate::components::organisms::load_screen::LoadScreenVideo;
 use crate::components::organisms::main_menu::MainMenu;
-use crate::components::organisms::admin_panel::AdminPanel;
-use crate::components::data::config::Config;
-use crate::components::molecules::music_context::MusicContextProvider;
-use crate::components::molecules::sound_effects::*;
-use components::molecules::video_list::VideosList;
 use components::molecules::keydown_logic::get_toggle_key;
+use components::molecules::video_list::VideosList;
+use components::organisms::about_choreo::*;
+use serde_wasm_bindgen::to_value;
+use std::rc::Rc;
+use wasm_bindgen::closure::Closure;
+use wasm_bindgen::prelude::wasm_bindgen;
+use wasm_bindgen::JsCast;
+use wasm_bindgen::JsValue;
+use wasm_bindgen_futures::spawn_local;
 use yew::functional::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
-use wasm_bindgen_futures::spawn_local;
-use std::rc::Rc;
-use wasm_bindgen::prelude::wasm_bindgen;
-use wasm_bindgen::JsValue;
-use serde_wasm_bindgen::to_value;
-use wasm_bindgen::closure::Closure;
-use wasm_bindgen::JsCast;
-
 
 mod components;
 #[derive(Clone, Routable, Debug, PartialEq)]
@@ -45,13 +44,8 @@ extern "C" {
     async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 }
 
-
-
 fn is_tauri() -> bool {
-    web_sys::window()
-        .unwrap()
-        .get("__TAURI__")
-        .is_some()
+    web_sys::window().unwrap().get("__TAURI__").is_some()
 }
 
 #[function_component(DanceOmatic)]
@@ -61,43 +55,41 @@ pub fn dance_o_matic() -> Html {
     let config_clone = config.clone();
     let config_fetched_clone = config_fetched.clone();
 
+    use_effect(move || {
+        // Only fetch if we haven't yet
+        if is_tauri() && !*config_fetched_clone {
+            spawn_local(async move {
+                let args = serde_json::json!({});
+                let js_args = to_value(&args).unwrap();
+                let result = invoke("get_config", js_args).await;
+                log::info!("Raw result from invoke: {:?}", result);
 
-        use_effect(move || {
-            // Only fetch if we haven't yet
-            if is_tauri() && !*config_fetched_clone {
-                spawn_local(async move {
-                    let args = serde_json::json!({});
-                    let js_args = to_value(&args).unwrap();
-                    let result = invoke("get_config", js_args).await;
-                    log::info!("Raw result from invoke: {:?}", result);
-    
-                    // Debugging: Call the debug_paths command to log paths
-                    let debug_result = invoke("debug_paths", JsValue::NULL).await;
-                    if let Some(txt) = debug_result.as_string() {
+                // Debugging: Call the debug_paths command to log paths
+                let debug_result = invoke("debug_paths", JsValue::NULL).await;
+                if let Some(txt) = debug_result.as_string() {
                     log::info!("🛠️ debug_paths → {}", txt);
                 } else {
                     log::warn!("debug_paths did not return a string");
                 }
-                    
-                    match serde_wasm_bindgen::from_value::<Config>(result) {
-                        Ok(loaded_config) => {
-                            let new_config = Rc::new(loaded_config);
-                            if Some(new_config.clone()) != *config_clone {
-                                log::info!("🔄 Config changed, updating state.");
-                                config_clone.set(Some(new_config));
-                            } else {
-                                log::info!("✅ Config unchanged, skipping update.");
-                            }
-                            config_fetched_clone.set(true);
+
+                match serde_wasm_bindgen::from_value::<Config>(result) {
+                    Ok(loaded_config) => {
+                        let new_config = Rc::new(loaded_config);
+                        if Some(new_config.clone()) != *config_clone {
+                            log::info!("🔄 Config changed, updating state.");
+                            config_clone.set(Some(new_config));
+                        } else {
+                            log::info!("✅ Config unchanged, skipping update.");
                         }
-                        Err(err) => log::error!("Failed to deserialize config: {:?}", err),
+                        config_fetched_clone.set(true);
                     }
-                    
-                });
-            }
-    
-            || ()
-        });
+                    Err(err) => log::error!("Failed to deserialize config: {:?}", err),
+                }
+            });
+        }
+
+        || ()
+    });
 
     // Callback for key detection to navigate to adminpannel
     {
@@ -132,7 +124,6 @@ pub fn dance_o_matic() -> Html {
         });
     }
 
-
     html! {
         <div>
             <MusicContextProvider>
@@ -153,7 +144,9 @@ pub fn dance_o_matic() -> Html {
 fn switch(config: Rc<Config>) -> impl Fn(Route) -> Html {
     move |routes: Route| {
         match routes {
-            Route::AboutChoreo { number } => html! {<AboutChoreo choreo_number={number} config={config.clone()} />},
+            Route::AboutChoreo { number } => {
+                html! {<AboutChoreo choreo_number={number} config={config.clone()} />}
+            }
             Route::MainMenu => html! { <MainMenu config={config.clone()} /> },
             Route::IntroScreen1 => html! { <IntroScreen config={config.clone()} /> },
             Route::ChoreoVideo => html! { <ChoreoVideo config={config.clone()}/> },
@@ -162,7 +155,6 @@ fn switch(config: Rc<Config>) -> impl Fn(Route) -> Html {
         }
     }
 }
-
 
 // fn fetch_config() {
 //     spawn_local(async {

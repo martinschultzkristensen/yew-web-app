@@ -1,5 +1,6 @@
 //src-tauri/src/lib.rs
 mod commands;
+mod local_media_server;
 pub mod machine_delivery_store;
 pub mod supabase_sync;
 
@@ -341,6 +342,11 @@ pub fn run() {
             let state = TauriState::new(app.handle())?;
             app.manage(state);
 
+            local_media_server::start(app.handle().clone()).map_err(|error| {
+                log::error!("Failed to start local media server: {error}");
+                std::io::Error::new(std::io::ErrorKind::Other, error)
+            })?;
+
             // Check immediately, then once more after 10 minutes.
             // The checks never block normal kiosk startup or video playback.
             let update_handle = app.handle().clone();
@@ -380,6 +386,7 @@ pub fn run() {
             import_video,
             import_images,
             resolve_media_path,
+            resolve_video_path,
             get_image_path,
             select_video_file,
             select_img_file,

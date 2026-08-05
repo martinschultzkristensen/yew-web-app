@@ -1,8 +1,6 @@
 // src/components/music_context.rs
-use yew::prelude::*;
 use web_sys::HtmlAudioElement;
-
-
+use yew::prelude::*;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct MusicContext {
@@ -14,7 +12,7 @@ pub struct MusicContext {
 pub enum MusicContextAction {
     StartMusic,
     StopMusic,
-} 
+}
 
 #[derive(Properties, PartialEq)]
 pub struct MusicContextProviderProps {
@@ -28,16 +26,16 @@ pub struct MusicContextProvider {
 }
 
 impl Component for MusicContextProvider {
-    type Message = MusicContextAction; 
+    type Message = MusicContextAction;
     type Properties = MusicContextProviderProps;
 
-    //note: is there a more elegant way than cloning after each move |_|? Thoughts: consumes 
+    //note: is there a more elegant way than cloning after each move |_|? Thoughts: consumes
     fn create(ctx: &Context<Self>) -> Self {
         let link = ctx.link().clone();
-        let start_music = Callback::from(move |_| link.send_message(MusicContextAction::StartMusic));
+        let start_music =
+            Callback::from(move |_| link.send_message(MusicContextAction::StartMusic));
         let link = ctx.link().clone();
         let stop_music = Callback::from(move |_| link.send_message(MusicContextAction::StopMusic));
-
 
         let music_context = MusicContext {
             audio_ref: NodeRef::default(),
@@ -57,19 +55,19 @@ impl Component for MusicContextProvider {
                 MusicContextAction::StopMusic => {
                     let _ = audio.pause();
                     audio.set_current_time(0.0);
-            }}
+                }
+            }
         }
         true
     }
-    
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         html! {
             <ContextProvider<MusicContext> context={self.music_context.clone()}>
-                <audio 
-                    ref={self.music_context.audio_ref.clone()} 
-                    src="/static/low_8bit-menusong-short-ed.mp3" 
-                    loop=true 
+                <audio
+                    ref={self.music_context.audio_ref.clone()}
+                    src="/static/low_8bit-menusong-short-ed.mp3"
+                    loop=true
                 />
                 { for ctx.props().children.iter() }
             </ContextProvider<MusicContext>>
