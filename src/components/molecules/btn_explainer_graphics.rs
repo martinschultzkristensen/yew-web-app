@@ -17,30 +17,39 @@ pub fn btn_explainer_graphics(props: &BtnExplainerProps) -> Html {
     const FINGER_DELAY: u32 = 3000; // 3 seconds
     const START_ADDITIONAL_DELAY: u32 = 2200; // 2.2 seconds after finger
     const INFO_ADDITIONAL_DELAY: u32 = 3200; // 3.2 seconds after finger
+
     let is_start_visible = use_state(|| false);
     let is_info_visible = use_state(|| false);
+    let point_finger_visible = use_state(|| false);
 
+    // Create the three timers only once when this component mounts.
+    // Dropping the handles in cleanup cancels pending timers when the route changes.
     {
         let is_start_visible = is_start_visible.clone();
-        use_effect(move || {
-            let timeout = Timeout::new(START_ADDITIONAL_DELAY + FINGER_DELAY, move || {
+        let is_info_visible = is_info_visible.clone();
+        let point_finger_visible = point_finger_visible.clone();
+
+        use_effect_with((), move |_| {
+            let finger_timeout = Timeout::new(FINGER_DELAY, move || {
+                point_finger_visible.set(true);
+            });
+
+            let start_timeout = Timeout::new(START_ADDITIONAL_DELAY + FINGER_DELAY, move || {
                 is_start_visible.set(true);
             });
-            timeout.forget();
-            || ()
-        });
-    }
-    {
-        let is_info_visible = is_info_visible.clone();
-        use_effect(move || {
-            let timeout = Timeout::new(
+
+            let info_timeout = Timeout::new(
                 START_ADDITIONAL_DELAY + FINGER_DELAY + INFO_ADDITIONAL_DELAY,
                 move || {
                     is_info_visible.set(true);
                 },
             );
-            timeout.forget();
-            || ()
+
+            move || {
+                drop(finger_timeout);
+                drop(start_timeout);
+                drop(info_timeout);
+            }
         });
     }
 
@@ -56,19 +65,6 @@ pub fn btn_explainer_graphics(props: &BtnExplainerProps) -> Html {
         "txt_info_position txt_animation"
     };
 
-    let point_finger_visible = use_state(|| false);
-
-    {
-        let point_finger_visible = point_finger_visible.clone();
-        use_effect(move || {
-            let timeout = Timeout::new(FINGER_DELAY, move || {
-                point_finger_visible.set(true);
-            });
-            timeout.forget();
-            || ()
-        });
-    }
-
     let finger_class = if *point_finger_visible {
         "point-finger point-finger-animate"
     } else {
@@ -79,39 +75,46 @@ pub fn btn_explainer_graphics(props: &BtnExplainerProps) -> Html {
     // Calculate animation delay in seconds for SVG
     let svg_animation_delay = (FINGER_DELAY / 1000 + 2).to_string();
 
-    // Effect to modify SVG animation timing once loaded
+    // Install one onload callback for this component mount and remove it on unmount.
     {
         let green_btn_ref = green_btn_ref.clone();
         let svg_animation_delay = svg_animation_delay.clone();
 
-        use_effect(move || {
-            if let Some(object_element) = green_btn_ref.cast::<web_sys::HtmlElement>() {
-                // Clone object_element before moving it into closure
-                let object_element_clone = object_element.clone();
-
-                // Wait for the object to load
-                let onload = Closure::wrap(Box::new(move || {
-                    // Try to get the contentDocument through JS
-                    if let Some(content_document) =
-                        js_sys::Reflect::get(&object_element_clone, &"contentDocument".into())
+        use_effect_with((), move |_| {
+            let onload_registration =
+                green_btn_ref
+                    .cast::<web_sys::HtmlElement>()
+                    .map(|object_element| {
+                        let object_element_for_callback = object_element.clone();
+                        let onload: Closure<dyn FnMut()> = Closure::wrap(Box::new(move || {
+                            if let Some(content_document) = js_sys::Reflect::get(
+                                &object_element_for_callback,
+                                &"contentDocument".into(),
+                            )
                             .ok()
                             .and_then(|doc| doc.dyn_into::<web_sys::Document>().ok())
-                    {
-                        if let Ok(Some(animate_element)) =
-                            content_document.query_selector("#smCircel animateTransform")
-                        {
-                            let _ = animate_element
-                                .set_attribute("begin", &format!("{}s", svg_animation_delay));
-                        }
-                    }
-                }) as Box<dyn FnMut()>);
+                            {
+                                if let Ok(Some(animate_element)) =
+                                    content_document.query_selector("#smCircel animateTransform")
+                                {
+                                    let _ = animate_element.set_attribute(
+                                        "begin",
+                                        &format!("{}s", svg_animation_delay),
+                                    );
+                                }
+                            }
+                        }));
 
-                let _ = object_element.set_attribute("onload", "");
-                object_element.set_onload(Some(onload.as_ref().unchecked_ref()));
-                onload.forget(); // Prevent closure from being dropped
+                        object_element.set_onload(Some(onload.as_ref().unchecked_ref()));
+                        (object_element, onload)
+                    });
+
+            move || {
+                if let Some((object_element, onload)) = onload_registration {
+                    object_element.set_onload(None);
+                    drop(onload);
+                }
             }
-
-            || ()
         });
     }
 
