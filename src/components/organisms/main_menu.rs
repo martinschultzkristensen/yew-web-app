@@ -22,14 +22,9 @@ pub fn main_menu(props: &AppConfigProps) -> Html {
         use_context::<SoundEffectsContext>().expect("SoundEffectsContext not found");
     let play_sound = sound_context.play_sound.clone();
 
-    use_effect_with((), {
-        let start_music = ctx.start_music.clone();
-        move |_| {
-            // Use the start_music callback from the context directly
-            start_music.emit(());
-            || ()
-        }
-    });
+    // Music is started from intro_screen.rs's "x" keydown handler, synchronously
+    // within the user gesture (required by Linux/WebKitGTK's autoplay policy),
+    // and simply keeps playing across navigation into and out of MainMenu.
 
     let div_ref = use_focus_div(); // Hook sets focus on the div (in this case demo video) when the component mounts.
     let demo_videos = use_state(|| props.config.get_demo_videos());

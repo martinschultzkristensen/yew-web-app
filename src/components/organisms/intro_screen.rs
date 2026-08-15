@@ -1,5 +1,6 @@
 use crate::components::atoms::shared_props::AppConfigProps;
 use crate::components::atoms::use_focus_div::use_focus_div;
+use crate::components::molecules::music_context::MusicContext;
 use crate::Route;
 use crate::VideosList;
 use wasm_bindgen::prelude::*;
@@ -21,11 +22,13 @@ fn request_restart_if_update_pending() {
 
 #[function_component(IntroScreen)]
 pub fn intro_screen(props: &AppConfigProps) -> Html {
-    let audio_coin = web_sys::HtmlAudioElement::new_with_src("static/coinSound.mp3").unwrap();
+    let audio_coin = web_sys::HtmlAudioElement::new_with_src("/static/coinSound.mp3").unwrap();
     let navigator = use_navigator().unwrap();
     let intro_video = props.config.get_intro_video();
     let current_video_index = use_state(|| 0);
     let div_ref = use_focus_div(); // Hook sets focus on the div when the component mounts.
+    let music_ctx = use_context::<MusicContext>().expect("No music context provider");
+    let start_music = music_ctx.start_music.clone();
 
     use_effect_with((), move |_| {
         request_restart_if_update_pending();
@@ -44,6 +47,11 @@ pub fn intro_screen(props: &AppConfigProps) -> Html {
     let press_x_for_main = Callback::from(move |event: KeyboardEvent| {
         if event.key() == "x" {
             let _ = audio_coin.play();
+            // Called synchronously within this keydown handler (not from a
+            // use_effect on MainMenu mount) so it stays inside the user
+            // gesture's call stack — WebKitGTK on Linux blocks audio.play()
+            // once that stack has unwound, even though other engines allow it.
+            start_music.emit(());
             navigator.push(&Route::MainMenu);
         }
     });

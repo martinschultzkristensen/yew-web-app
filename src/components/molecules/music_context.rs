@@ -1,4 +1,6 @@
 // src/components/music_context.rs
+use log;
+use wasm_bindgen_futures::JsFuture;
 use web_sys::HtmlAudioElement;
 use yew::prelude::*;
 
@@ -49,9 +51,16 @@ impl Component for MusicContextProvider {
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         if let Some(audio) = self.music_context.audio_ref.cast::<HtmlAudioElement>() {
             match msg {
-                MusicContextAction::StartMusic => {
-                    let _ = audio.play().unwrap();
-                }
+                MusicContextAction::StartMusic => match audio.play() {
+                    Ok(promise) => {
+                        wasm_bindgen_futures::spawn_local(async move {
+                            if let Err(e) = JsFuture::from(promise).await {
+                                log::error!("Music playback was rejected (likely blocked by autoplay policy): {:?}", e);
+                            }
+                        });
+                    }
+                    Err(e) => log::error!("Failed to start music playback: {:?}", e),
+                },
                 MusicContextAction::StopMusic => {
                     let _ = audio.pause();
                     audio.set_current_time(0.0);
