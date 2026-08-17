@@ -6,4 +6,3 @@ pub mod choreo_videos;
 pub mod intro_screen;
 pub mod load_screen;
 pub mod main_menu;
-pub mod music;

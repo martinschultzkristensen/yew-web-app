@@ -16,7 +16,7 @@ extern "C" {
     async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 }
 
-async fn get_audio_effect(effect_name: &str) -> Result<js_sys::Uint8Array, JsValue> {
+pub async fn get_audio_effect(effect_name: &str) -> Result<js_sys::Uint8Array, JsValue> {
     log::info!("Requesting audio effect from backend: {}", effect_name);
     let args = to_value(&serde_json::json!({
         "effectName": effect_name,
@@ -74,7 +74,12 @@ impl Component for SoundEffectsProvider {
         let link = ctx.link().clone();
 
         // Pre-load effects
-        let effect_names = vec!["uiToAboutChoreo.mp3", "BtnStart.mp3", "button-124476.mp3"];
+        let effect_names = vec![
+            "uiToAboutChoreo.mp3",
+            "BtnStart.mp3",
+            "button-124476.mp3",
+            "coinSound.mp3",
+        ];
         log::info!("About to load {} sound effects", effect_names.len());
         for name in effect_names {
             spawn_local({

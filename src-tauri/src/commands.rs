@@ -31,7 +31,13 @@ impl AudioCache {
 
     pub fn load_effects(&mut self, handle: &tauri::AppHandle) -> Result<(), String> {
         // Pre-load your sound effects into memory
-        let effect_files = ["uiToAboutChoreo.mp3", "BtnStart.mp3", "button-124476.mp3"];
+        let effect_files = [
+            "uiToAboutChoreo.mp3",
+            "BtnStart.mp3",
+            "button-124476.mp3",
+            "coinSound.mp3",
+            "low_8bit-menusong-short-ed.mp3",
+        ];
         for file in effect_files {
             log::info!("Loading audio file: {}", file);
             let path = handle
