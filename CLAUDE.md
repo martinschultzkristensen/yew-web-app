@@ -24,8 +24,10 @@ Dev and build always go through the Tauri CLI, which itself drives Trunk for the
 ```bash
 npm run dev              # cargo tauri dev — full app (frontend + backend), hot-reloads on change
 npm run build            # cargo tauri build — production bundle for the current host
-npm run build:rpi        # cargo tauri build --target aarch64-unknown-linux-gnu — Raspberry Pi target
 ```
+
+Deployment target is a PC running Ubuntu (a `build:rpi` script for a Raspberry Pi target existed historically
+but is no longer used).
 
 Equivalent raw commands: `cargo tauri dev` / `cargo tauri build`. There is no lint/format/test setup
 configured in this repo (no `#[test]` functions, no CI workflow) — verify changes by running the app.
@@ -131,8 +133,8 @@ There are two ways choreography/media content reaches the app, both producing th
 
 ## Platform notes
 
-- Built with Tauri v2. Linux is a first-class target (Raspberry Pi kiosk deployment via
-  `npm run build:rpi`), and several of the choices above (the `media://` scheme, the local Axum media
+- Built with Tauri v2. Linux is a first-class target (the kiosk runs on a PC running Ubuntu), and several
+  of the choices above (the `media://` scheme, the local Axum media
   server, the Web-Audio-based audio path) exist specifically to work around WebKitGTK quirks on Linux —
   don't "simplify" those back to plain `<video src>`/`<audio src>` without checking Linux playback.
 - `resources/supabase.toml` contains a *publishable* (anon) Supabase key — this is expected to be
