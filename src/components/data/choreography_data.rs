@@ -1,7 +1,6 @@
 //src/components/data/choreography_data.rs
 use crate::components::atoms::dancer::DancerData;
 use crate::components::data::config::Config;
-use crate::components::molecules::video_list::VideoType;
 
 #[derive(Clone)]
 pub struct ChoreographyData {
@@ -9,11 +8,9 @@ pub struct ChoreographyData {
     pub choreo_image: String,
     pub dancers: Vec<DancerData>,
     pub description: String, // Optional: if you want to add descriptions
-    pub videos: Vec<VideoType>,
 }
 
 pub fn get_choreography_data(config: &Config, choreo_number: usize) -> ChoreographyData {
-    let videos = config.load_choreo_videos();
     let dancers_map = config.load_dancers();
 
     let default_description = "There is not yet a description for this choreography.".to_string();
@@ -49,6 +46,5 @@ pub fn get_choreography_data(config: &Config, choreo_number: usize) -> Choreogra
         description,
         choreo_image: choreo_img,
         dancers: dancers_map.get(&choreo_number).cloned().unwrap_or_default(),
-        videos,
     }
 }

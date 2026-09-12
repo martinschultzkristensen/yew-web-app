@@ -10,10 +10,8 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
 use tauri::path::BaseDirectory;
-use tauri::Emitter;
 use tauri::Manager;
 
-const CONFIG_FILENAME: &str = "config.toml";
 const CONFIG_RESOURCE_PATH: &str = "resources/config.toml"; // Path relative to resources directory
 
 // Audio cache structure

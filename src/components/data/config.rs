@@ -4,24 +4,6 @@ use crate::components::molecules::video_list::DemoVideo;
 use crate::components::molecules::video_list::Video;
 use crate::components::molecules::video_list::VideoType;
 use serde::Deserialize;
-use serde_wasm_bindgen::from_value;
-use wasm_bindgen::JsValue;
-
-pub struct ConfigError(String);
-
-impl std::fmt::Debug for ConfigError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "ConfigError: {}", self.0)
-    }
-}
-
-impl std::fmt::Display for ConfigError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
-
-impl std::error::Error for ConfigError {}
 
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 pub struct ConfigDancer {
@@ -77,13 +59,6 @@ pub struct Config {
 //impl PartialEq for Config and comprare relevant fields
 
 impl Config {
-    // Deserialize the `JsValue` into the Rust struct
-    pub fn from_jsvalue(js_value: JsValue) -> Result<Config, ConfigError> {
-        // Deserialize the JsValue into Config struct using serde_wasm_bindgen
-        from_value(js_value)
-            .map_err(|e| ConfigError(format!("Failed to deserialize JsValue: {:?}", e)))
-    }
-
     pub fn load_dancers(&self) -> std::collections::HashMap<usize, Vec<Dancer>> {
         let mut choreography_map = std::collections::HashMap::new();
 

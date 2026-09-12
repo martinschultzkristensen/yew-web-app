@@ -5,7 +5,6 @@ pub mod machine_delivery_store;
 pub mod supabase_sync;
 
 use commands::*;
-use http::response::Builder as ResponseBuilder; // <-- there are often other builders in scope. Therefore rename to avoid ambiguity.
 use machine_delivery_store::*;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
@@ -20,8 +19,8 @@ use std::{
     time::Duration,
 };
 use supabase_sync::*;
-use tauri::http::{Request, Response};
-use tauri::{Manager, Runtime};
+use tauri::http::Response;
+use tauri::Manager;
 use tauri_plugin_log::{Target, TargetKind};
 use toml;
 pub mod path_utils;

@@ -1,11 +1,9 @@
 //src/components/molecules/video_list.rs
 use crate::components::atoms::arrow_respnd_ui::*;
 use serde_json::json;
-use serde_wasm_bindgen::{from_value, to_value};
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 use web_sys::console;
-use web_sys::{Blob as WebBlob, Url};
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq)]
@@ -84,7 +82,6 @@ pub fn videos_list(props: &VideosListProps) -> Html {
     let video_ref = use_node_ref();
 
     let current_video = &videos[*current_index]; // <- get current_index to display the corresponding video. Access the inner Video with .video
-    let video = current_video.get_video();
     let should_loop = current_video.should_loop();
     let video_ref_for_ended = video_ref.clone();
     let on_ended_callback = on_ended.clone();

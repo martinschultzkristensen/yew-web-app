@@ -13,7 +13,6 @@ use yew::prelude::*;
 use yew_router::prelude::use_navigator;
 
 // For Tauri backend invoke
-use serde_json::json;
 use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsValue;
 

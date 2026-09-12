@@ -1,5 +1,4 @@
 //src/components/molecules/sound_effects.rs
-use js_sys::Uint8Array;
 use log;
 use serde_wasm_bindgen::to_value;
 use std::collections::HashMap;
@@ -7,7 +6,7 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
 use wasm_bindgen_futures::JsFuture;
-use web_sys::{AudioBuffer, AudioBufferSourceNode, AudioContext, BaseAudioContext};
+use web_sys::{AudioBuffer, AudioContext};
 use yew::prelude::*;
 
 #[wasm_bindgen]

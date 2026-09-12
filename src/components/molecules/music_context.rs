@@ -3,7 +3,7 @@ use crate::components::molecules::sound_effects::get_audio_effect;
 use log;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::{spawn_local, JsFuture};
-use web_sys::{AudioBuffer, AudioBufferSourceNode, AudioContext, BaseAudioContext};
+use web_sys::{AudioBuffer, AudioBufferSourceNode, AudioContext, AudioScheduledSourceNode};
 use yew::prelude::*;
 
 const MUSIC_TRACK: &str = "low_8bit-menusong-short-ed.mp3";
@@ -107,7 +107,7 @@ impl Component for MusicContextProvider {
             }
             MusicContextAction::StartMusic => {
                 if let Some(source) = self.current_source.take() {
-                    let _ = source.stop();
+                    let _ = AudioScheduledSourceNode::stop(&source);
                 }
                 let Some(buffer) = &self.buffer else {
                     log::warn!("Music track not loaded yet; ignoring start request");
@@ -137,7 +137,7 @@ impl Component for MusicContextProvider {
             }
             MusicContextAction::StopMusic => {
                 if let Some(source) = self.current_source.take() {
-                    let _ = source.stop();
+                    let _ = AudioScheduledSourceNode::stop(&source);
                 }
                 false
             }
