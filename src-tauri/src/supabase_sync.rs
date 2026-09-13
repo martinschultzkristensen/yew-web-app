@@ -188,6 +188,23 @@ fn create_http_client() -> Result<Client, String> {
         .map_err(|error| format!("Failed to create HTTP client: {error}"))
 }
 
+// Storage downloads stream a media file whose size (and therefore total
+// transfer time) isn't known up front, so a fixed total deadline like
+// `create_http_client()` uses is the wrong tool here: on a slow connection a
+// large file can legitimately take minutes, and the request would get killed
+// mid-stream well before it finishes, surfacing as a body-read/decode error.
+// `read_timeout` resets after every successfully read chunk instead, so it
+// only fires when the transfer actually stalls or the connection drops —
+// exactly the failure this client needs to catch.
+fn create_download_http_client() -> Result<Client, String> {
+    Client::builder()
+        .connect_timeout(Duration::from_secs(15))
+        .read_timeout(Duration::from_secs(60))
+        .user_agent("DanceOmatic-Machine/0.1")
+        .build()
+        .map_err(|error| format!("Failed to create download HTTP client: {error}"))
+}
+
 fn load_supabase_config(handle: &AppHandle) -> Result<SupabaseConfig, String> {
     let resource_path = handle
         .path()
@@ -797,7 +814,7 @@ pub(crate) async fn authenticated_storage_client(
     let session = load_or_refresh_session(handle, &config).await?;
 
     Ok(AuthenticatedStorageClient {
-        client: create_http_client()?,
+        client: create_download_http_client()?,
         supabase_url: config.supabase_url,
         publishable_key: config.publishable_key,
         access_token: session.access_token,
