@@ -161,7 +161,20 @@ impl Component for SoundEffectsProvider {
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             SoundEffectsAction::PlaySound(effect_name) => {
-                log::info!("Attempting to play sound: {}", effect_name);
+                let audio_context = &self.sound_effects_context.audio_context;
+                log::info!(
+                    "Attempting to play sound: {} (AudioContext state: {:?})",
+                    effect_name,
+                    audio_context.state()
+                );
+                // AudioContext can start (or drift back into) a "suspended" state -
+                // e.g. the browser's autoplay policy, or the output device that was
+                // default when the context was created going away. resume() is a
+                // cheap no-op when already running, so it's safe to call on every
+                // playback attempt rather than trying to track state ourselves.
+                if let Err(e) = audio_context.resume() {
+                    log::warn!("AudioContext::resume() failed for {}: {:?}", effect_name, e);
+                }
                 if let Some(buffer) = self.sound_effects_context.effects.get(&effect_name) {
                     log::info!("Found audio buffer for: {}", effect_name);
                     let source = match self

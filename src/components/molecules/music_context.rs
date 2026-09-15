@@ -109,6 +109,18 @@ impl Component for MusicContextProvider {
                 if let Some(source) = self.current_source.take() {
                     let _ = AudioScheduledSourceNode::stop(&source);
                 }
+                log::info!(
+                    "Starting music (AudioContext state: {:?})",
+                    self.audio_context.state()
+                );
+                // AudioContext can start (or drift back into) a "suspended" state -
+                // e.g. the browser's autoplay policy, or the output device that was
+                // default when the context was created going away. resume() is a
+                // cheap no-op when already running, so it's safe to call every time
+                // rather than trying to track state ourselves.
+                if let Err(e) = self.audio_context.resume() {
+                    log::warn!("AudioContext::resume() failed for music: {:?}", e);
+                }
                 let Some(buffer) = &self.buffer else {
                     log::warn!("Music track not loaded yet; ignoring start request");
                     return false;
