@@ -381,6 +381,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_config,
             debug_paths,
+            frontend_log,
             reset_config_to_default,
             import_video,
             import_images,

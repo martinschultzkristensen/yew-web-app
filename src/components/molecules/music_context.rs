@@ -1,5 +1,5 @@
 // src/components/music_context.rs
-use crate::components::molecules::sound_effects::get_audio_effect;
+use crate::components::molecules::sound_effects::{frontend_log, get_audio_effect};
 use log;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::{spawn_local, JsFuture};
@@ -109,18 +109,28 @@ impl Component for MusicContextProvider {
                 if let Some(source) = self.current_source.take() {
                     let _ = AudioScheduledSourceNode::stop(&source);
                 }
+                let state_before = self.audio_context.state();
                 log::info!(
                     "Starting music (AudioContext state: {:?})",
-                    self.audio_context.state()
+                    state_before
                 );
                 // AudioContext can start (or drift back into) a "suspended" state -
                 // e.g. the browser's autoplay policy, or the output device that was
                 // default when the context was created going away. resume() is a
                 // cheap no-op when already running, so it's safe to call every time
                 // rather than trying to track state ourselves.
-                if let Err(e) = self.audio_context.resume() {
+                let resume_result = self.audio_context.resume();
+                if let Err(e) = &resume_result {
                     log::warn!("AudioContext::resume() failed for music: {:?}", e);
                 }
+                frontend_log(
+                    if resume_result.is_err() { "warn" } else { "info" },
+                    format!(
+                        "StartMusic: state before resume={:?}, resume()={}",
+                        state_before,
+                        if resume_result.is_ok() { "ok" } else { "failed" }
+                    ),
+                );
                 let Some(buffer) = &self.buffer else {
                     log::warn!("Music track not loaded yet; ignoring start request");
                     return false;

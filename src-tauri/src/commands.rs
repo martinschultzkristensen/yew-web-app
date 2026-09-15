@@ -91,6 +91,18 @@ pub async fn get_audio_effect(
         .ok_or_else(|| "Effect not found".to_string())
 }
 
+// Lets the WASM frontend write into the backend's log file (via tauri_plugin_log),
+// since the browser console isn't practically reachable on a fullscreen kiosk.
+#[tauri::command]
+pub fn frontend_log(level: String, message: String) {
+    match level.to_ascii_lowercase().as_str() {
+        "error" => log::error!("[frontend] {message}"),
+        "warn" => log::warn!("[frontend] {message}"),
+        "debug" => log::debug!("[frontend] {message}"),
+        _ => log::info!("[frontend] {message}"),
+    }
+}
+
 // This function creates a user media directory
 fn get_user_media_path(handle: &tauri::AppHandle) -> Result<PathBuf, String> {
     let path = media_dir(handle)?;

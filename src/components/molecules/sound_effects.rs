@@ -15,6 +15,23 @@ extern "C" {
     async fn invoke(cmd: &str, args: JsValue) -> JsValue;
 }
 
+// Writes into the backend's log file (tauri_plugin_log) instead of the browser
+// console, which isn't practically reachable on a fullscreen kiosk. Fire-and-forget:
+// logging failures shouldn't affect audio playback.
+pub fn frontend_log(level: &str, message: String) {
+    spawn_local({
+        let level = level.to_string();
+        async move {
+            let args = to_value(&serde_json::json!({
+                "level": level,
+                "message": message,
+            }))
+            .expect("failed to serialize frontend_log args");
+            invoke("frontend_log", args).await;
+        }
+    });
+}
+
 pub async fn get_audio_effect(effect_name: &str) -> Result<js_sys::Uint8Array, JsValue> {
     log::info!("Requesting audio effect from backend: {}", effect_name);
     let args = to_value(&serde_json::json!({
@@ -162,19 +179,30 @@ impl Component for SoundEffectsProvider {
         match msg {
             SoundEffectsAction::PlaySound(effect_name) => {
                 let audio_context = &self.sound_effects_context.audio_context;
+                let state_before = audio_context.state();
                 log::info!(
                     "Attempting to play sound: {} (AudioContext state: {:?})",
                     effect_name,
-                    audio_context.state()
+                    state_before
                 );
                 // AudioContext can start (or drift back into) a "suspended" state -
                 // e.g. the browser's autoplay policy, or the output device that was
                 // default when the context was created going away. resume() is a
                 // cheap no-op when already running, so it's safe to call on every
                 // playback attempt rather than trying to track state ourselves.
-                if let Err(e) = audio_context.resume() {
+                let resume_result = audio_context.resume();
+                if let Err(e) = &resume_result {
                     log::warn!("AudioContext::resume() failed for {}: {:?}", effect_name, e);
                 }
+                frontend_log(
+                    if resume_result.is_err() { "warn" } else { "info" },
+                    format!(
+                        "PlaySound {}: state before resume={:?}, resume()={}",
+                        effect_name,
+                        state_before,
+                        if resume_result.is_ok() { "ok" } else { "failed" }
+                    ),
+                );
                 if let Some(buffer) = self.sound_effects_context.effects.get(&effect_name) {
                     log::info!("Found audio buffer for: {}", effect_name);
                     let source = match self
