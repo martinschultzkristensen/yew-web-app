@@ -25,6 +25,32 @@ use tauri_plugin_log::{Target, TargetKind};
 use toml;
 pub mod path_utils;
 
+/// WebKitGTK has no audio stack of its own: Web Audio leaves through GStreamer, and WebKit asks
+/// `autoaudiosink` to choose the output element. autoaudiosink prefers `pulsesink`, and pulsesink
+/// talking to PipeWire's PulseAudio compatibility layer is silent on a Bluetooth sink -- the
+/// stream opens, unmuted, at full volume, the AudioContext reports "running", and no audio
+/// actually reaches the speaker. Ranking the native `pipewiresink` top fixes it and costs nothing
+/// on wired outputs, where pulsesink happened to work anyway.
+///
+/// An existing `GST_PLUGIN_FEATURE_RANK` is respected: we append rather than replace, and do
+/// nothing if it already mentions pipewiresink. This must run before the webview starts, since
+/// GStreamer reads the variable when it builds its registry (the child WebKitWebProcess inherits
+/// it from us).
+#[cfg(target_os = "linux")]
+fn prefer_pipewire_audio_sink() {
+    const KEY: &str = "GST_PLUGIN_FEATURE_RANK";
+    let existing = std::env::var(KEY).unwrap_or_default();
+    if existing.contains("pipewiresink") {
+        return;
+    }
+    let next = if existing.is_empty() {
+        "pipewiresink:MAX".to_owned()
+    } else {
+        format!("{existing},pipewiresink:MAX")
+    };
+    std::env::set_var(KEY, next);
+}
+
 // Track last logged media path to avoid duplicate logs during streaming
 static LAST_LOGGED_MEDIA_PATH: Mutex<Option<String>> = Mutex::new(None);
 static MACHINE_RESTART_PENDING: AtomicBool = AtomicBool::new(false);
@@ -151,6 +177,9 @@ impl Config {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    #[cfg(target_os = "linux")]
+    prefer_pipewire_audio_sink();
+
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
