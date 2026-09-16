@@ -68,22 +68,59 @@ impl Component for MusicContextProvider {
             spawn_local(async move {
                 match get_audio_effect(MUSIC_TRACK).await {
                     Ok(data) => {
+                        let raw_byte_len = data.length();
                         let array_buffer = data.buffer();
                         match audio_context.decode_audio_data(&array_buffer) {
                             Ok(promise) => match JsFuture::from(promise).await {
                                 Ok(buffer) => match buffer.dyn_into::<AudioBuffer>() {
                                     Ok(audio_buffer) => {
+                                        frontend_log(
+                                            "info",
+                                            format!(
+                                                "decodeAudioData resolved for {}: raw_bytes={}, duration={}, length={}, channels={}",
+                                                MUSIC_TRACK,
+                                                raw_byte_len,
+                                                audio_buffer.duration(),
+                                                audio_buffer.length(),
+                                                audio_buffer.number_of_channels()
+                                            ),
+                                        );
                                         link.send_message(MusicContextAction::TrackLoaded(
                                             audio_buffer,
                                         ));
                                     }
                                     Err(e) => {
-                                        log::error!("Failed to convert music to AudioBuffer: {:?}", e)
+                                        log::error!("Failed to convert music to AudioBuffer: {:?}", e);
+                                        frontend_log(
+                                            "warn",
+                                            format!(
+                                                "decodeAudioData resolved for {} (raw_bytes={}) but result wasn't an AudioBuffer: {:?}",
+                                                MUSIC_TRACK, raw_byte_len, e
+                                            ),
+                                        );
                                     }
                                 },
-                                Err(e) => log::error!("Failed to decode music track: {:?}", e),
+                                Err(e) => {
+                                    log::error!("Failed to decode music track: {:?}", e);
+                                    frontend_log(
+                                        "warn",
+                                        format!(
+                                            "decodeAudioData rejected for {} (raw_bytes={}): {:?}",
+                                            MUSIC_TRACK, raw_byte_len, e
+                                        ),
+                                    );
+                                }
                             },
-                            Err(e) => log::error!("Failed to start music decode: {:?}", e),
+                            Err(e) => {
+                                log::error!("Failed to start music decode: {:?}", e);
+                                frontend_log(
+                                    "warn",
+                                    format!(
+                                        "decodeAudioData failed to start for {} (raw_bytes={}): {:?}",
+                                        MUSIC_TRACK, raw_byte_len, e
+                                    ),
+                                );
+                            }
                         }
                     }
                     Err(e) => log::error!("Failed to load music track {}: {:?}", MUSIC_TRACK, e),

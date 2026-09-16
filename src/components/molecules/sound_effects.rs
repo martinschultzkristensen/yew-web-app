@@ -113,6 +113,7 @@ impl Component for SoundEffectsProvider {
                             let array_buffer = data.buffer();
                             log::info!("Created array buffer for: {}", name);
 
+                            let raw_byte_len = data.length();
                             let decode_result = audio_context.decode_audio_data(&array_buffer);
                             match decode_result {
                                 Ok(promise) => {
@@ -126,6 +127,17 @@ impl Component for SoundEffectsProvider {
                                                         "Successfully created AudioBuffer for: {}",
                                                         name
                                                     );
+                                                    frontend_log(
+                                                        "info",
+                                                        format!(
+                                                            "decodeAudioData resolved for {}: raw_bytes={}, duration={}, length={}, channels={}",
+                                                            name,
+                                                            raw_byte_len,
+                                                            audio_buffer.duration(),
+                                                            audio_buffer.length(),
+                                                            audio_buffer.number_of_channels()
+                                                        ),
+                                                    );
                                                     link.send_message(
                                                         SoundEffectsAction::LoadEffect(
                                                             name.to_string(),
@@ -135,6 +147,13 @@ impl Component for SoundEffectsProvider {
                                                 }
                                                 Err(e) => {
                                                     log::error!("Failed to convert to AudioBuffer for {}: {:?}", name, e);
+                                                    frontend_log(
+                                                        "warn",
+                                                        format!(
+                                                            "decodeAudioData resolved for {} (raw_bytes={}) but result wasn't an AudioBuffer: {:?}",
+                                                            name, raw_byte_len, e
+                                                        ),
+                                                    );
                                                 }
                                             }
                                         }
@@ -144,11 +163,25 @@ impl Component for SoundEffectsProvider {
                                                 name,
                                                 e
                                             );
+                                            frontend_log(
+                                                "warn",
+                                                format!(
+                                                    "decodeAudioData rejected for {} (raw_bytes={}): {:?}",
+                                                    name, raw_byte_len, e
+                                                ),
+                                            );
                                         }
                                     }
                                 }
                                 Err(e) => {
                                     log::error!("Failed to start decode for {}: {:?}", name, e);
+                                    frontend_log(
+                                        "warn",
+                                        format!(
+                                            "decodeAudioData failed to start for {} (raw_bytes={}): {:?}",
+                                            name, raw_byte_len, e
+                                        ),
+                                    );
                                 }
                             }
                         }
