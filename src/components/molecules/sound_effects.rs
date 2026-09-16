@@ -6,7 +6,7 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
 use wasm_bindgen_futures::JsFuture;
-use web_sys::{AudioBuffer, AudioContext};
+use web_sys::{AudioBuffer, AudioContext, AudioContextOptions};
 use yew::prelude::*;
 
 #[wasm_bindgen]
@@ -76,7 +76,12 @@ impl Component for SoundEffectsProvider {
 
     fn create(ctx: &Context<Self>) -> Self {
         log::info!("Initializing SoundEffectsProvider");
-        let audio_context = match AudioContext::new() {
+        // Match the kiosk's Bluetooth sink's native rate (48kHz) so PipeWire doesn't
+        // have to resample from the Web Audio default (44.1kHz), which was a
+        // suspected source of playback distortion.
+        let options = AudioContextOptions::new();
+        options.set_sample_rate(48000.0);
+        let audio_context = match AudioContext::new_with_context_options(&options) {
             Ok(ctx) => {
                 log::info!("Successfully created AudioContext");
                 ctx
