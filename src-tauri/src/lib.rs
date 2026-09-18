@@ -26,46 +26,39 @@ use toml;
 pub mod path_utils;
 
 /// WebKitGTK has no audio stack of its own: Web Audio leaves through GStreamer, and WebKit asks
-/// `autoaudiosink` to choose the output element. autoaudiosink prefers `pulsesink`, and pulsesink
-/// talking to PipeWire's PulseAudio compatibility layer is silent on a Bluetooth sink -- the
-/// stream opens, unmuted, at full volume, the AudioContext reports "running", and no audio
-/// actually reaches the speaker. Ranking the native `pipewiresink` top fixes it and costs nothing
-/// on wired outputs, where pulsesink happened to work anyway.
+/// `autoaudiosink` to choose the output element. autoaudiosink's default choice, `pulsesink`
+/// (-> PipeWire's PulseAudio compatibility layer), is silent on a Bluetooth sink -- the stream
+/// opens, unmuted, at full volume, the AudioContext reports "running", and no audio actually
+/// reaches the speaker.
+///
+/// The obvious fix, ranking `pipewiresink` (PipeWire's native GStreamer sink) above it, does fix
+/// Bluetooth silence, but was confirmed (by toggling it on/off) to itself be the source of
+/// distortion on *every* output, Bluetooth and the internal speaker alike, regardless of a
+/// PIPEWIRE_LATENCY hint pinned to the system's own default quantum/rate. Disabling it entirely
+/// made both outputs clean again (matching `main`, which has none of these audio fixes) while
+/// making Bluetooth silent again. That symmetry points at pipewiresink itself, not anything
+/// device- or latency-specific.
+///
+/// So: rank `alsasink` instead. With `pipewire-alsa` installed, ALSA's "default" device is
+/// redirected through PipeWire's ALSA-compatibility layer -- a third, distinct code path from
+/// both pulsesink (clean but silent on Bluetooth) and pipewiresink (plays but distorts
+/// everywhere) worth trying since neither of the other two worked cleanly.
 ///
 /// An existing `GST_PLUGIN_FEATURE_RANK` is respected: we append rather than replace, and do
-/// nothing if it already mentions pipewiresink. This must run before the webview starts, since
+/// nothing if it already mentions alsasink. This must run before the webview starts, since
 /// GStreamer reads the variable when it builds its registry (the child WebKitWebProcess inherits
 /// it from us).
 #[cfg(target_os = "linux")]
 fn prefer_pipewire_audio_sink() {
     const KEY: &str = "GST_PLUGIN_FEATURE_RANK";
     let existing = std::env::var(KEY).unwrap_or_default();
-    if !existing.contains("pipewiresink") {
+    if !existing.contains("alsasink") {
         let next = if existing.is_empty() {
-            "pipewiresink:MAX".to_owned()
+            "alsasink:MAX".to_owned()
         } else {
-            format!("{existing},pipewiresink:MAX")
+            format!("{existing},alsasink:MAX")
         };
         std::env::set_var(KEY, next);
-    }
-
-    // Ranking pipewiresink above pulsesink fixed Bluetooth silence, but introduced
-    // distortion on every output (Bluetooth and internal speaker alike) - confirmed
-    // by disabling this function entirely, which made the internal speaker clean
-    // again (matching main, which has none of these audio fixes) while making
-    // Bluetooth silent again (the original bug). That symmetry - distortion appears
-    // exactly when, and only when, pipewiresink is in use, regardless of device -
-    // points at pipewiresink itself negotiating a bad buffer size/latency by
-    // default rather than anything device-specific.
-    //
-    // PIPEWIRE_LATENCY is a real, documented PipeWire client env var ("sets a
-    // specific latency for a stream... will not be larger") that any PipeWire
-    // client, pipewiresink included, respects. Pin it to the system's own
-    // confirmed default (clock.quantum=1024, clock.rate=48000, verified via
-    // `pw-metadata -n settings 0`) so pipewiresink can't negotiate something
-    // smaller/unstable on its own.
-    if std::env::var("PIPEWIRE_LATENCY").is_err() {
-        std::env::set_var("PIPEWIRE_LATENCY", "1024/48000");
     }
 }
 
