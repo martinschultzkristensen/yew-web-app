@@ -260,8 +260,29 @@ impl Component for SoundEffectsProvider {
                         }
                     };
                     source.set_buffer(Some(buffer));
+                    // Some of the bundled sound effects are mastered right at 0dBFS
+                    // (e.g. BtnStart.mp3, button-124476.mp3 measured -0.2/-0.4dB true
+                    // peak). MP3 decoding can produce momentary reconstruction peaks
+                    // above the encoded level even with no resampling involved, and
+                    // AudioContext's destination hard-clips with zero headroom - which
+                    // matched the distortion seen identically on every output device.
+                    // A small gain reduction gives that overshoot somewhere to go
+                    // before it clips.
+                    let gain_node = match self.sound_effects_context.audio_context.create_gain() {
+                        Ok(g) => {
+                            g.gain().set_value(0.7);
+                            g
+                        }
+                        Err(e) => {
+                            log::error!("Failed to create gain node: {:?}", e);
+                            return false;
+                        }
+                    };
                     let destination = self.sound_effects_context.audio_context.destination();
-                    match source.connect_with_audio_node(&destination) {
+                    match source
+                        .connect_with_audio_node(&gain_node)
+                        .and_then(|_| gain_node.connect_with_audio_node(&destination))
+                    {
                         Ok(_) => {
                             log::info!("Successfully connected audio nodes");
                             match source.start() {

@@ -183,8 +183,22 @@ impl Component for MusicContextProvider {
                 };
                 source.set_buffer(Some(buffer));
                 source.set_loop(true);
-                if let Err(e) =
-                    source.connect_with_audio_node(&self.audio_context.destination())
+                // Small headroom reduction, matching sound_effects.rs, in case
+                // decode-time reconstruction overshoot pushes samples past 0dBFS -
+                // AudioContext's destination has no headroom of its own and hard-clips.
+                let gain_node = match self.audio_context.create_gain() {
+                    Ok(g) => {
+                        g.gain().set_value(0.7);
+                        g
+                    }
+                    Err(e) => {
+                        log::error!("Failed to create music gain node: {:?}", e);
+                        return false;
+                    }
+                };
+                if let Err(e) = source
+                    .connect_with_audio_node(&gain_node)
+                    .and_then(|_| gain_node.connect_with_audio_node(&self.audio_context.destination()))
                 {
                     log::error!("Failed to connect music source: {:?}", e);
                     return false;
