@@ -37,6 +37,7 @@ pub mod path_utils;
 /// GStreamer reads the variable when it builds its registry (the child WebKitWebProcess inherits
 /// it from us).
 #[cfg(target_os = "linux")]
+#[allow(dead_code)] // temporarily unused while testing without it, see run()
 fn prefer_pipewire_audio_sink() {
     const KEY: &str = "GST_PLUGIN_FEATURE_RANK";
     let existing = std::env::var(KEY).unwrap_or_default();
@@ -177,8 +178,16 @@ impl Config {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    #[cfg(target_os = "linux")]
-    prefer_pipewire_audio_sink();
+    // Disabled for testing: this forces GStreamer to prefer pipewiresink over
+    // pulsesink for every audio output the app produces (not just Bluetooth),
+    // which was needed while a stray pulseaudio daemon made pulsesink/pipewire-pulse
+    // silent on Bluetooth. Now that pulseaudio has been removed from the kiosk
+    // entirely, that conflict may no longer exist, and this global sink-ranking
+    // override is the prime remaining suspect for the distortion seen identically
+    // on both Bluetooth and the internal speaker - main (no PipeWire fixes at all)
+    // was clean on the internal speaker once pulseaudio was removed.
+    // #[cfg(target_os = "linux")]
+    // prefer_pipewire_audio_sink();
 
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
