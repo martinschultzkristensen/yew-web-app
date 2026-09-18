@@ -39,6 +39,22 @@ pub fn static_asset_url(filename: &str) -> String {
     format!("{LOCAL_MEDIA_BASE_URL}/static/{filename}")
 }
 
+// A WASM panic anywhere in the frontend otherwise only surfaces via
+// console_error_panic_hook, i.e. the browser console -- which isn't reachable on
+// this kiosk. That's a real blind spot: a startup hang has been seen where the
+// backend log goes silent right after config load with no further activity,
+// consistent with the frontend panicking during initial render before anything
+// else could run. This hook keeps the normal console_error_panic_hook behavior
+// (useful for `trunk serve`/local dev) and additionally forwards the panic
+// message into danceOmatic.log via frontend_log, so a repeat of that hang leaves
+// a trace of what actually happened.
+pub fn install_panic_logging() {
+    std::panic::set_hook(Box::new(|info| {
+        console_error_panic_hook::hook(info);
+        frontend_log("error", format!("WASM panic: {info}"));
+    }));
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct SoundEffectsContext {
     pub play_sound: Callback<String>,

@@ -22,6 +22,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 mod components;
+pub use components::molecules::sound_effects::install_panic_logging;
 #[derive(Clone, Routable, Debug, PartialEq)]
 pub enum Route {
     #[at("/about-choreo/:number")]

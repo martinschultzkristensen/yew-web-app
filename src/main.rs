@@ -10,7 +10,7 @@ fn main() {
     cfg_if! {
             if #[cfg(target_arch = "wasm32")] {
                 wasm_logger::init(wasm_logger::Config::default());
-                console_error_panic_hook::set_once();
+                yew_app::install_panic_logging();
             }
         else {
             // For native (Tauri backend, CLI, etc.)
