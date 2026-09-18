@@ -37,19 +37,36 @@ pub mod path_utils;
 /// GStreamer reads the variable when it builds its registry (the child WebKitWebProcess inherits
 /// it from us).
 #[cfg(target_os = "linux")]
-#[allow(dead_code)] // temporarily unused while testing without it, see run()
 fn prefer_pipewire_audio_sink() {
     const KEY: &str = "GST_PLUGIN_FEATURE_RANK";
     let existing = std::env::var(KEY).unwrap_or_default();
-    if existing.contains("pipewiresink") {
-        return;
+    if !existing.contains("pipewiresink") {
+        let next = if existing.is_empty() {
+            "pipewiresink:MAX".to_owned()
+        } else {
+            format!("{existing},pipewiresink:MAX")
+        };
+        std::env::set_var(KEY, next);
     }
-    let next = if existing.is_empty() {
-        "pipewiresink:MAX".to_owned()
-    } else {
-        format!("{existing},pipewiresink:MAX")
-    };
-    std::env::set_var(KEY, next);
+
+    // Ranking pipewiresink above pulsesink fixed Bluetooth silence, but introduced
+    // distortion on every output (Bluetooth and internal speaker alike) - confirmed
+    // by disabling this function entirely, which made the internal speaker clean
+    // again (matching main, which has none of these audio fixes) while making
+    // Bluetooth silent again (the original bug). That symmetry - distortion appears
+    // exactly when, and only when, pipewiresink is in use, regardless of device -
+    // points at pipewiresink itself negotiating a bad buffer size/latency by
+    // default rather than anything device-specific.
+    //
+    // PIPEWIRE_LATENCY is a real, documented PipeWire client env var ("sets a
+    // specific latency for a stream... will not be larger") that any PipeWire
+    // client, pipewiresink included, respects. Pin it to the system's own
+    // confirmed default (clock.quantum=1024, clock.rate=48000, verified via
+    // `pw-metadata -n settings 0`) so pipewiresink can't negotiate something
+    // smaller/unstable on its own.
+    if std::env::var("PIPEWIRE_LATENCY").is_err() {
+        std::env::set_var("PIPEWIRE_LATENCY", "1024/48000");
+    }
 }
 
 // Track last logged media path to avoid duplicate logs during streaming
@@ -178,16 +195,12 @@ impl Config {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    // Disabled for testing: this forces GStreamer to prefer pipewiresink over
-    // pulsesink for every audio output the app produces (not just Bluetooth),
-    // which was needed while a stray pulseaudio daemon made pulsesink/pipewire-pulse
-    // silent on Bluetooth. Now that pulseaudio has been removed from the kiosk
-    // entirely, that conflict may no longer exist, and this global sink-ranking
-    // override is the prime remaining suspect for the distortion seen identically
-    // on both Bluetooth and the internal speaker - main (no PipeWire fixes at all)
-    // was clean on the internal speaker once pulseaudio was removed.
-    // #[cfg(target_os = "linux")]
-    // prefer_pipewire_audio_sink();
+    // Confirmed by disabling this: it's needed for Bluetooth (silent without it),
+    // and it was the actual source of the distortion on every output (clean without
+    // it, matching main). See the comment on prefer_pipewire_audio_sink() itself
+    // for the PIPEWIRE_LATENCY fix now paired with it.
+    #[cfg(target_os = "linux")]
+    prefer_pipewire_audio_sink();
 
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
