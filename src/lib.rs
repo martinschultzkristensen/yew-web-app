@@ -17,6 +17,7 @@ use wasm_bindgen::prelude::wasm_bindgen;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
+use web_sys::AudioContext;
 use yew::functional::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -52,6 +53,16 @@ fn is_tauri() -> bool {
 pub fn dance_o_matic() -> Html {
     let config = use_state(|| None::<Rc<Config>>);
     let config_fetched = use_state(|| false);
+    // Music and sound effects previously each created their own independent
+    // AudioContext. Over Bluetooth A2DP, having two separate concurrent
+    // PipeWire/GStreamer client streams attached to the same sink was found to
+    // break both: playing a sound effect while music was already playing over
+    // Bluetooth killed all audio (music included) until navigating away to a
+    // <video> element, which uses a completely separate native pipeline. A
+    // single shared AudioContext means only one such stream is ever open.
+    let audio_context = use_state(|| {
+        AudioContext::new().expect("Failed to create shared AudioContext")
+    });
     let config_clone = config.clone();
     let config_fetched_clone = config_fetched.clone();
 
@@ -126,8 +137,8 @@ pub fn dance_o_matic() -> Html {
 
     html! {
         <div>
-            <MusicContextProvider>
-            <SoundEffectsProvider>
+            <MusicContextProvider audio_context={(*audio_context).clone()}>
+            <SoundEffectsProvider audio_context={(*audio_context).clone()}>
             <BrowserRouter>
                 { if let Some(config) = &*config {
                     html! { <Switch<Route> render={switch(config.clone())} /> }

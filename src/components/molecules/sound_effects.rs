@@ -61,6 +61,7 @@ pub enum SoundEffectsAction {
 
 #[derive(Properties, PartialEq)]
 pub struct SoundEffectsProviderProps {
+    pub audio_context: AudioContext,
     #[prop_or_default]
     pub children: Children,
 }
@@ -76,26 +77,11 @@ impl Component for SoundEffectsProvider {
 
     fn create(ctx: &Context<Self>) -> Self {
         log::info!("Initializing SoundEffectsProvider");
-        // Previously forced to 48000Hz via AudioContextOptions to match the Bluetooth
-        // sink's native rate, on the theory that this avoided a PipeWire resample step
-        // that was causing xruns. Reverted: that data was gathered while a stray
-        // pulseaudio daemon was still fighting PipeWire for the audio device, and the
-        // forced 48kHz rate instead made the browser resample every 44.1kHz-encoded MP3
-        // during decodeAudioData(), which can overshoot past 0dBFS and get hard-clipped
-        // by the Web Audio destination - identical distortion on every output device,
-        // since it happens before the signal reaches PipeWire/ALSA at all. Letting
-        // AudioContext use its default/native rate leaves any resampling to PipeWire,
-        // which already handles it cleanly for <video> audio.
-        let audio_context = match AudioContext::new() {
-            Ok(ctx) => {
-                log::info!("Successfully created AudioContext");
-                ctx
-            }
-            Err(e) => {
-                log::error!("Failed to create AudioContext: {:?}", e);
-                panic!("Failed to initialize audio");
-            }
-        };
+        // Shared with MusicContextProvider (created once in lib.rs) rather than each
+        // provider creating its own AudioContext - see the comment in lib.rs for why:
+        // two concurrent Web Audio streams attached to the same Bluetooth sink broke
+        // both of them.
+        let audio_context = ctx.props().audio_context.clone();
         let effects = HashMap::new();
         let link = ctx.link().clone();
 

@@ -22,6 +22,7 @@ pub enum MusicContextAction {
 
 #[derive(Properties, PartialEq)]
 pub struct MusicContextProviderProps {
+    pub audio_context: AudioContext,
     #[prop_or_default]
     pub children: Children,
 }
@@ -50,15 +51,11 @@ impl Component for MusicContextProvider {
             stop_music,
         };
 
-        // Previously forced to 48000Hz via AudioContextOptions - reverted, see the
-        // matching comment in sound_effects.rs for why.
-        let audio_context = match AudioContext::new() {
-            Ok(ctx) => ctx,
-            Err(e) => {
-                log::error!("Failed to create AudioContext for music: {:?}", e);
-                panic!("Failed to initialize music playback");
-            }
-        };
+        // Shared with SoundEffectsProvider (created once in lib.rs) rather than each
+        // provider creating its own AudioContext - see the comment in lib.rs for why:
+        // two concurrent Web Audio streams attached to the same Bluetooth sink broke
+        // both of them.
+        let audio_context = ctx.props().audio_context.clone();
 
         // Loaded via the same backend byte-fetch + Web Audio decode path as
         // sound_effects.rs, instead of an <audio src>, because WebKitGTK on
