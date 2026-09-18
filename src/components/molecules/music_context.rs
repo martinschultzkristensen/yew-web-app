@@ -26,7 +26,7 @@ pub struct MusicContextProviderProps {
 #[derive(Clone, PartialEq)]
 pub struct MusicContextProvider {
     music_context: MusicContext,
-    audio_element: HtmlAudioElement,
+    audio_element: Option<HtmlAudioElement>,
 }
 
 impl Component for MusicContextProvider {
@@ -45,35 +45,46 @@ impl Component for MusicContextProvider {
             stop_music,
         };
 
-        // Played through a plain <audio> element pointed at the local media server
-        // (WebKitGTK's normal media pipeline) instead of the Web Audio decode+play
-        // path, which has proven unreliable over Bluetooth on this WebKitGTK/PipeWire
-        // setup (first silent, then distorted) despite several targeted
-        // PipeWire/GStreamer fixes. The <video> element's audio, using this same
-        // native pipeline, has stayed clean throughout.
-        let url = static_asset_url(MUSIC_TRACK);
-        let audio_element = match HtmlAudioElement::new_with_src(&url) {
-            Ok(el) => {
-                el.set_loop(true);
-                el
-            }
-            Err(e) => {
-                log::error!("Failed to create music audio element: {:?}", e);
-                panic!("Failed to initialize music playback");
-            }
-        };
-
+        // The <audio> element (and the GStreamer playbin/pipewiresink pipeline behind
+        // it) is created lazily on first StartMusic, not eagerly here. Creating it at
+        // mount time raced directly against the intro video's own <video> element
+        // autoplaying at the same instant - two playbin pipelines both initializing
+        // pipewiresink concurrently deadlocked on PipeWire's shared per-process
+        // thread-loop lock (confirmed via gdb: WebKit's main thread blocked in
+        // libgstplayback.so's g_object_get, while a GStreamer streaming thread was
+        // blocked on pw_thread_loop_lock() during autoaudiosink's pipewiresink
+        // negotiation for a second, concurrent pipeline). By the time StartMusic
+        // fires (the "x" keypress), the video's playbin is already stable.
         Self {
             music_context,
-            audio_element,
+            audio_element: None,
         }
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             MusicContextAction::StartMusic => {
-                self.audio_element.set_current_time(0.0);
-                match self.audio_element.play() {
+                let audio_element = self.audio_element.get_or_insert_with(|| {
+                    // Played through a plain <audio> element pointed at the local media
+                    // server (WebKitGTK's normal media pipeline) instead of the Web Audio
+                    // decode+play path, which has proven unreliable over Bluetooth on this
+                    // WebKitGTK/PipeWire setup (first silent, then distorted) despite
+                    // several targeted PipeWire/GStreamer fixes. The <video> element's
+                    // audio, using this same native pipeline, has stayed clean throughout.
+                    let url = static_asset_url(MUSIC_TRACK);
+                    match HtmlAudioElement::new_with_src(&url) {
+                        Ok(el) => {
+                            el.set_loop(true);
+                            el
+                        }
+                        Err(e) => {
+                            log::error!("Failed to create music audio element: {:?}", e);
+                            panic!("Failed to initialize music playback");
+                        }
+                    }
+                });
+                audio_element.set_current_time(0.0);
+                match audio_element.play() {
                     Ok(_) => {
                         log::info!("Started music playback");
                         frontend_log("info", "StartMusic: play() called".to_string());
@@ -89,8 +100,10 @@ impl Component for MusicContextProvider {
                 false
             }
             MusicContextAction::StopMusic => {
-                if let Err(e) = self.audio_element.pause() {
-                    log::warn!("Failed to pause music: {:?}", e);
+                if let Some(audio_element) = &self.audio_element {
+                    if let Err(e) = audio_element.pause() {
+                        log::warn!("Failed to pause music: {:?}", e);
+                    }
                 }
                 false
             }
