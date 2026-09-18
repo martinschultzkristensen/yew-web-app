@@ -26,3 +26,13 @@ pub fn media_dir(handle: &AppHandle) -> Result<PathBuf, String> {
         .join("media"))
 }
 
+/// Returns the bundled `resources/static` directory (e.g.
+/// `/usr/lib/danceOmatic/resources/static/` on Linux) that ships the sound
+/// effect/music MP3s and other bundled static assets.
+pub fn static_resources_dir(handle: &AppHandle) -> Result<PathBuf, String> {
+    handle
+        .path()
+        .resolve("resources/static", tauri::path::BaseDirectory::Resource)
+        .map_err(|e| format!("Failed to resolve static resources dir: {e}"))
+}
+

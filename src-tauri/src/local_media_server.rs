@@ -1,5 +1,5 @@
 use crate::machine_delivery_store::initialize_machine_delivery_storage;
-use crate::path_utils::media_dir;
+use crate::path_utils::{media_dir, static_resources_dir};
 use axum::{routing::get, Router};
 use std::path::PathBuf;
 use tauri::AppHandle;
@@ -14,6 +14,7 @@ pub fn start(handle: AppHandle) -> Result<(), String> {
     let storage = initialize_machine_delivery_storage(handle.clone())?;
     let deployments_directory = PathBuf::from(storage.deployments);
     let media_directory = media_dir(&handle)?;
+    let static_directory = static_resources_dir(&handle)?;
 
     // Bind porten med det samme, så vi straks opdager portfejl.
     let listener = std::net::TcpListener::bind(LOCAL_MEDIA_ADDRESS)
@@ -61,6 +62,10 @@ pub fn start(handle: AppHandle) -> Result<(), String> {
                     .nest_service(
                         "/media",
                         ServeDir::new(media_directory),
+                    )
+                    .nest_service(
+                        "/static",
+                        ServeDir::new(static_directory),
                     )
                     .layer(CorsLayer::permissive());
 

@@ -31,32 +31,34 @@ pub mod path_utils;
 /// opens, unmuted, at full volume, the AudioContext reports "running", and no audio actually
 /// reaches the speaker.
 ///
-/// The obvious fix, ranking `pipewiresink` (PipeWire's native GStreamer sink) above it, does fix
-/// Bluetooth silence, but was confirmed (by toggling it on/off) to itself be the source of
-/// distortion on *every* output, Bluetooth and the internal speaker alike, regardless of a
-/// PIPEWIRE_LATENCY hint pinned to the system's own default quantum/rate. Disabling it entirely
-/// made both outputs clean again (matching `main`, which has none of these audio fixes) while
-/// making Bluetooth silent again. That symmetry points at pipewiresink itself, not anything
-/// device- or latency-specific.
+/// Ranking `pipewiresink` (PipeWire's native GStreamer sink) above it fixes Bluetooth silence.
+/// It was also found to distort *Web Audio* playback (AudioContext + decodeAudioData) on every
+/// output, regardless of device or a PIPEWIRE_LATENCY hint - matching a documented, still-open
+/// upstream gap in pipewiresink's clock-skew/rate-adaptation handling for audio (see
+/// https://arunraghavan.net/2024/12/gstreamer-pipewire-a-todo-list/). Neither pulsesink nor
+/// alsasink (tried as alternatives) reach Bluetooth at all - both are silent on it, same as
+/// pulsesink was originally.
 ///
-/// So: rank `alsasink` instead. With `pipewire-alsa` installed, ALSA's "default" device is
-/// redirected through PipeWire's ALSA-compatibility layer -- a third, distinct code path from
-/// both pulsesink (clean but silent on Bluetooth) and pipewiresink (plays but distorts
-/// everywhere) worth trying since neither of the other two worked cleanly.
+/// Critically, `<video>`'s own audio - which goes through WebKitGTK's normal playbin pipeline
+/// rather than the raw Web Audio API - has stayed clean through every one of these tests, with
+/// this same pipewiresink ranking active throughout. So the distortion is specific to Web
+/// Audio's interaction with pipewiresink, not to pipewiresink itself. Sound effects/music were
+/// moved off Web Audio onto plain <audio> elements (see sound_effects.rs/music_context.rs) to
+/// use that same native pipeline, so this ranking should now be safe to keep for all of them.
 ///
 /// An existing `GST_PLUGIN_FEATURE_RANK` is respected: we append rather than replace, and do
-/// nothing if it already mentions alsasink. This must run before the webview starts, since
+/// nothing if it already mentions pipewiresink. This must run before the webview starts, since
 /// GStreamer reads the variable when it builds its registry (the child WebKitWebProcess inherits
 /// it from us).
 #[cfg(target_os = "linux")]
 fn prefer_pipewire_audio_sink() {
     const KEY: &str = "GST_PLUGIN_FEATURE_RANK";
     let existing = std::env::var(KEY).unwrap_or_default();
-    if !existing.contains("alsasink") {
+    if !existing.contains("pipewiresink") {
         let next = if existing.is_empty() {
-            "alsasink:MAX".to_owned()
+            "pipewiresink:MAX".to_owned()
         } else {
-            format!("{existing},alsasink:MAX")
+            format!("{existing},pipewiresink:MAX")
         };
         std::env::set_var(KEY, next);
     }

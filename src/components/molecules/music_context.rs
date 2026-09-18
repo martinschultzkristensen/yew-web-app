@@ -1,9 +1,7 @@
 // src/components/music_context.rs
-use crate::components::molecules::sound_effects::{frontend_log, get_audio_effect};
+use crate::components::molecules::sound_effects::{frontend_log, static_asset_url};
 use log;
-use wasm_bindgen::JsCast;
-use wasm_bindgen_futures::{spawn_local, JsFuture};
-use web_sys::{AudioBuffer, AudioBufferSourceNode, AudioContext, AudioScheduledSourceNode};
+use web_sys::HtmlAudioElement;
 use yew::prelude::*;
 
 const MUSIC_TRACK: &str = "low_8bit-menusong-short-ed.mp3";
@@ -15,14 +13,12 @@ pub struct MusicContext {
 }
 
 pub enum MusicContextAction {
-    TrackLoaded(AudioBuffer),
     StartMusic,
     StopMusic,
 }
 
 #[derive(Properties, PartialEq)]
 pub struct MusicContextProviderProps {
-    pub audio_context: AudioContext,
     #[prop_or_default]
     pub children: Children,
 }
@@ -30,9 +26,7 @@ pub struct MusicContextProviderProps {
 #[derive(Clone, PartialEq)]
 pub struct MusicContextProvider {
     music_context: MusicContext,
-    audio_context: AudioContext,
-    buffer: Option<AudioBuffer>,
-    current_source: Option<AudioBufferSourceNode>,
+    audio_element: HtmlAudioElement,
 }
 
 impl Component for MusicContextProvider {
@@ -51,165 +45,52 @@ impl Component for MusicContextProvider {
             stop_music,
         };
 
-        // Shared with SoundEffectsProvider (created once in lib.rs) rather than each
-        // provider creating its own AudioContext - see the comment in lib.rs for why:
-        // two concurrent Web Audio streams attached to the same Bluetooth sink broke
-        // both of them.
-        let audio_context = ctx.props().audio_context.clone();
-
-        // Loaded via the same backend byte-fetch + Web Audio decode path as
-        // sound_effects.rs, instead of an <audio src>, because WebKitGTK on
-        // Linux rejects the plain frontendDist static route with
-        // NotSupportedError (it doesn't respond to Range requests with 206).
-        {
-            let link = ctx.link().clone();
-            let audio_context = audio_context.clone();
-            spawn_local(async move {
-                match get_audio_effect(MUSIC_TRACK).await {
-                    Ok(data) => {
-                        let raw_byte_len = data.length();
-                        let array_buffer = data.buffer();
-                        match audio_context.decode_audio_data(&array_buffer) {
-                            Ok(promise) => match JsFuture::from(promise).await {
-                                Ok(buffer) => match buffer.dyn_into::<AudioBuffer>() {
-                                    Ok(audio_buffer) => {
-                                        frontend_log(
-                                            "info",
-                                            format!(
-                                                "decodeAudioData resolved for {}: raw_bytes={}, duration={}, length={}, channels={}",
-                                                MUSIC_TRACK,
-                                                raw_byte_len,
-                                                audio_buffer.duration(),
-                                                audio_buffer.length(),
-                                                audio_buffer.number_of_channels()
-                                            ),
-                                        );
-                                        link.send_message(MusicContextAction::TrackLoaded(
-                                            audio_buffer,
-                                        ));
-                                    }
-                                    Err(e) => {
-                                        log::error!("Failed to convert music to AudioBuffer: {:?}", e);
-                                        frontend_log(
-                                            "warn",
-                                            format!(
-                                                "decodeAudioData resolved for {} (raw_bytes={}) but result wasn't an AudioBuffer: {:?}",
-                                                MUSIC_TRACK, raw_byte_len, e
-                                            ),
-                                        );
-                                    }
-                                },
-                                Err(e) => {
-                                    log::error!("Failed to decode music track: {:?}", e);
-                                    frontend_log(
-                                        "warn",
-                                        format!(
-                                            "decodeAudioData rejected for {} (raw_bytes={}): {:?}",
-                                            MUSIC_TRACK, raw_byte_len, e
-                                        ),
-                                    );
-                                }
-                            },
-                            Err(e) => {
-                                log::error!("Failed to start music decode: {:?}", e);
-                                frontend_log(
-                                    "warn",
-                                    format!(
-                                        "decodeAudioData failed to start for {} (raw_bytes={}): {:?}",
-                                        MUSIC_TRACK, raw_byte_len, e
-                                    ),
-                                );
-                            }
-                        }
-                    }
-                    Err(e) => log::error!("Failed to load music track {}: {:?}", MUSIC_TRACK, e),
-                }
-            });
-        }
+        // Played through a plain <audio> element pointed at the local media server
+        // (WebKitGTK's normal media pipeline) instead of the Web Audio decode+play
+        // path, which has proven unreliable over Bluetooth on this WebKitGTK/PipeWire
+        // setup (first silent, then distorted) despite several targeted
+        // PipeWire/GStreamer fixes. The <video> element's audio, using this same
+        // native pipeline, has stayed clean throughout.
+        let url = static_asset_url(MUSIC_TRACK);
+        let audio_element = match HtmlAudioElement::new_with_src(&url) {
+            Ok(el) => {
+                el.set_loop(true);
+                el
+            }
+            Err(e) => {
+                log::error!("Failed to create music audio element: {:?}", e);
+                panic!("Failed to initialize music playback");
+            }
+        };
 
         Self {
             music_context,
-            audio_context,
-            buffer: None,
-            current_source: None,
+            audio_element,
         }
     }
 
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            MusicContextAction::TrackLoaded(buffer) => {
-                self.buffer = Some(buffer);
-                false
-            }
             MusicContextAction::StartMusic => {
-                if let Some(source) = self.current_source.take() {
-                    let _ = AudioScheduledSourceNode::stop(&source);
-                }
-                let state_before = self.audio_context.state();
-                log::info!(
-                    "Starting music (AudioContext state: {:?})",
-                    state_before
-                );
-                // AudioContext can start (or drift back into) a "suspended" state -
-                // e.g. the browser's autoplay policy, or the output device that was
-                // default when the context was created going away. resume() is a
-                // cheap no-op when already running, so it's safe to call every time
-                // rather than trying to track state ourselves.
-                let resume_result = self.audio_context.resume();
-                if let Err(e) = &resume_result {
-                    log::warn!("AudioContext::resume() failed for music: {:?}", e);
-                }
-                frontend_log(
-                    if resume_result.is_err() { "warn" } else { "info" },
-                    format!(
-                        "StartMusic: state before resume={:?}, resume()={}",
-                        state_before,
-                        if resume_result.is_ok() { "ok" } else { "failed" }
-                    ),
-                );
-                let Some(buffer) = &self.buffer else {
-                    log::warn!("Music track not loaded yet; ignoring start request");
-                    return false;
-                };
-                let source = match self.audio_context.create_buffer_source() {
-                    Ok(s) => s,
-                    Err(e) => {
-                        log::error!("Failed to create music buffer source: {:?}", e);
-                        return false;
-                    }
-                };
-                source.set_buffer(Some(buffer));
-                source.set_loop(true);
-                // Small headroom reduction, matching sound_effects.rs, in case
-                // decode-time reconstruction overshoot pushes samples past 0dBFS -
-                // AudioContext's destination has no headroom of its own and hard-clips.
-                let gain_node = match self.audio_context.create_gain() {
-                    Ok(g) => {
-                        g.gain().set_value(0.7);
-                        g
+                self.audio_element.set_current_time(0.0);
+                match self.audio_element.play() {
+                    Ok(_) => {
+                        log::info!("Started music playback");
+                        frontend_log("info", "StartMusic: play() called".to_string());
                     }
                     Err(e) => {
-                        log::error!("Failed to create music gain node: {:?}", e);
-                        return false;
+                        log::error!("Failed to start music playback: {:?}", e);
+                        frontend_log(
+                            "warn",
+                            format!("StartMusic: play() failed: {:?}", e),
+                        );
                     }
-                };
-                if let Err(e) = source
-                    .connect_with_audio_node(&gain_node)
-                    .and_then(|_| gain_node.connect_with_audio_node(&self.audio_context.destination()))
-                {
-                    log::error!("Failed to connect music source: {:?}", e);
-                    return false;
                 }
-                if let Err(e) = source.start() {
-                    log::error!("Failed to start music playback: {:?}", e);
-                    return false;
-                }
-                self.current_source = Some(source);
                 false
             }
             MusicContextAction::StopMusic => {
-                if let Some(source) = self.current_source.take() {
-                    let _ = AudioScheduledSourceNode::stop(&source);
+                if let Err(e) = self.audio_element.pause() {
+                    log::warn!("Failed to pause music: {:?}", e);
                 }
                 false
             }
