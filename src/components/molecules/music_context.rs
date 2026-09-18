@@ -3,10 +3,7 @@ use crate::components::molecules::sound_effects::{frontend_log, get_audio_effect
 use log;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::{spawn_local, JsFuture};
-use web_sys::{
-    AudioBuffer, AudioBufferSourceNode, AudioContext, AudioContextOptions,
-    AudioScheduledSourceNode,
-};
+use web_sys::{AudioBuffer, AudioBufferSourceNode, AudioContext, AudioScheduledSourceNode};
 use yew::prelude::*;
 
 const MUSIC_TRACK: &str = "low_8bit-menusong-short-ed.mp3";
@@ -53,12 +50,9 @@ impl Component for MusicContextProvider {
             stop_music,
         };
 
-        // Match the kiosk's Bluetooth sink's native rate (48kHz) so PipeWire doesn't
-        // have to resample from the Web Audio default (44.1kHz), which was a
-        // suspected source of playback distortion.
-        let options = AudioContextOptions::new();
-        options.set_sample_rate(48000.0);
-        let audio_context = match AudioContext::new_with_context_options(&options) {
+        // Previously forced to 48000Hz via AudioContextOptions - reverted, see the
+        // matching comment in sound_effects.rs for why.
+        let audio_context = match AudioContext::new() {
             Ok(ctx) => ctx,
             Err(e) => {
                 log::error!("Failed to create AudioContext for music: {:?}", e);
