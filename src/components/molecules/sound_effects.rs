@@ -1,9 +1,10 @@
 //src/components/molecules/sound_effects.rs
 use log;
 use serde_wasm_bindgen::to_value;
+use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
-use wasm_bindgen_futures::spawn_local;
+use wasm_bindgen_futures::{spawn_local, JsFuture};
 use web_sys::HtmlAudioElement;
 use yew::prelude::*;
 
@@ -55,6 +56,26 @@ pub fn install_panic_logging() {
     }));
 }
 
+// Surfaces MediaError (network/decode/src-not-supported) into danceOmatic.log.
+// Without this a failed load is completely invisible: the element simply never
+// produces sound and play() reports nothing.
+fn attach_error_logging(audio: &HtmlAudioElement, effect_name: &str) {
+    let element = audio.clone();
+    let name = effect_name.to_string();
+    let on_error = Closure::<dyn FnMut()>::new(move || {
+        let detail = match element.error() {
+            Some(err) => format!("code={} message={}", err.code(), err.message()),
+            None => "no MediaError set".to_string(),
+        };
+        log::error!("Media error for {}: {}", name, detail);
+        frontend_log("warn", format!("PlaySound {}: media error ({})", name, detail));
+    });
+    audio.set_onerror(Some(on_error.as_ref().unchecked_ref()));
+    // The element outlives this call (it is cached in SoundEffectsProvider), so the
+    // closure has to outlive it too.
+    on_error.forget();
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct SoundEffectsContext {
     pub play_sound: Callback<String>,
@@ -73,6 +94,19 @@ pub struct SoundEffectsProviderProps {
 #[derive(Clone, PartialEq)]
 pub struct SoundEffectsProvider {
     sound_effects_context: SoundEffectsContext,
+    // One reusable <audio> element per effect, created on first play and rewound
+    // on every play after that. Two reasons it is a cache rather than a fresh
+    // element per play:
+    //
+    // 1. Lifetime. A bare `HtmlAudioElement` that is never inserted into the DOM
+    //    is kept alive only by WebKit's "a *playing* media element stays alive"
+    //    rule -- which does not cover an element still loading. Over Bluetooth the
+    //    sink takes ~1s to come up, which is exactly that window.
+    // 2. Pipeline churn. Every new element builds a fresh GStreamer
+    //    playbin+pipewiresink. Reusing one keeps a single, already-negotiated
+    //    pipeline per effect instead of renegotiating the Bluetooth sink each time
+    //    (see the concurrent-negotiation deadlock documented in music_context.rs).
+    elements: HashMap<String, HtmlAudioElement>,
 }
 
 impl Component for SoundEffectsProvider {
@@ -90,6 +124,7 @@ impl Component for SoundEffectsProvider {
 
         Self {
             sound_effects_context,
+            elements: HashMap::new(),
         }
     }
 
@@ -102,42 +137,64 @@ impl Component for SoundEffectsProvider {
                 // WebKitGTK/PipeWire setup (first silent, then distorted) despite
                 // several targeted PipeWire/GStreamer fixes. The <video> element's
                 // audio, using this same native pipeline, has stayed clean throughout.
-                // A new element is created per play so overlapping sounds (e.g. rapid
-                // scroll clicks) don't cut each other off.
                 let url = static_asset_url(&effect_name);
-                match HtmlAudioElement::new_with_src(&url) {
-                    Ok(audio) => match audio.play() {
-                        Ok(_) => {
-                            log::info!("Started playing sound: {} ({})", effect_name, url);
-                            frontend_log(
-                                "info",
-                                format!("PlaySound {}: play() called ({})", effect_name, url),
-                            );
+
+                if !self.elements.contains_key(&effect_name) {
+                    match HtmlAudioElement::new_with_src(&url) {
+                        Ok(audio) => {
+                            audio.set_preload("auto");
+                            attach_error_logging(&audio, &effect_name);
+                            self.elements.insert(effect_name.clone(), audio);
                         }
                         Err(e) => {
                             log::error!(
-                                "Failed to start audio playback for {}: {:?}",
+                                "Failed to create audio element for {}: {:?}",
                                 effect_name,
                                 e
                             );
                             frontend_log(
                                 "warn",
-                                format!("PlaySound {}: play() failed: {:?}", effect_name, e),
+                                format!(
+                                    "PlaySound {}: failed to create <audio> element: {:?}",
+                                    effect_name, e
+                                ),
                             );
+                            return false;
                         }
-                    },
+                    }
+                }
+
+                let audio = &self.elements[&effect_name];
+                audio.set_current_time(0.0);
+                match audio.play() {
+                    Ok(promise) => {
+                        log::info!("Started playing sound: {} ({})", effect_name, url);
+                        // play() resolving is the only signal that audio actually
+                        // reached the sink; the Ok() here just means the promise was
+                        // created, which is true even when loading or decoding fails.
+                        let name = effect_name.clone();
+                        spawn_local(async move {
+                            match JsFuture::from(promise).await {
+                                Ok(_) => frontend_log(
+                                    "info",
+                                    format!("PlaySound {}: playback started", name),
+                                ),
+                                Err(e) => frontend_log(
+                                    "warn",
+                                    format!("PlaySound {}: play() rejected: {:?}", name, e),
+                                ),
+                            }
+                        });
+                    }
                     Err(e) => {
                         log::error!(
-                            "Failed to create audio element for {}: {:?}",
+                            "Failed to start audio playback for {}: {:?}",
                             effect_name,
                             e
                         );
                         frontend_log(
                             "warn",
-                            format!(
-                                "PlaySound {}: failed to create <audio> element: {:?}",
-                                effect_name, e
-                            ),
+                            format!("PlaySound {}: play() failed: {:?}", effect_name, e),
                         );
                     }
                 }
