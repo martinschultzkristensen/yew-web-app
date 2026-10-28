@@ -148,6 +148,24 @@ pub fn videos_list(props: &VideosListProps) -> Html {
         });
     }
 
+    // Demo videos are always silent: the `muted` content attribute only provides a
+    // default for media elements, so set the property directly as well.
+    {
+        let video_ref = video_ref.clone();
+        let is_demo = matches!(current_video, VideoType::Demo(_));
+        use_effect_with(
+            (is_demo, (*video_src).clone()),
+            move |(is_demo, _src)| {
+                if *is_demo {
+                    if let Some(video_element) = video_ref.cast::<web_sys::HtmlVideoElement>() {
+                        video_element.set_muted(true);
+                    }
+                }
+                || ()
+            },
+        );
+    }
+
     match current_video {
         VideoType::Demo(demo) => {
             let src = video_src.as_ref().cloned().unwrap_or_default();
@@ -169,6 +187,7 @@ pub fn videos_list(props: &VideosListProps) -> Html {
 
                             ref={video_ref.clone()}
                             autoplay=true
+                            muted=true
                             loop=false
                             onended={onended_attr.clone()}
                             class={classes!(video_class.clone(), "smallscreenvideo")}
